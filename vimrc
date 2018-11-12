@@ -7,13 +7,25 @@ set softtabstop=4
 set shiftwidth=4
 set autoindent
 set smartindent
+set smarttab
+set et
 
+if has('mouse')
+  set mouse=a
+endif
 
 syntax on
 colorscheme desert
 
 set textwidth=80
+set wrap
 set background=dark
+
+if exists('+colorcolumn')
+  set colorcolumn=81
+endif
+
+
 map ; :
  "this line and the next line make ; act like : so that you don't have to 
 "use ;; for ; instead
