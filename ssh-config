@@ -1,0 +1,8 @@
+
+Host caen login.engin.umich.edu
+	HostName login.engin.umich.edu
+	User maxrzaw
+	ControlMaster auto
+	ControlPath ~/.ssh/_%r@%h:%p
+	ControlPersist 43200
+
