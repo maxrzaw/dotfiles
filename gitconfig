@@ -18,3 +18,5 @@
 	graph2 = log --graph --full-history --all --color --pretty=tformat:"%C(red)%h%C(reset)%x09%C(green)%d%C(reset)%C(bold)%s%C(reset)%C(yellow)(%an)%C(reset)"
 [core]
 	editor = vim
+[push]
+	default = simple
