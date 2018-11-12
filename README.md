@@ -7,7 +7,7 @@ ln -s /path/to/file/in/this/repo /path/to/link
 ```
 Example
 ``` bash
-ln -s ~/dotfiles/.bashrc ~/
+ln -s ~/dotfiles/bashrc ~/.bashrc
 ```
 
 The **git-bash-prompt** can be found [here](https://github.com/magicmonty/bash-git-prompt).
