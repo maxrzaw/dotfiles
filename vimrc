@@ -30,3 +30,7 @@ map ; :
  "this line and the next line make ; act like : so that you don't have to 
 "use ;; for ; instead
 noremap ;; ;
+
+iabbrev #i #include
+iabbrev ustd using namespace std;
+iabbrev main int main(int argc, char * argv[]) { }
