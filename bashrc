@@ -131,3 +131,4 @@ eval $(thefuck --alias)
 
 alias submit370=/afs/umich.edu/class/eecs370/bin/submit370
 
+JOIN scrubs AND noobs WHERE height = Height AND PRINT 7 name 1 Name 2 age 1 Age 2 Height 2 height 1 student? 1 Student? 2
