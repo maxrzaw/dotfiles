@@ -129,5 +129,6 @@ source ~/.bash-git-prompt/gitprompt.sh
 
 eval $(thefuck --alias)
 
-alias submit370=/afs/umich.edu/class/eecs370/bin/submit370
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
