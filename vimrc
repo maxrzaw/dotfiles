@@ -17,7 +17,7 @@ endif
 syntax on
 colorscheme desert
 
-set textwidth=80
+set textwidth=70
 set wrap
 set background=dark
 
