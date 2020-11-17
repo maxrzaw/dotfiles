@@ -17,18 +17,17 @@ endif
 syntax on
 colorscheme desert
 
-set textwidth=80
+set textwidth=70
 set wrap
 set background=dark
 
 if exists('+colorcolumn')
-  set colorcolumn=81
+  set colorcolumn=70
 endif
 
-
-map ; :
- "this line and the next line make ; act like : so that you don't have to 
+"the next two lines make ; act like : so that you don't have to 
 "use ;; for ; instead
+map ; :
 noremap ;; ;
 
 
