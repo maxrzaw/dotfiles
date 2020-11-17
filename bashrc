@@ -116,9 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="~/Desktop:$PATH"
-
-
 export PS1="\[$(tput bold)\]\[\033[38;5;4m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;226m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
 export PS2="\[\033[38;5;226m\]>\[$(tput sgr0)\]"
 
@@ -126,6 +123,10 @@ alias got='git'
 
 GIT_PROMPT_ONLY_IN_REPO=1
 source ~/.bash-git-prompt/gitprompt.sh
+
+if [ -f ~/.git-completion.bash ]; then
+    . ~/.git-completion.bash
+fi
 
 eval $(thefuck --alias)
 
