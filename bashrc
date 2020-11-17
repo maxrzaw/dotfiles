@@ -129,4 +129,8 @@ source ~/.bash-git-prompt/gitprompt.sh
 
 eval $(thefuck --alias)
 
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
+alias go485='cd ~/classes/eecs485'
+
+alias prettyjson='python -m json.tool | pygmentize -l json'
