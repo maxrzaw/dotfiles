@@ -127,6 +127,10 @@ if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
     source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 
+if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+    source $HOME/.bash-git-prompt/gitprompt.sh
+fi
+
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
