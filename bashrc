@@ -122,16 +122,16 @@ export PS2="\[\033[38;5;226m\]>\[$(tput sgr0)\]"
 alias got='git'
 
 GIT_PROMPT_ONLY_IN_REPO=1
-source ~/.bash-git-prompt/gitprompt.sh
+if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
+    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
+fi
 
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
 
-eval $(thefuck --alias)
-
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-
-alias go485='cd ~/classes/eecs485'
-
 alias prettyjson='python -m json.tool | pygmentize -l json'
+
+# Set colors of links
+# LS_COLORS=$LS_COLORS:'di=0;35:' ; export LS_COLORS
