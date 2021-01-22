@@ -116,8 +116,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#export PS1="\[$(tput bold)\]\[\033[38;5;4m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;226m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-#export PS2="\[\033[38;5;226m\]>\[$(tput sgr0)\]"
+export PS1="\[$(tput bold)\]\[\033[38;5;4m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;226m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
+export PS2="\[\033[38;5;226m\]>\[$(tput sgr0)\]"
 
 alias got='git'
 
@@ -136,6 +136,3 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 alias prettyjson='python -m json.tool | pygmentize -l json'
-
-# Set colors of links
-# LS_COLORS=$LS_COLORS:'di=0;35:' ; export LS_COLORS
