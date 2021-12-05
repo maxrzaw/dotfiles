@@ -37,7 +37,6 @@ set showmatch " Highlight matching parenthesis.
 
 " Miscellaneous Options
 set history=1000 " Increase history.
-set spell " Turns on spell check.
 set showcmd " Show partial commands.
 set wildmenu " Allows tab completion in menu.
 set cmdheight=2 " Sets menu height to 2 lines.
