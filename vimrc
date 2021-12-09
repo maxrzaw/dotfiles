@@ -44,6 +44,7 @@ set showcmd " Show partial commands.
 set wildmenu " Allows tab completion in menu.
 set cmdheight=2 " Sets menu height to 2 lines.
 set autoread " Reload files if changed externally.
+
 " the next two lines make ; act like : so that you don't have to
 " use ;; for ; instead
 map ; :
