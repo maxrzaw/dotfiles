@@ -119,6 +119,7 @@ fi
 
 alias got='git'
 
+# Removed this in favor of powerline
 #GIT_PROMPT_ONLY_IN_REPO=1
 #if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
 #    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
