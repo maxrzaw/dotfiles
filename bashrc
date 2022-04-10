@@ -119,15 +119,15 @@ fi
 
 alias got='git'
 
-GIT_PROMPT_ONLY_IN_REPO=1
-if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
-    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
-fi
+#GIT_PROMPT_ONLY_IN_REPO=1
+#if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+#    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
+#    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
+#fi
 
-if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
-    source $HOME/.bash-git-prompt/gitprompt.sh
-fi
+# if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+#     source $HOME/.bash-git-prompt/gitprompt.sh
+# fi
 
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
