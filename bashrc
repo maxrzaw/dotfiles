@@ -116,8 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
-
+# Git-Bash Completion
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
