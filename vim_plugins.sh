@@ -2,7 +2,7 @@
 git clone https://github.com/ap/vim-css-color.git ~/.vim/pack/css-color/start/css-color
 
 # Install Vim Airline
-mkdir ~/.vim/pack/dist/start
+mkdir -p ~/.vim/pack/dist/start
 cd ~/.vim/pack/dist/start
 git clone https://github.com/vim-airline/vim-airline
 vim -u NONE -c "helptags vim-airline/doc" -c q
