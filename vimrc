@@ -1,10 +1,11 @@
 " Max Zawisa's .vimrc
 
 set nocompatible " only use this .vimrc.
-filetype plugin indent on
 
-" Set <leader> to Space
-let mapleader = " "
+" Syntax and indentation
+filetype plugin indent on
+syntax on " Turns on syntax highlighting.
+set foldmethod=syntax
 
 " Indentation Options
 set expandtab " This expands tabs into spaces.
@@ -15,19 +16,23 @@ set autoindent " new lines inherit the indentation of previous lines.
 set smartindent
 set smarttab
 
+
 " Search Options
 set hlsearch " This highlights search results.
 set ignorecase " This ignores case when searching.
 set incsearch " Show incremental searches.
 set smartcase " Switch to case sensitive when uppercase is present in search.
 
+
+" Mouse
 if has('mouse')
   set mouse=a
 endif
 
+
 " User Interface Options
 set number " Turns on line numbers.
-syntax on " Turns on syntax highlighting.
+
 set background=dark
 "colorscheme desert " Sets the default color scheme.
 set textwidth=80 " Sets the text width.
@@ -38,6 +43,7 @@ endif
 set title " Sets the title of the window to the current file name.
 set showmatch " Highlight matching parenthesis.
 
+
 " Miscellaneous Options
 set history=1000 " Increase history.
 set showcmd " Show partial commands.
@@ -45,7 +51,12 @@ set wildmenu " Allows tab completion in menu.
 set cmdheight=2 " Sets menu height to 2 lines.
 set autoread " Reload files if changed externally.
 
-" the next two lines make ; act like : so that you don't have to
+
+" Mappings
+" Set <leader> to Space
+let mapleader = " "
+
+" The next two lines make ; act like : so that you don't have to
 " use ;; for ; instead
 map ; :
 noremap ;; ;
@@ -53,8 +64,10 @@ noremap ;; ;
 inoremap jk <ESC>
 set backspace=indent,eol,start
 
+
 " Powerline
 " set rtp+=/usr/local/lib/python3.9/site-packages/powerline/bindings/vim
+
 
 " Airline
 set laststatus=2
