@@ -122,4 +122,3 @@ if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
 
-# source /usr/local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh
