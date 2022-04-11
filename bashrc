@@ -117,27 +117,9 @@ if ! shopt -oq posix; then
 fi
 
 
-alias got='git'
-
-# Removed this in favor of powerline
-#GIT_PROMPT_ONLY_IN_REPO=1
-#if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-#    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
-#    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
-#fi
-
-# if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
-#     source $HOME/.bash-git-prompt/gitprompt.sh
-# fi
 
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
 
-# Powerline
-powerline-daemon -q
-POWERLINE_BASH_CONTINUATION=1
-POWERLINE_BASH_SELECT=1
-source /usr/local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh
-
-alias prettyjson='python -m json.tool | pygmentize -l json'
+# source /usr/local/lib/python3.9/site-packages/powerline/bindings/bash/powerline.sh
