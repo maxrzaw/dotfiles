@@ -103,3 +103,4 @@ nmap <leader>9 <Plug>AirlineSelectTab9
 nmap <leader>0 <Plug>AirlineSelectTab0
 nmap <leader>- <Plug>AirlineSelectPrevTab
 nmap <leader>t <Plug>AirlineSelectNextTab
+nmap <leader>q <Esc>:tabclose<CR>
