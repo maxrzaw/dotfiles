@@ -63,3 +63,6 @@ keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
 
 -- netrw
 keymap("n", "<leader>f", "<cmd>Explore<CR>", opts)
+keymap("n", "<leader>fj", "<cmd>Hexplore<CR>", opts)
+keymap("n", "<leader>fk", "<cmd>Sexplore<CR>", opts)
+
