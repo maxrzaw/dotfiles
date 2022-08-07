@@ -30,7 +30,7 @@
     sw = switch
     swl = switch -
 [core]
-	editor = vim
+	editor = nvim
 [push]
 	default = simple
 [pull]
