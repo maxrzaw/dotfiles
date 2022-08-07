@@ -60,3 +60,6 @@ keymap("n", "gs", ":call CocAction('jumpDefinition', 'vsplit') <CR>", { silent =
 keymap("n", "gy", "<Plug>(coc-type-definition)", { silent = true })
 keymap("n", "gi", "<Plug>(coc-implementation)", { silent = true })
 keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
+
+-- netrw
+keymap("n", "<leader>f", "<cmd>Explore<CR>", opts)
