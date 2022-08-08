@@ -32,7 +32,7 @@ keymap(
 keymap(
     "i",
     "<TAB>",
-    [[coc#pum#visible() ? coc#pum#next(1) : "\<c-j>"]]
+    [[coc#pum#visible() ? coc#pum#next(1) : "\<TAB>"]]
     ,
     expr_opts
 )
@@ -40,7 +40,7 @@ keymap(
 keymap(
     "i",
     "<S-TAB>",
-    [[coc#pum#visible() ? coc#pum#prev(1) : "\<c-k>"]]
+    [[coc#pum#visible() ? coc#pum#prev(1) : "\<S-TAB>"]]
     ,
     expr_opts
 )
