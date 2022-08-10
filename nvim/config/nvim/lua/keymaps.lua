@@ -62,7 +62,13 @@ keymap("n", "gi", "<Plug>(coc-implementation)", { silent = true })
 keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
 
 -- netrw
-keymap("n", "<leader>f", "<cmd>Explore<CR>", opts)
-keymap("n", "<leader>fj", "<cmd>Hexplore<CR>", opts)
-keymap("n", "<leader>fk", "<cmd>Sexplore<CR>", opts)
+keymap("n", "<leader>rw", "<cmd>Explore<CR>", opts)
 
+-- Telescope
+keymap("n", "<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>", opts)
+keymap("n", "<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>", opts)
+keymap("n", "<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>", opts)
+keymap("n", "<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>", opts)
+keymap("n", "<leader>fgs", "<cmd>lua require('telescope.builtin').git_status()<cr>", opts)
+keymap("n", "<leader>fgb", "<cmd>lua require('telescope.builtin').git_branches()<cr>", opts)
+keymap("n", "<leader>fgc", "<cmd>lua require('telescope.builtin').git_commits()<cr>", opts)
