@@ -1,4 +1,5 @@
 {
     "clangd.fallbackFlags": ["-std=c++1z", "-Wconversion", "-Wall", "-Wextra", "-pedantic"],
-    "diagnostic.virtualText": true
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextCurrentLineOnly": false
 }
