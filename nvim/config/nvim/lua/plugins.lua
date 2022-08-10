@@ -35,6 +35,14 @@ return require('packer').startup(function(use)
     -- Neogit
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
 
+    -- Harpoon
+    use {
+        'ThePrimeagen/harpoon',
+        requires = {{ 'nvim-lua/plenary.nvim'}}
+    }
+
+    use 'voldikss/vim-floaterm'
+
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if packer_bootstrap then

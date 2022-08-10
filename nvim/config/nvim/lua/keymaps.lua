@@ -10,7 +10,10 @@ vim.keymap.set('', ';', ':')
 -- Map jk to <ESC> when in insert mode
 vim.keymap.set('i', 'jk', '<ESC>')
 
--- COC
+-- Terminal Mode
+keymap("t", "<ESC>", "<cmd>FloatermToggle<cr>", opts)
+keymap("n", "<leader>t", "<cmd>FloatermToggle<cr>", opts)
+
 -- Use CTRL-J to move down when in auto completion
 keymap(
     "i",
@@ -72,3 +75,10 @@ keymap("n", "<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>
 keymap("n", "<leader>fgs", "<cmd>lua require('telescope.builtin').git_status()<cr>", opts)
 keymap("n", "<leader>fgb", "<cmd>lua require('telescope.builtin').git_branches()<cr>", opts)
 keymap("n", "<leader>fgc", "<cmd>lua require('telescope.builtin').git_commits()<cr>", opts)
+
+-- Harpoon
+keymap("n", "<leader>m", "<cmd>lua require('harpoon.mark').add_file()<cr>", opts)
+keymap("n", "<leader>h", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", opts)
+
+
+
