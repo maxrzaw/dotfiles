@@ -80,5 +80,3 @@ keymap("n", "<leader>fgc", "<cmd>lua require('telescope.builtin').git_commits()<
 keymap("n", "<leader>m", "<cmd>lua require('harpoon.mark').add_file()<cr>", opts)
 keymap("n", "<leader>h", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", opts)
 
-
-
