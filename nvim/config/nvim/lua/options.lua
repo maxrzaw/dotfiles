@@ -45,3 +45,5 @@ vim.opt.backup = true
 vim.opt.writebackup = true
 vim.opt.updatetime = 300
 vim.opt.signcolumn = "yes"
+vim.opt.foldmethod = "expr"
+
