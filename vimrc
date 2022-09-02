@@ -32,6 +32,7 @@ endif
 
 " User Interface Options
 set number " Turns on line numbers.
+set relativenumber
 
 set background=dark
 "colorscheme desert " Sets the default color scheme.
@@ -65,9 +66,8 @@ inoremap jk <ESC>
 set backspace=indent,eol,start
 
 " Moving lines
-vnoremap("J", ":m '>+1<CR>gv=gv")
-vnoremap("K", ":m '<-2<CR>gv=gv")
-
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 
 " Powerline
 " set rtp+=/usr/local/lib/python3.9/site-packages/powerline/bindings/vim
