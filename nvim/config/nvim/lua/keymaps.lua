@@ -64,6 +64,10 @@ keymap("n", "gy", "<Plug>(coc-type-definition)", { silent = true })
 keymap("n", "gi", "<Plug>(coc-implementation)", { silent = true })
 keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
 
+-- Moving lines
+keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
+vnoremap("v", "K", ":m '<-2<CR>gv=gv", opts)
+
 -- netrw
 keymap("n", "<leader>rw", "<cmd>Explore<CR>", opts)
 
