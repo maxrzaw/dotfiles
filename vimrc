@@ -64,6 +64,10 @@ noremap ;; ;
 inoremap jk <ESC>
 set backspace=indent,eol,start
 
+" Moving lines
+vnoremap("J", ":m '>+1<CR>gv=gv")
+vnoremap("K", ":m '<-2<CR>gv=gv")
+
 
 " Powerline
 " set rtp+=/usr/local/lib/python3.9/site-packages/powerline/bindings/vim
@@ -105,5 +109,5 @@ nmap <leader>- <Plug>AirlineSelectPrevTab
 nmap <leader>t <Plug>AirlineSelectNextTab
 nmap <leader>q <Esc>:tabclose<CR>
 
-nmap <leader>f <CMD>Explore<CR>
+nmap <leader>rw <CMD>Explore<CR>
 nmap <leader>ff <CMD>FZF<CR>
