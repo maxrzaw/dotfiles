@@ -32,6 +32,7 @@ vim.opt.termguicolors = true
 vim.opt.mouse = "a"
 vim.opt.showmatch = true
 vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.history = 1000
 vim.opt.cmdheight = 1
 vim.opt.wildmenu = true
