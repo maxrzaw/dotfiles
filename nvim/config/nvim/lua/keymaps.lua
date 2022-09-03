@@ -7,8 +7,9 @@ local opts = { noremap = true, silent = true }
 vim.g.mapleader = ' '
 -- Map ; act like :
 vim.keymap.set('', ';', ':')
--- Map jk to <ESC> when in insert mode
+-- Map jk to <ESC> when in insert and visual mode 
 vim.keymap.set('i', 'jk', '<ESC>')
+vim.keymap.set('v', 'jk', '<ESC>')
 
 -- Terminal Mode
 keymap("t", "<ESC>", "<cmd>FloatermToggle<cr>", opts)
@@ -66,7 +67,7 @@ keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
 
 -- Moving lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
-vnoremap("v", "K", ":m '<-2<CR>gv=gv", opts)
+keymap("v", "K", ":m '<-2<CR>gv=gv", opts)
 
 -- netrw
 keymap("n", "<leader>rw", "<cmd>Explore<CR>", opts)
