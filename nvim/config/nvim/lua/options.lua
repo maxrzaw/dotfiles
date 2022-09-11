@@ -7,6 +7,11 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.smarttab = true
 
+-- Folding
+vim.opt.foldmethod = "indent"
+vim.opt.foldlevelstart = 3
+vim.opt.foldminlines=2
+
 -- Search Options
 vim.opt.hlsearch = false -- This highlights search results.
 vim.opt.ignorecase = true -- This ignores case when searching.
@@ -46,5 +51,5 @@ vim.opt.backup = true
 vim.opt.writebackup = true
 vim.opt.updatetime = 300
 vim.opt.signcolumn = "yes"
-vim.opt.foldmethod = "expr"
+--vim.opt.foldmethod = "expr"
 
