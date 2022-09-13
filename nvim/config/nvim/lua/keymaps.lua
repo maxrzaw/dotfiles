@@ -43,11 +43,11 @@ keymap('t', 'jk', '<ESC>', {silent = true}) -- I don't think many words contain 
 keymap("n", "<leader>t", "<cmd>FloatermToggle<cr>", opts)
 
 -- Code Navigation
-keymap("n", "gd", "<Plug>(coc-definition)", { silent = true })
-keymap("n", "gs", ":call CocAction('jumpDefinition', 'vsplit') <CR>", { silent = true })
-keymap("n", "gy", "<Plug>(coc-type-definition)", { silent = true })
-keymap("n", "gi", "<Plug>(coc-implementation)", { silent = true })
-keymap("n", "gr", "<Plug>(coc-references)", { silent = true })
+keymap("n", "gd", "<Plug>(coc-definition)zz", { silent = true })
+keymap("n", "gs", ":call CocAction('jumpDefinition', 'vsplit') <CR>zz", { silent = true })
+keymap("n", "gy", "<Plug>(coc-type-definition)zz", { silent = true })
+keymap("n", "gi", "<Plug>(coc-implementation)zz", { silent = true })
+keymap("n", "gr", "<Plug>(coc-references)zz", { silent = true })
 
 -- Moving lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
