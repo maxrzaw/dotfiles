@@ -50,6 +50,11 @@ vim.opt.directory = vim.fn.stdpath('config') .. '/swp'
 vim.opt.backup = true
 vim.opt.writebackup = true
 vim.opt.updatetime = 300
+vim.opt.timeoutlen = 500 -- how long to wait between key combinations
 vim.opt.signcolumn = "yes"
 --vim.opt.foldmethod = "expr"
 
+-- netrw
+vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
+vim.g.netrw_preview = 1
+vim.g.netrw_winsize = 40

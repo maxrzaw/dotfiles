@@ -7,9 +7,10 @@ local opts = { noremap = true, silent = true }
 vim.g.mapleader = ' '
 -- Map ; act like :
 vim.keymap.set('', ';', ':')
+-- I used to remap jk to <ESC> for speed. However, I remapped CAPS LOCK to ESC
 -- Map jk to <ESC> when in insert and visual mode 
-keymap('i', 'jk', '<ESC>', opts)
-keymap('v', 'jk', '<ESC>', opts) -- not sure if I like this one
+keymap('i', 'jk', '<ESC>', opts) -- keeping this for now
+--keymap('v', 'jk', '<ESC>', opts) -- not sure if I like this one
 
 -- Keep me centered
 keymap("n", "<C-u>", "<C-u>zz", opts)
@@ -39,7 +40,7 @@ keymap("n", "<leader>Y", "\"+Y", {silent = true}) -- I want this to remap
 
 -- Terminal Mode
 keymap("t", "<ESC>", "<cmd>FloatermToggle<cr>", opts)
-keymap('t', 'jk', '<ESC>', {silent = true}) -- I don't think many words contain 'jk'
+--keymap('t', 'jk', '<ESC>', {silent = true}) -- I don't think many words contain 'jk'
 keymap("n", "<leader>t", "<cmd>FloatermToggle<cr>", opts)
 
 -- Code Navigation
@@ -54,7 +55,7 @@ keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
 keymap("v", "K", ":m '<-2<CR>gv=gv", opts)
 
 -- netrw
-keymap("n", "<leader>rw", "<cmd>Explore<CR>", opts)
+keymap("n", "<leader>e", "<cmd>Explore<CR>", opts)
 
 -- Telescope
 keymap("n", "<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>", opts)
