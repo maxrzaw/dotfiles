@@ -121,3 +121,6 @@ if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
 
+if [ -f ~/.cargo/env ]; then
+. "$HOME/.cargo/env"
+f
