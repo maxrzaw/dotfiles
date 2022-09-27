@@ -123,4 +123,4 @@ fi
 
 if [ -f ~/.cargo/env ]; then
 . "$HOME/.cargo/env"
-f
+fi
