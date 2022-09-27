@@ -16,15 +16,15 @@ lsp.preset('recommended');
 lsp.ensure_installed({
     'tsserver',
     'eslint',
-    "sumneko_lua",
-    "clangd",
+    -- "sumneko_lua",
+    -- "clangd",
     "cmake",
     "dockerls",
     "html",
     "jsonls",
-    "marksman",
-    "omnisharp",
-    "rust_analyzer",
+    -- "marksman",
+    -- "omnisharp",
+    -- "rust_analyzer",
 });
 
 lsp.on_attach(function(client, bufnr)
