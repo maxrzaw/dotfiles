@@ -22,10 +22,6 @@ vim.opt.smartcase = true -- Switch to case sensitive when uppercase is present i
 -- Color Column
 vim.opt.colorcolumn = {80,120}
 
--- Sets the background
-vim.opt.background = "dark"
-
-
 -- Line Wrapping
 vim.opt.textwidth = 80
 -- Prevent automatic wrapping
