@@ -46,7 +46,7 @@ return require('packer').startup(function(use)
     use 'gpanders/editorconfig.nvim'
 
     -- needed for windows maybe?
-    if vim.fn.has("win32") then
+    if (vim.fn.has("win32") == 1) then
         use 'OmniSharp/omnisharp-vim'
     end
 
