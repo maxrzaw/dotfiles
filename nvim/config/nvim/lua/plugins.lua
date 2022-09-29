@@ -43,6 +43,13 @@ return require('packer').startup(function(use)
 
     use 'voldikss/vim-floaterm'
 
+    use 'gpanders/editorconfig.nvim'
+
+    -- needed for windows maybe?
+    if vim.fn.has("win32") then
+        use 'OmniSharp/omnisharp-vim'
+    end
+
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if packer_bootstrap then
