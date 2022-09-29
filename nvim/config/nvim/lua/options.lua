@@ -48,9 +48,17 @@ vim.opt.writebackup = true
 vim.opt.updatetime = 300
 vim.opt.timeoutlen = 500 -- how long to wait between key combinations
 vim.opt.signcolumn = "yes"
+--vim.g.coc_node_path = '/c/Program Files/nodejs/node'
 --vim.opt.foldmethod = "expr"
 
 -- netrw
 vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
+
+
+-- needed for windows maybe?
+if vim.fn.has("win32") then
+    vim.opt.shell = 'bash.exe'
+    vim.opt.shellcmdflag='-c'
+end
