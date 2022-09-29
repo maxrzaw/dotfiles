@@ -63,7 +63,7 @@ vim.g.netrw_winsize = 40
 
 
 -- needed for windows maybe?
-if vim.fn.has("win32") then
+if (vim.fn.has("win32") == 1) then
     vim.opt.shell = 'bash.exe'
     vim.opt.shellcmdflag='-c'
     --vim.g.coc_node_path = '/c/Program Files/nodejs/node'
