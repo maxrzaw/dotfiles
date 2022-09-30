@@ -43,7 +43,7 @@ vim.opt.cmdheight = 1
 vim.opt.wildmenu = true
 vim.opt.autoread = true
 vim.opt.showcmd = true
-vim.opt.signcolumn = "yes"
+--vim.opt.signcolumn = "yes"
 
 -- Backup, history, and undo
 vim.opt.backup = true
