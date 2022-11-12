@@ -44,11 +44,55 @@ keymap("t", "<ESC>", "<cmd>FloatermToggle<cr>", opts)
 keymap("n", "<leader>t", "<cmd>FloatermToggle<cr>", opts)
 
 -- Code Navigation
-keymap("n", "gd", "<Plug>(coc-definition)zz", { silent = true })
-keymap("n", "gs", ":call CocAction('jumpDefinition', 'vsplit') <CR>zz", { silent = true })
-keymap("n", "gy", "<Plug>(coc-type-definition)zz", { silent = true })
-keymap("n", "gi", "<Plug>(coc-implementation)zz", { silent = true })
-keymap("n", "gr", "<Plug>(coc-references)zz", { silent = true })
+-- keymap("n", "gd", "<Plug>(coc-definition)zz", { silent = true })
+-- keymap("n", "gs", ":call CocAction('jumpDefinition', 'vsplit') <CR>zz", { silent = true })
+-- keymap("n", "gy", "<Plug>(coc-type-definition)zz", { silent = true })
+-- keymap("n", "gi", "<Plug>(coc-implementation)zz", { silent = true })
+-- keymap("n", "gr", "<Plug>(coc-references)zz", { silent = true })
+
+-- Snippets
+keymap(
+    "i",
+    "<Tab>",
+    [[luasnip#expand_or_jumpable() ? "<Plug>luasnip-expand-or-jump" : "\<Tab>"]]
+    ,
+    expr_opts
+)
+
+keymap(
+    "i",
+    "<S-Tab>",
+    "<cmd>lua require('luasnip').jump(-1)<cr>" ,
+    opts
+)
+
+keymap(
+    "s",
+    "<Tab>",
+    "<cmd>lua require('luasnip').jump(1)<cr>" ,
+    opts
+)
+
+keymap(
+    "s",
+    "<S-Tab>",
+    "<cmd>lua require('luasnip').jump(-1)<cr>" ,
+    opts
+)
+
+--keymap(
+--    "i",
+--    "<Tab>",
+--    "<cmd>lua require('luasnip').jump(1)<cr>" ,
+--    expr_opts
+--)
+--
+--keymap(
+--    "i",
+--    "<S-Tab>",
+--    "<cmd>lua require('luasnip').jump(-1)<cr>" ,
+--    expr_opts
+--)
 
 -- Moving lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
@@ -70,47 +114,4 @@ keymap("n", "<leader>fgc", "<cmd>lua require('telescope.builtin').git_commits()<
 keymap("n", "<leader>m", "<cmd>lua require('harpoon.mark').add_file()<cr>", opts)
 keymap("n", "<leader>h", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", opts)
 
--- COC
--- Use CTRL-J to move down when in auto completion
-keymap(
-    "i",
-    "<c-j>",
-    [[coc#pum#visible() ? coc#pum#next(1) : "\<c-j>"]]
-    ,
-    expr_opts
-)
--- Use CTRL-K to move up when in auto completion
-keymap(
-    "i",
-    "<c-k>",
-    [[coc#pum#visible() ? coc#pum#prev(1) : "\<c-k>"]]
-    ,
-    expr_opts
-)
-
--- Use TAB to move down when in auto completion
-keymap(
-    "i",
-    "<TAB>",
-    [[coc#pum#visible() ? coc#pum#next(1) : "\<TAB>"]]
-    ,
-    expr_opts
-)
--- Use SHIFT+TAB to move up when in auto completion
-keymap(
-    "i",
-    "<S-TAB>",
-    [[coc#pum#visible() ? coc#pum#prev(1) : "\<S-TAB>"]]
-    ,
-    expr_opts
-)
-
-keymap(
-    "i",
-    "<CR>",
-    [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
-    expr_opts
-)
-
-keymap("i", "<c-space>", [[coc#refresh()]], expr_opts)
 
