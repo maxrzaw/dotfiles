@@ -1,0 +1,16 @@
+<base>
+[rwin]>[ralt]
+[lalt]>[lwin]
+[down]>[up]
+[up]>[down]
+
+* the below does not work :(
+* {rshift}{1}>{1}
+* {1}>{-rshift}{1}{+rshift}
+<keypad>
+
+<function1>
+
+<function2>
+
+<function3>

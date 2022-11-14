@@ -1,0 +1,7 @@
+<base>
+[lalt]>[lwin]
+[rwin]>[ralt]
+<keypad>
+<function1>
+<function2>
+<function3>
