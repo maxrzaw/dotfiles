@@ -50,6 +50,8 @@ require("mason-lspconfig").setup({
         "jsonls",
         "tsserver",
         "marksman",
+        "omnisharp",
+        --"csharp-ls",
     }
 })
 
@@ -64,6 +66,10 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", "<leader>dN", vim.diagnostic.goto_prev, {buffer=bufnr})
     vim.keymap.set("n", "<leader>dl", "<cmd>Telescope diagnostics<CR>", {buffer=bufnr})
     vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer=bufnr})
+end
+
+local on_attach_dotnet = function (client, bufnr)
+    vim.keymap.set("n", "<leader>b", ":dotnet build", {buffer=bufnr})
 end
 
 require'lspconfig'.sumneko_lua.setup{
@@ -97,6 +103,13 @@ require'lspconfig'.marksman.setup{
     on_attach = on_attach,
     capabilities = capabilities
 }
+
+require'lspconfig'.omnisharp.setup{
+    on_attach = on_attach,
+    capabilities = capabilities
+}
+
+--require'lspconfig'.csharp_ls.setup{}
 
 vim.opt.completeopt={'menu','menuone','noselect'}
 -- Set up nvim-cmp.
