@@ -98,6 +98,11 @@ require'lspconfig'.marksman.setup{
     capabilities = capabilities
 }
 
+require'lspconfig'.dockerls.setup{
+    on_attach = on_attach,
+    capabilities = capabilities
+}
+
 vim.opt.completeopt={'menu','menuone','noselect'}
 -- Set up nvim-cmp.
 local cmp = require'cmp'
