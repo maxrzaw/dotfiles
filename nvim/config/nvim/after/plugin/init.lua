@@ -4,7 +4,6 @@ neogit.setup {}
 require'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all"
     ensure_installed = { "c", "lua", "cpp" },
-
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,
 
@@ -40,18 +39,30 @@ require("telescope").load_extension('harpoon')
 -- LSP
 -- This must come before the lspconfig setup
 require("mason").setup()
-require("mason-lspconfig").setup({
-    ensure_installed = {
-        "sumneko_lua",
-        "clangd",
-        "cmake",
-        "dockerls",
-        "html",
-        "jsonls",
-        "tsserver",
-        "marksman",
-    }
-})
+-- needed for windows maybe?
+if (vim.fn.has("win32") == 1) then
+    require("mason-lspconfig").setup({
+        ensure_installed = {
+            "dockerls",
+            "html",
+            "jsonls",
+            "tsserver",
+        }
+    })
+else
+    require("mason-lspconfig").setup({
+        ensure_installed = {
+            "sumneko_lua",
+            "clangd",
+            "cmake",
+            "dockerls",
+            "html",
+            "jsonls",
+            "tsserver",
+            "marksman",
+        }
+    })
+end
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local on_attach = function(client, bufnr)
