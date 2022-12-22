@@ -29,6 +29,7 @@
 	st = status
     sw = switch
     swl = switch -
+    cloc = !cloc $(git ls-files)
 [core]
 	editor = nvim
 [push]
