@@ -12,7 +12,7 @@ vim.opt.listchars = { tab = '▸ ', trail = '·' }
 -- Folding
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevelstart = 3
-vim.opt.foldminlines=2
+vim.opt.foldminlines = 2
 --vim.opt.foldmethod = "expr"
 
 -- Search Options
@@ -24,7 +24,12 @@ vim.opt.smartcase = true -- Switch to case sensitive when uppercase is present i
 -- Interface options
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.colorcolumn = {80,120}
+vim.opt.colorcolumn = { 80, 120 }
+-- Relativenumber for current buffer only
+vim.cmd [[
+        autocmd BufLeave * : setlocal norelativenumber
+        autocmd BufEnter * : setlocal relativenumber
+]]
 
 -- Line Wrapping
 vim.opt.textwidth = 80
@@ -43,15 +48,16 @@ vim.opt.cmdheight = 1
 vim.opt.wildmenu = true
 vim.opt.autoread = true
 vim.opt.showcmd = true
---vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "yes"
 
 -- Backup, history, and undo
-vim.opt.backup = true
-vim.opt.writebackup = true
+vim.opt.backup = false
+vim.opt.writebackup = false
 vim.opt.backupdir = vim.fn.stdpath('config') .. '/backup'
 vim.opt.directory = vim.fn.stdpath('config') .. '/swp'
 vim.opt.history = 1000
 vim.opt.undofile = true
+vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 
 vim.opt.updatetime = 300
 vim.opt.timeoutlen = 500 -- how long to wait between key combinations
@@ -65,6 +71,6 @@ vim.g.netrw_winsize = 40
 -- needed for windows maybe?
 if (vim.fn.has("win32") == 1) then
     vim.opt.shell = 'bash.exe'
-    vim.opt.shellcmdflag='-c'
+    vim.opt.shellcmdflag = '-c'
     --vim.g.coc_node_path = '/c/Program Files/nodejs/node'
 end
