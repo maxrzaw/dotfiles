@@ -1,7 +1,3 @@
-[user]
-	email = maxrzaw@umich.edu
-	name = Max Zawisa
-
 # This will automatically fix simple typos, e.g. `git psuh` will run `git push`
 [help]
 	autocorrect = 1
@@ -15,21 +11,26 @@
     a = add
     aa = add .
     br = branch
+    cloc = !cloc $(git ls-files)
     cm = commit
-	graph1 = log --graph --full-history --all --color --pretty=tformat:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s%x20%x1b[33m(%an)%x1b[0m"
-	graph2 = log --graph --full-history --all --color --pretty=tformat:"%C(red)%h%C(reset)%x09%C(green)%d%C(reset)%C(bold)%s%C(reset)%C(yellow)(%an)%C(reset)"
-	ll = log --pretty=format:"%Cred%h%Creset%x20%s%Cblue%x20[%cn]"
-	lll = log --stat --abbrev-commit
-	plog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%ae>%Creset' --abbrev-commit
+    graph1 = log --graph --full-history --all --color --pretty=tformat:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s%x20%x1b[33m(%an)%x1b[0m"
+    graph2 = log --graph --full-history --all --color --pretty=tformat:"%C(red)%h%C(reset)%x09%C(green)%d%C(reset)%C(bold)%s%C(reset)%C(yellow)(%an)%C(reset)"
+    ll = log --pretty=format:'%Cred%h %Creset%<(67,trunc)%s %Cblue[%cn]%C(Yellow)%d'
+    lll = log --stat --abbrev-commit
+    lls = log --pretty=format:'%Cred%h %Creset%<(80,trunc)%s %Cblue[%cn]' -n 14
+    pb = push -u origin HEAD
+    plog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%ae>%Creset' --abbrev-commit
     rb = rebase
     sa = stash apply
     sd = stash drop
     sl = stash list
     ss = stash push -m
-	st = status
+    st = status
+    st = status
     sw = switch
+    swc = switch -c
     swl = switch -
-    cloc = !cloc $(git ls-files)
+
 [core]
 	editor = nvim
 [push]
