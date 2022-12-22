@@ -18,11 +18,11 @@ lsp.ensure_installed({
     'eslint',
     "lua_ls",
     -- "clangd",
-    "cmake",
+    -- "marksman",
+    -- "cmake",
     "dockerls",
     "html",
     "jsonls",
-    -- "marksman",
     -- "omnisharp",
     -- "rust_analyzer",
 });
