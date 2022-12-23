@@ -24,7 +24,7 @@ vim.opt.smartcase = true -- Switch to case sensitive when uppercase is present i
 -- Interface options
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.colorcolumn = { 80, 120 }
+vim.opt.colorcolumn = { 120 }
 -- Relativenumber for current buffer only
 vim.cmd [[
         autocmd BufLeave * : setlocal norelativenumber
