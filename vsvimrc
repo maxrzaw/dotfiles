@@ -1,0 +1,69 @@
+" Max Zawisa's .vsvimrc
+
+" use system clipboard
+set clipboard=unnamedplus
+
+" Indentation Options
+set expandtab " This expands tabs into spaces.
+set tabstop=4 " this sets tab width to 4 spaces
+set softtabstop=4
+set shiftwidth=4 " When shifting, indent using 4 spaces.
+set autoindent " new lines inherit the indentation of previous lines.
+
+" Search Options
+set nohlsearch " This highlights search results.
+set ignorecase " This ignores case when searching.
+set incsearch " Show incremental searches.
+set smartcase " Switch to case sensitive when uppercase is present in search.
+set vsvim_hidemarks=<>[]^.'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+" User Interface Options
+set number " Turns on line numbers.
+set relativenumber
+set scrolloff=6
+
+" Miscellaneous Options
+set history=1000 " Increase history.
+set showcmd " Show partial commands.
+
+" Mappings
+" Set <leader> to Space
+let mapleader = " "
+
+" The next two lines make ; act like : so that you don't have to
+" use ;; for ; instead
+map ; :
+noremap ;; ;
+" Maps jk to <ESC> when in insert mode
+inoremap jk <ESC>
+set backspace=indent,eol,start
+
+" Moving lines
+vnoremap J :vsc Edit.MoveSelectedLinesDown<CR>
+vnoremap K :vsc Edit.MoveSelectedLinesUp<CR>
+
+" Visual Studio Commands
+nnoremap <leader>rt :vsc TestExplorer.RunAllTestsInContext <CR>
+nnoremap <leader>dt :vsc TestExplorer.DebugAllTestsInContext <CR>
+nnoremap <leader>te :vsc TestExplorer.ShowTestExplorer <CR>
+nnoremap <leader>r :vsc Refactor.Rename <CR>
+xnoremap <leader>em :vsc Refactor.ExtractMethod <cr>
+nnoremap <leader>z za
+nnoremap zM :vsc Edit.CollapsetoDefinitions<CR>
+nnoremap zR :vsc Edit.ExpandAllOutlining<CR>
+nnoremap K :vsc Edit.QuickInfo<CR>
+nnoremap <leader>kk :vsc View.QuickActions <CR>
+
+" Commenting
+nnoremap <leader>cc V:vsc Edit.CommentSelection<cr>
+xnoremap <leader>cc :vsc Edit.CommentSelection<cr>
+nnoremap <leader>CC V:vsc Edit.UncommentSelection<cr>
+xnoremap <leader>CC :vsc Edit.UncommentSelection<cr>
+
+nnoremap <leader>ff : vsc Window.SolutionExplorerSearch<cr>
+nnoremap gi :vsc Edit.GoToImplementation<cr>
+nnoremap gr :vsc Edit.FindAllReferences<CR>
+nnoremap gp :vsc Edit.PeekDefinition<CR>
+nnoremap <C-o> :vsc View.NavigateBackward<cr>
+nnoremap <C-i> :vsc View.NavigateForward<cr>
+nnoremap <leader>b :vsc Debug.ToggleBreakpoint<cr>
