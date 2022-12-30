@@ -68,3 +68,5 @@ if (vim.fn.has("win32") == 1) then
     vim.opt.shellcmdflag='-c'
     --vim.g.coc_node_path = '/c/Program Files/nodejs/node'
 end
+require 'nvim-treesitter.install'.compilers = { "clang" }
+require 'nvim-treesitter.install'.prefer_git = false
