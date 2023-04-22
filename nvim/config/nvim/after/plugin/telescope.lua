@@ -8,7 +8,7 @@ require('telescope').setup({
     pickers = {
         diagnostics = {
             theme = "ivy",
-            path_display = "smart",
+            path_display = "hidden",
         },
         lsp_definitions = {
             theme = "ivy",
