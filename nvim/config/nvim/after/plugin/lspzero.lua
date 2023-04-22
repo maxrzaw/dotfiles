@@ -4,6 +4,9 @@ local inoremap = keymap.inoremap;
 local lsp = require('lsp-zero');
 local cmp = require('cmp');
 local lspkind = require('lspkind');
+local util = require 'lspconfig.util'
+local vim = vim
+local uv = vim.loop
 
 require('mason.settings').set({
     ui = {
@@ -17,17 +20,17 @@ lsp.ensure_installed({
     'tsserver',
     'eslint',
     "lua_ls",
+    'angularls',
     "dockerls",
     "html",
     "jsonls",
     "marksman",
-    "omnisharp",
 });
 
 lsp.on_attach(function(client, bufnr)
-    nnoremap("gt", "<cmd>Trouble lsp_type_definitions<cr>", { buffer = bufnr });
-    nnoremap("gr", "<cmd>Trouble lsp_references<cr>", { buffer = bufnr });
-    nnoremap("gd", "<cmd>Trouble lsp_definitions<cr>", { buffer = bufnr });
+    nnoremap("gt", "<cmd>Telescope lsp_type_definitions<cr>", { buffer = bufnr });
+    nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references({fname_width = 0.6})<CR>", { buffer = bufnr });
+    nnoremap("gd", "<cmd>Telescope lsp_definitions<cr>", { buffer = bufnr });
     nnoremap("<leader>vd", vim.diagnostic.open_float, { buffer = bufnr });
     nnoremap("<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr });
     nnoremap("<leader>dn", vim.diagnostic.goto_next, { buffer = bufnr });
@@ -54,6 +57,41 @@ lsp.configure('lua_ls', {
             }
         }
     }
+});
+
+local function get_node_modules(root_dir)
+    -- return util.find_node_modules_ancestor(root_dir) .. '/node_modules' or ''
+    -- util.find_node_modules_ancestor()
+    local root_node = root_dir .. "/node_modules"
+    local stats = uv.fs_stat(root_node)
+    if stats == nil then
+        return ''
+    else
+        return root_node
+    end
+end
+
+local default_node_modules = get_node_modules(vim.fn.getcwd())
+
+local ngls_cmd = {
+    "ngserver",
+    "--stdio",
+    "--tsProbeLocations",
+    default_node_modules,
+    "--ngProbeLocations",
+    default_node_modules,
+}
+
+require('lspconfig').angularls.setup({
+    cmd = ngls_cmd,
+    root_dir = util.root_pattern '.git',
+    on_new_config = function(new_config)
+        new_config.cmd = ngls_cmd
+    end
+});
+
+require('lspconfig').tsserver.setup({
+    root_dir = util.root_pattern '.git'
 });
 
 lsp.configure('omnisharp', {

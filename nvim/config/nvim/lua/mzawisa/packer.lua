@@ -44,8 +44,8 @@ return require('packer').startup(function(use)
     use 'mbbill/undotree' -- ability to browse file history tree
 
 
-    --use 'MunifTanjim/prettier.nvim'
-    --use 'jose-elias-alvarez/null-ls.nvim'
+    use 'MunifTanjim/prettier.nvim'
+    use 'jose-elias-alvarez/null-ls.nvim'
 
     -- Theme
     use 'folke/tokyonight.nvim'
@@ -86,6 +86,7 @@ return require('packer').startup(function(use)
     })
 
     use 'yamatsum/nvim-cursorline'
+    use 'tpope/vim-surround'
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
