@@ -16,7 +16,7 @@ lsp.preset('recommended');
 lsp.ensure_installed({
     'tsserver',
     'eslint',
-    -- "sumneko_lua",
+    "lua_ls",
     -- "clangd",
     "cmake",
     "dockerls",
@@ -49,7 +49,7 @@ lsp.on_attach(function(client, bufnr)
     end
 end);
 
-lsp.configure('sumneko_lua', {
+lsp.configure('lua_ls', {
     settings = {
         Lua = {
             diagnostics = {
