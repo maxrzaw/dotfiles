@@ -77,7 +77,7 @@ lsp.setup_nvim_cmp({
         --{ name = 'nvim_lsp_signature_help' },
         { name = 'path' },
         { name = 'luasnip' },
-        { name = 'buffer', kayword_length = 5 },
+        { name = 'buffer',        keyword_length = 5 },
         { name = 'luasnip_choice' },
     }),
     formatting = {
@@ -90,8 +90,8 @@ lsp.setup_nvim_cmp({
                 luasnip = "[snip]",
                 gh_issues = "[issues]",
             },
-            mode = 'symbol_text', -- show symbol then text annotations
-            maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            mode = 'symbol_text',  -- show symbol then text annotations
+            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
             ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
         })
     },
@@ -133,7 +133,6 @@ lsp.setup_nvim_cmp({
     experimental = {
         -- I like the new menu better! Nice work hrsh7th
         native_menu = false,
-
         -- Let's play with this for a day or two
         ghost_text = true,
     },
