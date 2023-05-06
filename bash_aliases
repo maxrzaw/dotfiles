@@ -1,10 +1,13 @@
 alias got='git'
 
 alias docker-ip="docker ps -q | xargs -n 1 docker inspect --format '{{ .Name }} {{range .NetworkSettings.Networks}} {{.IPAddress}}{{end}}' | sed 's#^/##';"
-alias vim=nvim
+
 if [ -x "$(command -v nvim)" ]; then
     alias vim=nvim
     alias vimdiff="nvim -d"
+    git config --global core.editor nvim
+else
+    git config --global core.editor vim
 fi
 
 alias tts-node="time ts-node"
