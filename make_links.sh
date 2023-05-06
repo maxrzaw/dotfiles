@@ -11,11 +11,13 @@ if [ ! -d ~/.config/powerline ]; then
 fi
 
 # Set up come includes
+touch ~/.vimrc
 if test $(grep -c "~/dotfiles/vimrc" ~/.vimrc) = 0; then
     echo "Adding vimrc to ~/.vimrc"
     echo "source ~/dotfiles/vimrc" >> ~/.vimrc
 fi
 
+touch ~/.bashrc
 if test $(grep -c "~/dotfiles/bashrc" ~/.bashrc) = 0; then
     echo "Adding bashrc to ~/.bashrc"
     echo -e "if [ -f ~/dotfiles/bashrc ]; then\n    . ~/dotfiles/bashrc\nfi" >> ~/.bashrc
