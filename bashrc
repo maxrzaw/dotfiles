@@ -19,7 +19,7 @@ HISTFILESIZE=2000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# Alias definitions are in bash_aliases.
+# Alias definitions.
 if [ -f ~/dotfiles/bash_aliases ]; then
     . ~/dotfiles/bash_aliases
 fi
@@ -28,4 +28,3 @@ fi
 if [ -f ~/.git-completion.bash ]; then
     . ~/.git-completion.bash
 fi
-
