@@ -62,6 +62,10 @@ return require('packer').startup(function(use)
     use 'voldikss/vim-floaterm'
 
     use 'gpanders/editorconfig.nvim'
+    use 'f-person/git-blame.nvim'
+
+    -- Markdown Preview
+    use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins

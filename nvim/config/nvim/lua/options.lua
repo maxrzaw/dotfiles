@@ -61,6 +61,9 @@ vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
 
+-- Git Blame
+vim.g.gitblame_enabled = 1
+
 
 -- needed for windows maybe?
 if (vim.fn.has("win32") == 1) then

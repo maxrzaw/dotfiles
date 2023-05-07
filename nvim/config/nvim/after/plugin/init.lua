@@ -52,7 +52,7 @@ if (vim.fn.has("win32") == 1) then
 else
     require("mason-lspconfig").setup({
         ensure_installed = {
-            "sumneko_lua",
+            "lua_ls",
             "clangd",
             "cmake",
             "dockerls",
@@ -77,7 +77,7 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer=bufnr})
 end
 
-require'lspconfig'.sumneko_lua.setup{
+require'lspconfig'.lua_ls.setup{
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
