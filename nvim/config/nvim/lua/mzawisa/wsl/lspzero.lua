@@ -7,6 +7,7 @@ local lspkind = require('lspkind');
 local util = require 'lspconfig.util'
 local vim = vim
 local uv = vim.loop
+local null_ls = require('null-ls')
 
 require('mason.settings').set({
     ui = {
@@ -27,6 +28,22 @@ lsp.ensure_installed({
     "marksman",
 });
 
+-- sources for null_ls
+local sources = {
+    null_ls.builtins.formatting.prettierd,
+}
+
+local lsp_formatting = function(bufnr)
+    vim.lsp.buf.format({
+        filter = function(client)
+            return client.name ~= "tsserver"
+        end,
+        bufnr = bufnr,
+    })
+end
+
+local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
+
 lsp.on_attach(function(client, bufnr)
     nnoremap("gt", "<cmd>Telescope lsp_type_definitions<cr>", { buffer = bufnr });
     nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references({fname_width = 0.6})<CR>", { buffer = bufnr });
@@ -40,11 +57,11 @@ lsp.on_attach(function(client, bufnr)
     inoremap("<C-h>", vim.lsp.buf.signature_help, { buffer = bufnr });
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
-            group = vim.api.nvim_create_augroup("Format", { clear = true }),
+            group = augroup,
             buffer = bufnr,
             callback = function()
-                vim.lsp.buf.format();
-            end
+                lsp_formatting(bufnr)
+            end,
         })
     end
 end);
@@ -59,6 +76,7 @@ lsp.configure('lua_ls', {
     }
 });
 
+-- wierd things required for angular monorepo
 local function get_node_modules(root_dir)
     -- return util.find_node_modules_ancestor(root_dir) .. '/node_modules' or ''
     -- util.find_node_modules_ancestor()
@@ -186,7 +204,7 @@ lsp.setup_nvim_cmp({
         --{ name = 'nvim_lsp_signature_help' },
         { name = 'path' },
         { name = 'luasnip' },
-        { name = 'buffer', keyword_length = 5 },
+        { name = 'buffer',        keyword_length = 5 },
         { name = 'luasnip_choice' },
     }),
     formatting = {
@@ -250,6 +268,10 @@ lsp.setup_nvim_cmp({
 lsp.nvim_workspace();
 
 lsp.setup();
+
+null_ls.setup({
+    sources = sources,
+})
 
 cmp.setup.filetype('gitcommit', {
     sources = cmp.config.sources({
