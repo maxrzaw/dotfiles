@@ -16,10 +16,10 @@ vim.opt.foldminlines = 2
 --vim.opt.foldmethod = "expr"
 
 -- Search Options
-vim.opt.hlsearch = false -- This highlights search results.
+vim.opt.hlsearch = false  -- This highlights search results.
 vim.opt.ignorecase = true -- This ignores case when searching.
-vim.opt.incsearch = true -- Show incremental searches.
-vim.opt.smartcase = true -- Switch to case sensitive when uppercase is present in search.
+vim.opt.incsearch = true  -- Show incremental searches.
+vim.opt.smartcase = true  -- Switch to case sensitive when uppercase is present in search.
 
 -- Interface options
 vim.opt.number = true
