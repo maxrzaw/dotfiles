@@ -112,6 +112,11 @@ require('lspconfig').tsserver.setup({
     root_dir = util.root_pattern '.git'
 });
 
+require('lspconfig').eslint.setup({
+    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx",
+        "vue", "svelte", "astro", "html" }
+});
+
 lsp.configure('omnisharp', {
     on_attach = function(client, bufnr)
         vim.keymap.set("n", "<leader>b", ":dotnet build", { buffer = bufnr })
