@@ -3,11 +3,12 @@ local nnoremap = keymap.nnoremap;
 local inoremap = keymap.inoremap;
 local lsp = require('lsp-zero');
 local cmp = require('cmp');
+local ls = require('luasnip');
 local lspkind = require('lspkind');
-local util = require 'lspconfig.util'
-local vim = vim
-local uv = vim.loop
-local null_ls = require('null-ls')
+local util = require('lspconfig.util');
+local vim = vim;
+local uv = vim.loop;
+local null_ls = require('null-ls');
 
 require('mason.settings').set({
     ui = {
@@ -44,7 +45,12 @@ end
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 
+-- lsp.set_server_config({
+--     capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- })
+
 lsp.on_attach(function(client, bufnr)
+    lsp.default_keymaps({ buffer = bufnr });
     nnoremap("gt", "<cmd>Telescope lsp_type_definitions<cr>", { buffer = bufnr });
     nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references({fname_width = 0.6})<CR>", { buffer = bufnr });
     nnoremap("gd", "<cmd>Telescope lsp_definitions<cr>", { buffer = bufnr });
@@ -197,19 +203,26 @@ lsp.configure('omnisharp', {
     end
 });
 
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' };
+lsp.nvim_workspace();
 
-lsp.setup_nvim_cmp({
+lsp.setup();
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            ls.lsp_expand(args.body)
+        end,
+    },
     window = {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
     },
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        --{ name = 'nvim_lsp_signature_help' },
+        { name = 'nvim_lsp_signature_help' },
         { name = 'path' },
         { name = 'luasnip' },
-        { name = 'buffer',        keyword_length = 5 },
+        { name = 'buffer',                 keyword_length = 5 },
         { name = 'luasnip_choice' },
     }),
     formatting = {
@@ -270,13 +283,11 @@ lsp.setup_nvim_cmp({
     },
 });
 
-lsp.nvim_workspace();
-
-lsp.setup();
-
 null_ls.setup({
     sources = sources,
 })
+
+require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls());
 
 cmp.setup.filetype('gitcommit', {
     sources = cmp.config.sources({

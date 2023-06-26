@@ -17,13 +17,14 @@ return require('packer').startup(function(use)
             { 'williamboman/mason-lspconfig.nvim' },
 
             -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
+            { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-buffer' },
             { 'hrsh7th/cmp-path' },
+            { 'hrsh7th/nvim-cmp' },
             { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
-            { "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" },
+            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
+            { "petertriho/cmp-git",                 requires = "nvim-lua/plenary.nvim" },
 
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
@@ -40,7 +41,11 @@ return require('packer').startup(function(use)
         }
     }
 
+    -- Comments
     use 'numToStr/Comment.nvim'
+    -- LuaSnip is not strictly required, but I plan on using neogen through LuaSnip
+    use { "danymat/neogen", requires = { "nvim-treesitter/nvim-treesitter" }, { "L3MON4D3/LuaSnip" } }
+
     use 'mbbill/undotree' -- ability to browse file history tree
 
 
@@ -72,6 +77,12 @@ return require('packer').startup(function(use)
     use {
         'ThePrimeagen/harpoon',
         requires = { { 'nvim-lua/plenary.nvim' } }
+    }
+
+    use {
+        "benfowler/telescope-luasnip.nvim",
+        module = "telescope._extensions.luasnip", -- if you wish to lazy-load
+        requires = { { 'nvim-telescope/telescope.nvim' }, { 'L3MON4D3/LuaSnip' } }
     }
 
     -- use {

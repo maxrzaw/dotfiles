@@ -23,6 +23,7 @@ require('telescope').setup({
     },
 })
 require("telescope").load_extension('harpoon')
+require("telescope").load_extension('luasnip')
 local nnoremap = keymap.nnoremap;
 
 nnoremap('<leader>ff', builtin.find_files, {})
