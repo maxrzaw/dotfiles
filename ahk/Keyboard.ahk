@@ -22,8 +22,8 @@ SetNumLockState, AlwaysOn
 }
 
 ; Always on Top
-^SPACE::
-{
-    WinSet, AlwaysOnTop, Toggle, A ; ctrl + space
-}
+;^SPACE::
+;{
+;    WinSet, AlwaysOnTop, Toggle, A ; ctrl + space
+;}
 
