@@ -107,6 +107,10 @@ return require('packer').startup(function(use)
     use 'yamatsum/nvim-cursorline'
     use 'tpope/vim-surround'
 
+    -- Git
+    use 'tpope/vim-fugitive'
+    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if PACKER_BOOTSTRAP then
