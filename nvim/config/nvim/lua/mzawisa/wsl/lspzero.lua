@@ -128,6 +128,45 @@ require('lspconfig').eslint.setup({
         "vue", "svelte", "astro", "html" }
 });
 
+require('sonarlint').setup({
+    server = {
+        cmd = {
+            'sonarlint-language-server',
+            -- Ensure that sonarlint-language-server uses stdio channel
+            '-stdio',
+            '-analyzers',
+            -- paths to the analyzers you need, using those for python and java in this example
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
+
+            -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarcfamily.jar"),
+            -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonargo.jar"),
+            -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarphp.jar"),
+            -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
+        }
+    },
+    filetypes = {
+        -- Tested
+        'typescript',
+        'javascript',
+        'html',
+        'text',
+        'css',
+        'scss',
+        -- Not Tested
+        'docker',
+        'terraform',
+        'xml',
+        'cs',
+        -- 'cpp',
+        -- -- Requires nvim-jdtls, otherwise an error message will be printed
+        -- 'java',
+    }
+});
+
 lsp.nvim_workspace();
 
 lsp.setup();
