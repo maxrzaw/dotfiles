@@ -65,20 +65,18 @@ return require('packer').startup(function(use)
         'nvim-treesitter/nvim-treesitter',
         run = function() require('nvim-treesitter.install').update({ with_sync = true }) end,
     }
+    use({ "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" })
 
     use {
         'nvim-telescope/telescope.nvim', tag = '0.1.x',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
-
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
-
     use {
         'ThePrimeagen/harpoon',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
-
     use {
         "benfowler/telescope-luasnip.nvim",
         module = "telescope._extensions.luasnip", -- if you wish to lazy-load
@@ -110,6 +108,8 @@ return require('packer').startup(function(use)
     -- Git
     use 'tpope/vim-fugitive'
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+
+    use 'mattkubej/jest.nvim'
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
