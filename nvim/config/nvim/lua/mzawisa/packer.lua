@@ -33,7 +33,7 @@ return require('packer').startup(function(use)
             { 'doxnit/cmp-luasnip-choice' },
 
             -- Useful status updates for LSP
-            { 'j-hui/fidget.nvim' },
+            { 'j-hui/fidget.nvim',                  tag = 'legacy' },
             {
                 "folke/trouble.nvim",
                 requires = "kyazdani42/nvim-web-devicons",
