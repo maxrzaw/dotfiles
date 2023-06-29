@@ -36,9 +36,12 @@ xnoremap("<leader>p", "\"_dP", {})
 
 -- Delete without overwriting paste register
 nnoremap("<leader>d", "\"_d", {});
-vnoremap("<leader>d", "\"_d", {})
+vnoremap("<leader>d", "\"_d", {});
 
 -- Yank to system clipboard
 nnoremap("<leader>y", "\"+y", {});
 vnoremap("<leader>y", "\"+y", {});
 nmap("<leader>Y", "\"+Y", { silent = true }); -- I want this to remap
+
+vim.keymap.set("n", "<leader>sp", "<cmd>lua require('mzawisa.custom.angular').toggle_between_spec_and_file()<cr>",
+    { desc = "Toggle between spec and file" });
