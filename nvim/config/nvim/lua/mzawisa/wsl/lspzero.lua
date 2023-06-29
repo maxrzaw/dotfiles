@@ -35,6 +35,11 @@ local sources = {
 }
 
 local lsp_formatting = function(bufnr)
+    local path = vim.api.nvim_buf_get_name(bufnr)
+    -- skip formatting if we are in Nova.UI and not in workspace
+    if string.find(path, 'Nova.UI') and not string.find(path, 'Nova.UI/apps/workspace/') then
+        return;
+    end
     vim.lsp.buf.format({
         filter = function(client)
             return client.name ~= "tsserver"
@@ -43,7 +48,7 @@ local lsp_formatting = function(bufnr)
     })
 end
 
-local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
+local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 
 -- lsp.set_server_config({
 --     capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -63,7 +68,7 @@ lsp.on_attach(function(client, bufnr)
     inoremap("<C-h>", vim.lsp.buf.signature_help, { buffer = bufnr });
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
-            group = augroup,
+            group = lspFormattingAugroup,
             buffer = bufnr,
             callback = function()
                 lsp_formatting(bufnr)
