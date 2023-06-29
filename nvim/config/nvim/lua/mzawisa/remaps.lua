@@ -47,3 +47,4 @@ vim.keymap.set("n", "<leader>sp", "<cmd>lua require('mzawisa.custom.angular').to
     { desc = "Toggle between spec and file" });
 
 nnoremap("<leader>lg", "<cmd>LazyGit<cr>", {});
+nnoremap("<leader>gb", "<cmd>Git blame<cr>", {});
