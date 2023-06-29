@@ -108,6 +108,16 @@ return require('packer').startup(function(use)
     -- Git
     use 'tpope/vim-fugitive'
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+    use({
+        "kdheepak/lazygit.nvim",
+        -- optional for floating window border decoration
+        requires = {
+            "nvim-lua/plenary.nvim",
+        },
+        config = function()
+            require('telescope').load_extension('lazygit')
+        end,
+    })
 
     use 'mattkubej/jest.nvim'
 
