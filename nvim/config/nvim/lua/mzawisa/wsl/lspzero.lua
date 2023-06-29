@@ -42,7 +42,7 @@ local lsp_formatting = function(bufnr)
     end
     vim.lsp.buf.format({
         filter = function(client)
-            return client.name ~= "tsserver"
+            return client.name ~= "tsserver" and client.name ~= "eslint"
         end,
         bufnr = bufnr,
     })
