@@ -45,3 +45,5 @@ nmap("<leader>Y", "\"+Y", { silent = true }); -- I want this to remap
 
 vim.keymap.set("n", "<leader>sp", "<cmd>lua require('mzawisa.custom.angular').toggle_between_spec_and_file()<cr>",
     { desc = "Toggle between spec and file" });
+
+nnoremap("<leader>lg", "<cmd>LazyGit<cr>", {});
