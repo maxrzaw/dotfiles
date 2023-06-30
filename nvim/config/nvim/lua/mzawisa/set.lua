@@ -16,10 +16,10 @@ vim.opt.foldminlines = 2
 --vim.opt.foldmethod = "expr"
 
 -- Search Options
-vim.opt.hlsearch = false -- This highlights search results.
+vim.opt.hlsearch = false  -- This highlights search results.
 vim.opt.ignorecase = true -- This ignores case when searching.
-vim.opt.incsearch = true -- Show incremental searches.
-vim.opt.smartcase = true -- Switch to case sensitive when uppercase is present in search.
+vim.opt.incsearch = true  -- Show incremental searches.
+vim.opt.smartcase = true  -- Switch to case sensitive when uppercase is present in search.
 
 -- Interface options
 vim.opt.number = true
@@ -66,3 +66,5 @@ vim.opt.timeoutlen = 500 -- how long to wait between key combinations
 vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
+
+vim.opt.exrc = true
