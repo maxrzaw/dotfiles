@@ -42,3 +42,6 @@ vnoremap("<leader>d", "\"_d", {})
 nnoremap("<leader>y", "\"+y", {});
 vnoremap("<leader>y", "\"+y", {});
 nmap("<leader>Y", "\"+Y", { silent = true }); -- I want this to remap
+
+nnoremap("<leader>lg", "<cmd>LazyGit<cr>", {});
+nnoremap("<leader>gb", "<cmd>Git blame<cr>", {});

@@ -23,7 +23,8 @@ return require('packer').startup(function(use)
             { 'saadparwaiz1/cmp_luasnip' },
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
-            { "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" },
+            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
+            { "petertriho/cmp-git",                 requires = "nvim-lua/plenary.nvim" },
 
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
@@ -32,7 +33,7 @@ return require('packer').startup(function(use)
             { 'doxnit/cmp-luasnip-choice' },
 
             -- Useful status updates for LSP
-            { 'j-hui/fidget.nvim' },
+            { 'j-hui/fidget.nvim',                  tag = 'legacy' },
             {
                 "folke/trouble.nvim",
                 requires = "kyazdani42/nvim-web-devicons",
@@ -44,8 +45,8 @@ return require('packer').startup(function(use)
     use 'mbbill/undotree' -- ability to browse file history tree
 
 
-    --use 'MunifTanjim/prettier.nvim'
-    --use 'jose-elias-alvarez/null-ls.nvim'
+    use 'MunifTanjim/prettier.nvim'
+    use 'jose-elias-alvarez/null-ls.nvim'
 
     -- Theme
     use 'folke/tokyonight.nvim'
@@ -86,6 +87,21 @@ return require('packer').startup(function(use)
     })
 
     use 'yamatsum/nvim-cursorline'
+    use 'tpope/vim-surround'
+
+    -- Git
+    use 'tpope/vim-fugitive'
+    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+    use({
+        "kdheepak/lazygit.nvim",
+        -- optional for floating window border decoration
+        requires = {
+            "nvim-lua/plenary.nvim",
+        },
+        config = function()
+            require('telescope').load_extension('lazygit')
+        end,
+    })
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
