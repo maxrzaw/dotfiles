@@ -41,7 +41,11 @@ return require('packer').startup(function(use)
         }
     }
 
+    -- Comments
     use 'numToStr/Comment.nvim'
+    -- LuaSnip is not strictly required, but I plan on using neogen through LuaSnip
+    use { "danymat/neogen", requires = { "nvim-treesitter/nvim-treesitter" }, { "L3MON4D3/LuaSnip" } }
+
     use 'mbbill/undotree' -- ability to browse file history tree
 
 
@@ -64,7 +68,7 @@ return require('packer').startup(function(use)
 
     use {
         'nvim-telescope/telescope.nvim', tag = '0.1.x',
-        requires = { { 'nvim-lua/plenary.nvim' } }
+        requires = { { 'nvim-lua/plenary.nvim' }, { 'benfowler/telescope-luasnip.nvim' } }
     }
 
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available

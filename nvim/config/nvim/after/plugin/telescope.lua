@@ -24,6 +24,7 @@ require('telescope').setup({
 })
 
 require("telescope").load_extension('harpoon')
+require('telescope').load_extension('luasnip')
 require('telescope').load_extension('lazygit')
 local nnoremap = keymap.nnoremap;
 

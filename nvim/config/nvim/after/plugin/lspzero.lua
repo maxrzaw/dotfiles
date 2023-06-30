@@ -3,7 +3,9 @@ local nnoremap = keymap.nnoremap;
 local inoremap = keymap.inoremap;
 local lsp = require('lsp-zero');
 local cmp = require('cmp');
+local ls = require('luasnip');
 local lspkind = require('lspkind');
+local null_ls = require('null-ls');
 
 require('mason.settings').set({
     ui = {
@@ -24,8 +26,24 @@ lsp.ensure_installed({
     "jsonls",
     -- "marksman",
     -- "omnisharp",
-    -- "rust_analyzer",
+    "rust_analyzer",
 });
+
+-- sources for null_ls
+local sources = {
+    null_ls.builtins.formatting.prettierd,
+}
+
+local lsp_formatting = function(bufnr)
+    vim.lsp.buf.format({
+        filter = function(client)
+            return client.name ~= "tsserver" and client.name ~= "eslint"
+        end,
+        bufnr = bufnr,
+    })
+end
+
+local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 
 lsp.on_attach(function(client, bufnr)
     nnoremap("gt", "<cmd>Trouble lsp_type_definitions<cr>", { buffer = bufnr });
@@ -40,11 +58,11 @@ lsp.on_attach(function(client, bufnr)
     inoremap("<C-h>", vim.lsp.buf.signature_help, { buffer = bufnr });
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
-            group = vim.api.nvim_create_augroup("Format", { clear = true }),
+            group = lspFormattingAugroup,
             buffer = bufnr,
             callback = function()
-                vim.lsp.buf.format();
-            end
+                lsp_formatting(bufnr)
+            end,
         })
     end
 end);
@@ -67,17 +85,31 @@ lsp.configure('omnisharp', {
 
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect' };
 
-lsp.setup_nvim_cmp({
+require('lspconfig').eslint.setup({
+    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx",
+        "vue", "svelte", "astro", "html" }
+});
+
+lsp.nvim_workspace();
+
+lsp.setup();
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            ls.lsp_expand(args.body)
+        end,
+    },
     window = {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
     },
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        --{ name = 'nvim_lsp_signature_help' },
+        { name = 'nvim_lsp_signature_help' },
         { name = 'path' },
         { name = 'luasnip' },
-        { name = 'buffer',        keyword_length = 5 },
+        { name = 'buffer',                 keyword_length = 5 },
         { name = 'luasnip_choice' },
     }),
     formatting = {
@@ -138,9 +170,9 @@ lsp.setup_nvim_cmp({
     },
 });
 
-lsp.nvim_workspace();
-
-lsp.setup();
+null_ls.setup({
+    sources = sources,
+})
 
 cmp.setup.filetype('gitcommit', {
     sources = cmp.config.sources({
