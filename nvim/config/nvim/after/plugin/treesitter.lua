@@ -1,4 +1,4 @@
-require('nvim-treesitter.configs').setup {
+require("nvim-treesitter.configs").setup({
     -- A list of parser names, or "all"
     ensure_installed = { "vimdoc", "javascript", "typescript", "c", "lua", "cpp", "c_sharp", "rust" },
 
@@ -30,4 +30,4 @@ require('nvim-treesitter.configs').setup {
     indent = {
         enable = true,
     },
-}
+})
