@@ -1,2 +1,2 @@
 -- My First Neovim config
-require('mzawisa')
+require("mzawisa")
