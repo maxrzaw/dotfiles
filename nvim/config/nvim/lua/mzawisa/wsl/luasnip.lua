@@ -1,5 +1,5 @@
-local ls = require('luasnip')
-local ls_choice = require('cmp_luasnip_choice');
+local ls = require("luasnip")
+local ls_choice = require("cmp_luasnip_choice")
 ls_choice.setup({ auto_open = true })
 
 -- Stolen from teej_dv

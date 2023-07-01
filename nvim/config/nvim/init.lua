@@ -1,6 +1,6 @@
 -- My First Neovim config
 if vim.g.vscode then
-    require('mzawisa.vscode')
+    require("mzawisa.vscode")
 else
-    require('mzawisa')
+    require("mzawisa")
 end

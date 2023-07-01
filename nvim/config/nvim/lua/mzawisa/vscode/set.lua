@@ -7,7 +7,7 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.smarttab = true
 vim.opt.list = true -- enable the below listchars
-vim.opt.listchars = { tab = '▸ ', trail = '·' }
+vim.opt.listchars = { tab = "▸ ", trail = "·" }
 
 -- Search Options
 vim.opt.hlsearch = false -- This highlights search results.
@@ -28,8 +28,8 @@ vim.opt.showmatch = true
 -- Backup, history, and undo
 vim.opt.backup = false
 vim.opt.writebackup = false
-vim.opt.backupdir = vim.fn.stdpath('config') .. '/backup'
-vim.opt.directory = vim.fn.stdpath('config') .. '/swp'
+vim.opt.backupdir = vim.fn.stdpath("config") .. "/backup"
+vim.opt.directory = vim.fn.stdpath("config") .. "/swp"
 vim.opt.history = 1000
 vim.opt.undofile = true
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"

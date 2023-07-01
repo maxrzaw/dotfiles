@@ -1,1 +1,1 @@
-require('nvim-jest').setup {}
+require("nvim-jest").setup({})

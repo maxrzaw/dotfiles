@@ -1,34 +1,34 @@
-local keymap = require("mzawisa.keymap");
-local nnoremap = keymap.nnoremap;
-local inoremap = keymap.inoremap;
-local lsp = require('lsp-zero');
-local cmp = require('cmp');
-local ls = require('luasnip');
-local lspkind = require('lspkind');
-local util = require('lspconfig.util');
-local vim = vim;
-local uv = vim.loop;
-local null_ls = require('null-ls');
-local sonar_rules = require('mzawisa.wsl.sonarlint_helper').rules;
+local keymap = require("mzawisa.keymap")
+local nnoremap = keymap.nnoremap
+local inoremap = keymap.inoremap
+local lsp = require("lsp-zero")
+local cmp = require("cmp")
+local ls = require("luasnip")
+local lspkind = require("lspkind")
+local util = require("lspconfig.util")
+local vim = vim
+local uv = vim.loop
+local null_ls = require("null-ls")
+local sonar_rules = require("mzawisa.wsl.sonarlint_helper").rules
 
-require('mason.settings').set({
+require("mason.settings").set({
     ui = {
-        border = 'rounded'
-    }
-});
+        border = "rounded",
+    },
+})
 
-lsp.preset('recommended');
+lsp.preset("recommended")
 
 lsp.ensure_installed({
-    'tsserver',
-    'eslint',
+    "tsserver",
+    "eslint",
     "lua_ls",
-    'angularls',
+    "angularls",
     "dockerls",
     "html",
     "jsonls",
     "marksman",
-});
+})
 
 -- sources for null_ls
 local sources = {
@@ -38,8 +38,8 @@ local sources = {
 local lsp_formatting = function(bufnr)
     local path = vim.api.nvim_buf_get_name(bufnr)
     -- skip formatting if we are in Nova.UI and not in workspace
-    if string.find(path, 'Nova.UI') and not string.find(path, 'Nova.UI/apps/workspace/') then
-        return;
+    if string.find(path, "Nova.UI") and not string.find(path, "Nova.UI/apps/workspace/") then
+        return
     end
     vim.lsp.buf.format({
         filter = function(client)
@@ -56,17 +56,17 @@ local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clea
 -- })
 
 lsp.on_attach(function(client, bufnr)
-    lsp.default_keymaps({ buffer = bufnr });
-    nnoremap("gt", "<cmd>Telescope lsp_type_definitions<cr>", { buffer = bufnr });
-    nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references({fname_width = 0.6})<CR>", { buffer = bufnr });
-    nnoremap("gd", "<cmd>Telescope lsp_definitions<cr>", { buffer = bufnr });
-    nnoremap("<leader>vd", vim.diagnostic.open_float, { buffer = bufnr });
-    nnoremap("<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr });
-    nnoremap("<leader>dn", vim.diagnostic.goto_next, { buffer = bufnr });
-    nnoremap("<leader>dN", vim.diagnostic.goto_prev, { buffer = bufnr });
-    nnoremap("<leader>dl", "<cmd>Telescope diagnostics<CR>", { buffer = bufnr });
-    nnoremap("<leader>r", vim.lsp.buf.rename, { buffer = bufnr });
-    inoremap("<C-h>", vim.lsp.buf.signature_help, { buffer = bufnr });
+    lsp.default_keymaps({ buffer = bufnr })
+    nnoremap("gt", "<cmd>Telescope lsp_type_definitions<cr>", { buffer = bufnr })
+    nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references({fname_width = 0.6})<CR>", { buffer = bufnr })
+    nnoremap("gd", "<cmd>Telescope lsp_definitions<cr>", { buffer = bufnr })
+    nnoremap("<leader>vd", vim.diagnostic.open_float, { buffer = bufnr })
+    nnoremap("<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr })
+    nnoremap("<leader>dn", vim.diagnostic.goto_next, { buffer = bufnr })
+    nnoremap("<leader>dN", vim.diagnostic.goto_prev, { buffer = bufnr })
+    nnoremap("<leader>dl", "<cmd>Telescope diagnostics<CR>", { buffer = bufnr })
+    nnoremap("<leader>r", vim.lsp.buf.rename, { buffer = bufnr })
+    inoremap("<C-h>", vim.lsp.buf.signature_help, { buffer = bufnr })
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = lspFormattingAugroup,
@@ -76,17 +76,17 @@ lsp.on_attach(function(client, bufnr)
             end,
         })
     end
-end);
+end)
 
-lsp.configure('lua_ls', {
+lsp.configure("lua_ls", {
     settings = {
         Lua = {
             diagnostics = {
-                globals = { 'vim' }
-            }
-        }
-    }
-});
+                globals = { "vim" },
+            },
+        },
+    },
+})
 
 -- wierd things required for angular monorepo
 local function get_node_modules(root_dir)
@@ -95,7 +95,7 @@ local function get_node_modules(root_dir)
     local root_node = root_dir .. "/node_modules"
     local stats = uv.fs_stat(root_node)
     if stats == nil then
-        return ''
+        return ""
     else
         return root_node
     end
@@ -112,47 +112,57 @@ local ngls_cmd = {
     default_node_modules,
 }
 
-require('lspconfig').angularls.setup({
+require("lspconfig").angularls.setup({
     cmd = ngls_cmd,
-    root_dir = util.root_pattern '.git',
+    root_dir = util.root_pattern(".git"),
     on_new_config = function(new_config)
         new_config.cmd = ngls_cmd
-    end
-});
+    end,
+})
 
-require('lspconfig').tsserver.setup({
-    root_dir = util.root_pattern '.git'
-});
+require("lspconfig").tsserver.setup({
+    root_dir = util.root_pattern(".git"),
+})
 
-require('lspconfig').eslint.setup({
-    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx",
-        "vue", "svelte", "astro", "html" }
-});
+require("lspconfig").eslint.setup({
+    filetypes = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        "vue",
+        "svelte",
+        "astro",
+        "html",
+    },
+})
 
-require('sonarlint').setup({
+require("sonarlint").setup({
     filetypes = {
         -- Tested
-        'typescript',
-        'javascript',
-        'html',
-        'text',
-        'css',
-        'scss',
+        "typescript",
+        "javascript",
+        "html",
+        "text",
+        "css",
+        "scss",
         -- Not Tested
-        'docker',
-        'terraform',
-        'xml',
-        'cs',
+        "docker",
+        "terraform",
+        "xml",
+        "cs",
         -- 'cpp',
         -- -- Requires nvim-jdtls, otherwise an error message will be printed
         -- 'java',
     },
     server = {
         cmd = {
-            'sonarlint-language-server',
+            "sonarlint-language-server",
             -- Ensure that sonarlint-language-server uses stdio channel
-            '-stdio',
-            '-analyzers',
+            "-stdio",
+            "-analyzers",
             -- paths to the analyzers you need, using those for python and java in this example
             vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
             vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
@@ -168,14 +178,14 @@ require('sonarlint').setup({
         settings = {
             sonarlint = {
                 rules = sonar_rules,
-            }
+            },
         },
     },
-});
+})
 
-lsp.nvim_workspace();
+lsp.nvim_workspace()
 
-lsp.setup();
+lsp.setup()
 
 cmp.setup({
     snippet = {
@@ -188,12 +198,12 @@ cmp.setup({
         documentation = cmp.config.window.bordered(),
     },
     sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        { name = 'nvim_lsp_signature_help' },
-        { name = 'path' },
-        { name = 'luasnip' },
-        { name = 'buffer',                 keyword_length = 5 },
-        { name = 'luasnip_choice' },
+        { name = "nvim_lsp" },
+        { name = "nvim_lsp_signature_help" },
+        { name = "path" },
+        { name = "luasnip" },
+        { name = "buffer", keyword_length = 5 },
+        { name = "luasnip_choice" },
     }),
     formatting = {
         format = lspkind.cmp_format({
@@ -205,17 +215,17 @@ cmp.setup({
                 luasnip = "[snip]",
                 gh_issues = "[issues]",
             },
-            mode = 'symbol_text',  -- show symbol then text annotations
-            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-        })
+            mode = "symbol_text", -- show symbol then text annotations
+            maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+        }),
     },
     mapping = cmp.mapping.preset.insert({
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+        ["<C-f>"] = cmp.mapping.scroll_docs(4),
+        ["<C-Space>"] = cmp.mapping.complete(),
+        ["<C-e>"] = cmp.mapping.abort(),
+        ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         ["<C-n>"] = function(fallback)
             if cmp.visible() then
                 cmp.select_next_item()
@@ -243,7 +253,7 @@ cmp.setup({
             else
                 fallback()
             end
-        end
+        end,
     }),
     experimental = {
         -- I like the new menu better! Nice work hrsh7th
@@ -251,20 +261,20 @@ cmp.setup({
         -- Let's play with this for a day or two
         ghost_text = true,
     },
-});
+})
 
 null_ls.setup({
     sources = sources,
 })
 
-require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls());
+require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
 
-cmp.setup.filetype('gitcommit', {
+cmp.setup.filetype("gitcommit", {
     sources = cmp.config.sources({
-        { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+        { name = "cmp_git" }, -- You can specify the `cmp_git` source if you were installed it.
     }, {
-        { name = 'buffer' },
-    })
+        { name = "buffer" },
+    }),
 })
 
 vim.diagnostic.config({
@@ -276,4 +286,4 @@ vim.diagnostic.config({
         source = "always",
         border = "rounded",
     },
-});
+})
