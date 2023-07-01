@@ -1,12 +1,6 @@
 # This will automatically fix simple typos, e.g. `git psuh` will run `git push`
 [help]
-	autocorrect = 1
-# Alias lets you create new git subcommands.
-# The first example lets you type `git st` instead of `git status`.
-# The second example augments `git log` to include a summary of changed files
-# and to show only the commit titles.
-# The last exaples are the `git graph` command we showed in lecture.
-# Try them out!
+    autocorrect = 1
 [alias]
     a = add
     aa = add .
@@ -27,18 +21,17 @@
     sl = stash list
     ss = stash push -m
     st = status
-    st = status
     sw = switch
     swc = switch -c
     swl = switch -
 [push]
-	default = simple
+    default = simple
 [pull]
-	rebase = true
+rebase = true
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
 [init]
-	defaultBranch = main
+    defaultBranch = main
