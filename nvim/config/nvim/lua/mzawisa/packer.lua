@@ -122,7 +122,8 @@ return require('packer').startup(function(use)
     use 'mattkubej/jest.nvim'
 
     -- sonarlint
-    use { 'https://gitlab.com/schrieveslaach/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
+    use { '~/dev/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
+    -- use { 'https://gitlab.com/schrieveslaach/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins

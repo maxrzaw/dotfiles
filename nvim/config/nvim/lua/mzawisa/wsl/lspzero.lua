@@ -9,6 +9,7 @@ local util = require('lspconfig.util');
 local vim = vim;
 local uv = vim.loop;
 local null_ls = require('null-ls');
+local sonar_rules = require('mzawisa.wsl.sonarlint_helper').rules;
 
 require('mason.settings').set({
     ui = {
@@ -129,6 +130,23 @@ require('lspconfig').eslint.setup({
 });
 
 require('sonarlint').setup({
+    filetypes = {
+        -- Tested
+        'typescript',
+        'javascript',
+        'html',
+        'text',
+        'css',
+        'scss',
+        -- Not Tested
+        'docker',
+        'terraform',
+        'xml',
+        'cs',
+        -- 'cpp',
+        -- -- Requires nvim-jdtls, otherwise an error message will be printed
+        -- 'java',
+    },
     server = {
         cmd = {
             'sonarlint-language-server',
@@ -146,25 +164,13 @@ require('sonarlint').setup({
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonargo.jar"),
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarphp.jar"),
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
-        }
+        },
+        settings = {
+            sonarlint = {
+                rules = sonar_rules,
+            }
+        },
     },
-    filetypes = {
-        -- Tested
-        'typescript',
-        'javascript',
-        'html',
-        'text',
-        'css',
-        'scss',
-        -- Not Tested
-        'docker',
-        'terraform',
-        'xml',
-        'cs',
-        -- 'cpp',
-        -- -- Requires nvim-jdtls, otherwise an error message will be printed
-        -- 'java',
-    }
 });
 
 lsp.nvim_workspace();
