@@ -90,7 +90,6 @@ return require('packer').startup(function(use)
         ft = { "markdown" },
     })
 
-    use 'yamatsum/nvim-cursorline'
     use 'tpope/vim-surround'
 
     -- Git
