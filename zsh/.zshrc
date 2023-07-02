@@ -18,3 +18,6 @@ setopt histignoredups
 # use vi mode
 bindkey -M viins 'jk' vi-cmd-mode
 # INSERT_MODE_INDICATOR="%F{yellow}+%f"
+if [ -x "$(command -v lazygit)" ]; then
+    alias lg=lazygit
+fi
