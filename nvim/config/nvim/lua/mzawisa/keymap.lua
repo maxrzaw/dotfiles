@@ -8,6 +8,10 @@ local function bind(op, outer_opts)
     end
 end
 
+M.makeOpts = function(opts)
+    return vim.tbl_extend("force", { noremap = true, silent = true }, opts or {})
+end
+
 M.imap = bind("i", { noremap = false })
 M.nmap = bind("n", { noremap = false })
 M.omap = bind("o", { noremap = false })
