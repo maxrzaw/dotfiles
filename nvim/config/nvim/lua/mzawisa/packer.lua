@@ -24,7 +24,7 @@ return require("packer").startup(function(use)
             { "saadparwaiz1/cmp_luasnip" },
             { "hrsh7th/cmp-nvim-lua" },
             { "hrsh7th/cmp-nvim-lsp-signature-help" },
-            { "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" },
+            { "petertriho/cmp-git",                 requires = "nvim-lua/plenary.nvim" },
 
             -- Snippets
             { "L3MON4D3/LuaSnip" },
@@ -33,7 +33,7 @@ return require("packer").startup(function(use)
             { "doxnit/cmp-luasnip-choice" },
 
             -- Useful status updates for LSP
-            { "j-hui/fidget.nvim", tag = "legacy" },
+            { "j-hui/fidget.nvim",                  tag = "legacy" },
             {
                 "folke/trouble.nvim",
                 requires = "kyazdani42/nvim-web-devicons",
@@ -111,7 +111,7 @@ return require("packer").startup(function(use)
 
     -- Git
     use("tpope/vim-fugitive")
-    use({ "TimUntersberger/neogit", requires = "nvim-lua/plenary.nvim" })
+    use({ "NeogitOrg/neogit", requires = "nvim-lua/plenary.nvim" })
     use({
         "kdheepak/lazygit.nvim",
         -- optional for floating window border decoration
@@ -124,10 +124,11 @@ return require("packer").startup(function(use)
     })
 
     use("mattkubej/jest.nvim")
+    use("ckipp01/stylua-nvim")
 
     -- sonarlint
-    -- use { '~/dev/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
-    use({ "https://gitlab.com/maxzawisa/sonarlint.nvim", requires = "mfussenegger/nvim-jdtls" })
+    use { '~/dev/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
+    -- use({ "https://gitlab.com/maxzawisa/sonarlint.nvim", requires = "mfussenegger/nvim-jdtls" })
     -- use { 'https://gitlab.com/schrieveslaach/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
 
     -- Automatically set up your configuration after cloning packer.nvim

@@ -11,6 +11,11 @@ local uv = vim.loop
 local null_ls = require("null-ls")
 local sonar_rules = require("mzawisa.wsl.sonarlint_helper").rules
 
+-- set the border for :LspInfo
+require("lspconfig.ui.windows").default_options.border = "single"
+
+require("stylua-nvim").setup()
+
 require("mason.settings").set({
     ui = {
         border = "rounded",
@@ -30,9 +35,15 @@ lsp.ensure_installed({
     "marksman",
 })
 
+local disable_formatting_on_init = function(client)
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentFormattingRangeProvider = false
+end
+
 -- sources for null_ls
 local sources = {
     null_ls.builtins.formatting.prettierd,
+    null_ls.builtins.formatting.stylua,
 }
 
 local lsp_formatting = function(bufnr)
@@ -113,6 +124,7 @@ local ngls_cmd = {
 }
 
 require("lspconfig").angularls.setup({
+    autostart = false,
     cmd = ngls_cmd,
     root_dir = util.root_pattern(".git"),
     on_new_config = function(new_config)
@@ -122,9 +134,11 @@ require("lspconfig").angularls.setup({
 
 require("lspconfig").tsserver.setup({
     root_dir = util.root_pattern(".git"),
+    on_init = disable_formatting_on_init,
 })
 
 require("lspconfig").eslint.setup({
+    on_init = disable_formatting_on_init,
     filetypes = {
         "javascript",
         "javascriptreact",
@@ -155,7 +169,7 @@ require("sonarlint").setup({
         "cs",
         -- 'cpp',
         -- -- Requires nvim-jdtls, otherwise an error message will be printed
-        -- 'java',
+        "java",
     },
     server = {
         cmd = {
@@ -169,11 +183,16 @@ require("sonarlint").setup({
             vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
             vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
             vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
+            vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
 
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarcfamily.jar"),
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonargo.jar"),
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarphp.jar"),
             -- vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
+        },
+        window = {
+            -- border = "rounded",
+            -- title_pos = "center",
         },
         settings = {
             sonarlint = {
@@ -267,7 +286,9 @@ null_ls.setup({
     sources = sources,
 })
 
-require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
+require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls({
+    on_init = disable_formatting_on_init,
+}))
 
 cmp.setup.filetype("gitcommit", {
     sources = cmp.config.sources({
