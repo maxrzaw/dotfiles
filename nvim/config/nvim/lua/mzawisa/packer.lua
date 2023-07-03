@@ -36,7 +36,7 @@ return require("packer").startup(function(use)
             { "j-hui/fidget.nvim", tag = "legacy" },
             {
                 "folke/trouble.nvim",
-                requires = "kyazdani42/nvim-web-devicons",
+                requires = "nvim-tree/nvim-web-devicons",
             },
         },
     })
@@ -54,11 +54,12 @@ return require("packer").startup(function(use)
 
     -- Theme
     use("folke/tokyonight.nvim")
+    use("nvim-tree/nvim-web-devicons")
 
     -- Status Line with Lualine
     use({
         "nvim-lualine/lualine.nvim",
-        requires = { "kyazdani42/nvim-web-devicons", opt = true },
+        requires = { "nvim-tree/nvim-web-devicons", opt = true },
     })
 
     use({
