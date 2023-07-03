@@ -1,2 +1,1 @@
-local nnoremap = require("mzawisa.keymap").nnoremap
-nnoremap("<leader>u", vim.cmd.UndotreeToggle, {})
+vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { silent = true, noremap = true })

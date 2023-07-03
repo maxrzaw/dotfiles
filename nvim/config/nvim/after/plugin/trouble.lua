@@ -15,3 +15,4 @@ require("trouble").setup({
     -- refer to the configuration section below
 })
 nnoremap("<leader>qq", "<cmd>Trouble<cr>", {})
+vim.keymap.set("n", "<leader>tt", "<cmd>TroubleClose<cr>", { silent = true, noremap = true })
