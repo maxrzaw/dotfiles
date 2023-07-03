@@ -8,37 +8,32 @@ end
 
 return require("packer").startup(function(use)
     use("wbthomason/packer.nvim")
+    -- LSP Support
+    use({ "neovim/nvim-lspconfig" })
+    use({ "williamboman/mason.nvim" })
+    use({ "williamboman/mason-lspconfig.nvim" })
+
+    -- Autocompletion
+    use({ "hrsh7th/cmp-nvim-lsp" })
+    use({ "hrsh7th/cmp-buffer" })
+    use({ "hrsh7th/cmp-path" })
+    use({ "hrsh7th/nvim-cmp" })
+    use({ "saadparwaiz1/cmp_luasnip" })
+    use({ "hrsh7th/cmp-nvim-lua" })
+    use({ "hrsh7th/cmp-nvim-lsp-signature-help" })
+    use({ "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" })
+
+    -- Snippets
+    use({ "L3MON4D3/LuaSnip" })
+    use({ "rafamadriz/friendly-snippets" })
+    use({ "onsails/lspkind.nvim" })
+    use({ "doxnit/cmp-luasnip-choice" })
+
+    -- Useful status updates for LSP
+    use({ "j-hui/fidget.nvim", tag = "legacy" })
     use({
-        "VonHeikemen/lsp-zero.nvim",
-        requires = {
-            -- LSP Support
-            { "neovim/nvim-lspconfig" },
-            { "williamboman/mason.nvim" },
-            { "williamboman/mason-lspconfig.nvim" },
-
-            -- Autocompletion
-            { "hrsh7th/cmp-nvim-lsp" },
-            { "hrsh7th/cmp-buffer" },
-            { "hrsh7th/cmp-path" },
-            { "hrsh7th/nvim-cmp" },
-            { "saadparwaiz1/cmp_luasnip" },
-            { "hrsh7th/cmp-nvim-lua" },
-            { "hrsh7th/cmp-nvim-lsp-signature-help" },
-            { "petertriho/cmp-git",                 requires = "nvim-lua/plenary.nvim" },
-
-            -- Snippets
-            { "L3MON4D3/LuaSnip" },
-            { "rafamadriz/friendly-snippets" },
-            { "onsails/lspkind.nvim" },
-            { "doxnit/cmp-luasnip-choice" },
-
-            -- Useful status updates for LSP
-            { "j-hui/fidget.nvim",                  tag = "legacy" },
-            {
-                "folke/trouble.nvim",
-                requires = "kyazdani42/nvim-web-devicons",
-            },
-        },
+        "folke/trouble.nvim",
+        requires = "nvim-tree/nvim-web-devicons",
     })
 
     -- Comments
@@ -53,11 +48,15 @@ return require("packer").startup(function(use)
 
     -- Theme
     use("folke/tokyonight.nvim")
+    use("ckipp01/stylua-nvim")
+
+    -- Theme
+    use("folke/tokyonight.nvim")
 
     -- Status Line with Lualine
     use({
         "nvim-lualine/lualine.nvim",
-        requires = { "kyazdani42/nvim-web-devicons", opt = true },
+        requires = { "nvim-tree/nvim-web-devicons", opt = true },
     })
 
     use({
@@ -69,21 +68,20 @@ return require("packer").startup(function(use)
     use({ "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" })
 
     use({
+        "nvim-treesitter/nvim-treesitter",
+        run = function()
+            require("nvim-treesitter.install").update({ with_sync = true })
+        end,
+    })
+
+    use({
         "nvim-telescope/telescope.nvim",
         tag = "0.1.x",
-        requires = { { "nvim-lua/plenary.nvim" } },
+        requires = { { "nvim-lua/plenary.nvim" }, { "benfowler/telescope-luasnip.nvim" } },
     })
+
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
     use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make", cond = vim.fn.executable("make") == 1 })
-    use({
-        "ThePrimeagen/harpoon",
-        requires = { { "nvim-lua/plenary.nvim" } },
-    })
-    use({
-        "benfowler/telescope-luasnip.nvim",
-        module = "telescope._extensions.luasnip", -- if you wish to lazy-load
-        requires = { { "nvim-telescope/telescope.nvim" }, { "L3MON4D3/LuaSnip" } },
-    })
 
     -- use {
     --     'ThePrimeagen/refactoring.nvim',
@@ -93,9 +91,12 @@ return require("packer").startup(function(use)
     --     }
     -- }
 
-    use("voldikss/vim-floaterm")
+    use({
+        "ThePrimeagen/harpoon",
+        requires = { { "nvim-lua/plenary.nvim" } },
+    })
 
-    use("gpanders/editorconfig.nvim")
+    use("voldikss/vim-floaterm")
 
     use({
         "iamcco/markdown-preview.nvim",
@@ -106,7 +107,6 @@ return require("packer").startup(function(use)
         ft = { "markdown" },
     })
 
-    use("yamatsum/nvim-cursorline")
     use("tpope/vim-surround")
 
     -- Git
@@ -127,7 +127,7 @@ return require("packer").startup(function(use)
     use("ckipp01/stylua-nvim")
 
     -- sonarlint
-    use { '~/dev/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
+    use({ "~/dev/sonarlint.nvim", requires = "mfussenegger/nvim-jdtls" })
     -- use({ "https://gitlab.com/maxzawisa/sonarlint.nvim", requires = "mfussenegger/nvim-jdtls" })
     -- use { 'https://gitlab.com/schrieveslaach/sonarlint.nvim', requires = 'mfussenegger/nvim-jdtls' }
 
