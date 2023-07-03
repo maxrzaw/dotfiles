@@ -2,6 +2,22 @@ local path = require("plenary.path")
 
 local M = {}
 
+-- Start the Angular Language Server if it is not already active
+function M.start_angularls()
+    local active_clients = vim.lsp.get_active_clients()
+    for _, v in pairs(active_clients) do
+        if v.name == "angularls" then
+            print("found angularls")
+            return
+        end
+    end
+    local config = require("lspconfig.configs")["angularls"]
+    if config then
+        print("launching angularls")
+        config.launch()
+    end
+end
+
 local function load_file_into_buffer(file)
     local uri = vim.uri_from_fname(file)
     local new_buff = vim.uri_to_bufnr(uri)
