@@ -1,18 +1,4 @@
 local M = {}
--- Set up Tokyonight
-require("tokyonight").setup({
-    style = "moon",
-    transparent = true,
-    terminal_colors = true,
-    italic_comments = false,
-    styles = {
-        floats = "dark",
-        sidebars = "dark",
-    },
-    sidebars = { "qf", "vista_kind" },
-    --colors = { hint = "orange", error = "#ff0000" },
-})
-
 -- Additional setup that I sometimes need to rerun
 function M.ColorMyPencils(color)
     color = color or "tokyonight"
@@ -26,5 +12,20 @@ function M.ColorMyPencils(color)
     vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "none" })
 end
 
-M.ColorMyPencils()
+-- Set up Tokyonight
+M.setup = function()
+    require("tokyonight").setup({
+        style = "moon",
+        transparent = true,
+        terminal_colors = true,
+        italic_comments = false,
+        styles = {
+            floats = "dark",
+            sidebars = "dark",
+        },
+        sidebars = { "qf", "vista_kind" },
+        --colors = { hint = "orange", error = "#ff0000" },
+    })
+    M.ColorMyPencils()
+end
 return M
