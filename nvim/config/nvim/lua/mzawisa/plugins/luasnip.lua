@@ -2,6 +2,8 @@ local ls = require("luasnip")
 local ls_choice = require("cmp_luasnip_choice")
 ls_choice.setup({ auto_open = true })
 
+require("luasnip.loaders.from_vscode").lazy_load()
+
 -- Stolen from teej_dv
 -- <c-j> is my expansion key
 -- this will expand the current item or jump to the next item within the snippet.
