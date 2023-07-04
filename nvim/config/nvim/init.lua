@@ -14,6 +14,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Set Up Plugins
 require("lazy").setup({
     {
         "folke/tokyonight.nvim",
@@ -21,34 +22,46 @@ require("lazy").setup({
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             -- load the colorscheme here
-            require("mzawisa.plugins.tokyonight")
+            require("mzawisa.plugins.tokyonight").setup()
+        end,
+    },
+    {
+        "jose-elias-alvarez/null-ls.nvim",
+        name = "null-ls",
+        dependencies = {
+            "MunifTanjim/prettier.nvim",
+            "ckipp01/stylua-nvim",
+        },
+    },
+    "tpope/vim-fugitive",
+    "tpope/vim-surround",
+    {
+        "hrsh7th/nvim-cmp",
+        name = "nvim-cmp",
+        dependencies = {
+            "doxnit/cmp-luasnip-choice",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-nvim-lsp-signature-help",
+            "hrsh7th/cmp-nvim-lua",
+            "hrsh7th/cmp-path",
+            "onsails/lspkind.nvim",
+            "saadparwaiz1/cmp_luasnip",
+            { "petertriho/cmp-git", dependencies = { "nvim-lua/plenary.nvim" } },
+        },
+        config = function()
+            require("mzawisa.plugins.cmp")
         end,
     },
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
-            "jose-elias-alvarez/null-ls.nvim",
-            "MunifTanjim/prettier.nvim",
-            "ckipp01/stylua-nvim",
-            {
-                "hrsh7th/nvim-cmp",
-                dependencies = {
-                    "hrsh7th/cmp-nvim-lsp",
-                    "hrsh7th/cmp-buffer",
-                    "hrsh7th/cmp-path",
-                    "saadparwaiz1/cmp_luasnip",
-                    "hrsh7th/cmp-nvim-lua",
-                    "hrsh7th/cmp-nvim-lsp-signature-help",
-                    { "petertriho/cmp-git", dependencies = { "nvim-lua/plenary.nvim" } },
-                    "onsails/lspkind.nvim",
-                    "doxnit/cmp-luasnip-choice",
-                },
-                config = function()
-                    require("mzawisa.plugins.cmp")
-                end,
-            },
+            -- Mason
+            "Mason",
+            -- Null Language Server
+            "null-ls",
+            -- Completion
+            "nvim-cmp",
         },
         config = function()
             require("mzawisa.plugins.lspconfig")
@@ -56,6 +69,7 @@ require("lazy").setup({
     },
     {
         "williamboman/mason.nvim",
+        name = "Mason",
         dependencies = {
             "williamboman/mason-lspconfig.nvim",
         },
@@ -65,82 +79,103 @@ require("lazy").setup({
     },
 
     -- Snippets
-    "L3MON4D3/LuaSnip",
-    "rafamadriz/friendly-snippets",
+    {
+        "L3MON4D3/LuaSnip",
+        name = "LuaSnip",
+        dependencies = {
+            "rafamadriz/friendly-snippets",
+        },
+        config = function()
+            require("mzawisa.plugins.luasnip")
+        end,
+    },
 
     -- Useful status updates for LSP
-    { "j-hui/fidget.nvim", version = "legacy" },
+    {
+        "j-hui/fidget.nvim",
+        name = "Fidget",
+        version = "legacy",
+        config = function()
+            require("mzawisa.plugins.fidget")
+        end,
+    },
     {
         "folke/trouble.nvim",
-        dependencies = { "kyazdani42/nvim-web-devicons" },
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("mzawisa.plugins.trouble")
+        end,
     },
 
     -- Comments
     {
         "numToStr/Comment.nvim",
+        name = "Comment",
         config = function()
             require("mzawisa.plugins.comment")
         end,
     },
-    -- LuaSnip is not strictly required, but I plan on using neogen through LuaSnip
     {
         "danymat/neogen",
-        dependencies = { "nvim-treesitter/nvim-treesitter", "L3MON4D3/LuaSnip" },
+        name = "Neogen",
+        dependencies = { "nvim-treesitter", "LuaSnip" },
         config = function()
             require("mzawisa.plugins.neogen")
         end,
     },
     {
         "mbbill/undotree", -- ability to browse file history tree
+        name = "Undo Tree",
         config = function()
-            require("mzawisa.plugins.neogen")
+            require("mzawisa.plugins.undotree")
         end,
     },
-
-    -- Status Line with Lualine
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = { "kyazdani42/nvim-web-devicons", lazy = true },
+        name = "Lualine",
+        dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
         config = function()
             require("mzawisa.plugins.lualine")
         end,
     },
-
     {
         "nvim-treesitter/nvim-treesitter",
+        name = "nvim-treesitter",
         build = function()
             require("nvim-treesitter.install").update({ with_sync = true })
         end,
+        config = function()
+            require("mzawisa.plugins.treesitter")
+        end,
     },
-
     {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
+            "Harpoon",
             "benfowler/telescope-luasnip.nvim",
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-            {
-                "ThePrimeagen/harpoon",
-                dependencies = { "nvim-lua/plenary.nvim" },
-                config = function()
-                    require("mzawisa.plugins.harpoon")
-                end,
-            },
         },
         config = function()
             require("mzawisa.plugins.telescope")
         end,
     },
-
+    {
+        "ThePrimeagen/harpoon",
+        name = "Harpoon",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+            require("mzawisa.plugins.harpoon")
+        end,
+    },
     {
         "voldikss/vim-floaterm",
         config = function()
             require("mzawisa.plugins.floaterm")
         end,
     },
-
     {
         "iamcco/markdown-preview.nvim",
         build = "cd app && npm install",
@@ -152,12 +187,13 @@ require("lazy").setup({
             require("mzawisa.plugins.markdown-preview")
         end,
     },
-
-    "tpope/vim-surround",
-
-    -- Git
-    "tpope/vim-fugitive",
-    { "NeogitOrg/neogit", dependencies = { "nvim-lua/plenary.nvim" } },
+    {
+        "NeogitOrg/neogit",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+            require("mzawisa.plugins.git")
+        end,
+    },
     {
         "kdheepak/lazygit.nvim",
         -- optional for floating window border decoration
