@@ -3,6 +3,8 @@ local lspconfig = require("lspconfig")
 local mason = require("mason")
 local null_ls = require("null-ls")
 
+require("lspconfig.ui.windows").default_options.border = "rounded"
+
 -- Start of Mason
 local mason_ensure_installed = {
     "bash-language-server",
