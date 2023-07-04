@@ -1,10 +1,7 @@
 local neogit = require("neogit")
-local nnoremap = require("mzawisa.keymap").nnoremap
-
 neogit.setup({})
 
-nnoremap("<leader>gb", "<cmd>Git blame<cr>", {})
-vim.keymap.set("n", "<leader>gb", "<cmd>Git blame<cr>", {})
+vim.keymap.set("n", "<leader>gb", "<cmd>Git blame<cr>", { silent = true, noremap = true, desc = "Git Blame" })
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
     callback = function()
