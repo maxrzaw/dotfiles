@@ -1,6 +1,7 @@
 local cmp = require("cmp")
 local lspconfig = require("lspconfig")
 local null_ls = require("null-ls")
+local sonar_rules = require("mzawisa.plugins.sonarlint_helper").rules
 
 -- Add nvim_cmp default capabilities to lspconfig default capabilities
 lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
@@ -9,15 +10,15 @@ lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
     require("cmp_nvim_lsp").default_capabilities()
 )
 
+-- Helper function to disable formatting capabilities
+local disable_formatting_on_init = function(client)
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentFormattingRangeProvider = false
+end
+
 -- LSP Formatting
 local lsp_formatting = function(bufnr)
-    vim.lsp.buf.format({
-        filter = function(client)
-            -- Don't use tsserver or eslint for formatting
-            return client.name ~= "tsserver" and client.name ~= "eslint"
-        end,
-        bufnr = bufnr,
-    })
+    vim.lsp.buf.format({ bufnr = bufnr })
 end
 local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 local set_format_on_save = function(client, bufnr)
@@ -70,6 +71,7 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 lspconfig.lua_ls.setup({
+    on_init = disable_formatting_on_init,
     settings = {
         Lua = {
             -- Disable Telemetry
@@ -92,13 +94,99 @@ lspconfig.lua_ls.setup({
     },
 })
 
-lspconfig.omnisharp.setup({
-    on_attach = function(client, bufnr)
-        vim.keymap.set("n", "<leader>b", ":dotnet build", { buffer = bufnr })
-    end,
-})
+if not os.getenv("NEOVIM_WORK") then
+    lspconfig.omnisharp.setup({
+        on_attach = function(client, bufnr)
+            vim.keymap.set("n", "<leader>b", ":dotnet build", { buffer = bufnr })
+        end,
+    })
+end
 
+if os.getenv("NEOVIM_WORK") then
+    -- Set up Angular Language Server
+    -- wierd things required for angular monorepo
+    local function get_node_modules(root_dir)
+        -- return util.find_node_modules_ancestor(root_dir) .. '/node_modules' or ''
+        -- util.find_node_modules_ancestor()
+        local root_node = root_dir .. "/node_modules"
+        local stats = vim.loop.fs_stat(root_node)
+        if stats == nil then
+            return ""
+        else
+            return root_node
+        end
+    end
+
+    local default_node_modules = get_node_modules(vim.fn.getcwd())
+    local ngls_cmd = {
+        "ngserver",
+        "--stdio",
+        "--tsProbeLocations",
+        default_node_modules,
+        "--ngProbeLocations",
+        default_node_modules,
+    }
+    lspconfig.angularls.setup({
+        autostart = false,
+        cmd = ngls_cmd,
+        root_dir = lspconfig.util.root_pattern(".git"),
+        on_new_config = function(new_config)
+            new_config.cmd = ngls_cmd
+        end,
+    })
+
+    lspconfig.tsserver.setup({
+        root_dir = lspconfig.util.root_pattern(".git"),
+        on_init = disable_formatting_on_init,
+    })
+
+    -- Set up Sonarlint Language Server
+    require("sonarlint").setup({
+        filetypes = {
+            -- Tested
+            "typescript",
+            "javascript",
+            "html",
+            "text",
+            "css",
+            "scss",
+            -- Not Tested
+            "docker",
+            "terraform",
+            "xml",
+            "cs",
+            -- 'cpp',
+            -- -- Requires nvim-jdtls, otherwise an error message will be printed
+            "java",
+        },
+        server = {
+            cmd = {
+                "sonarlint-language-server",
+                -- Ensure that sonarlint-language-server uses stdio channel
+                "-stdio",
+                "-analyzers",
+                -- paths to the analyzers you need, using those for python and java in this example
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
+                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
+            },
+            window = {
+                border = "rounded",
+                title_pos = "center",
+            },
+            settings = {
+                sonarlint = {
+                    rules = sonar_rules,
+                },
+            },
+        },
+    })
+end
 lspconfig.eslint.setup({
+    on_init = disable_formatting_on_init,
     filetypes = {
         "javascript",
         "javascriptreact",
