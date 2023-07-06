@@ -1,6 +1,8 @@
 require("mzawisa")
 -- Bootstrap Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local is_work = os.getenv("NEOVIM_WORK")
+local not_vscode = not vim.g.vscode
 
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -18,12 +20,14 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     {
         "folke/tokyonight.nvim",
+        name = "Tokyo Night",
         lazy = false, -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             -- load the colorscheme here
             require("mzawisa.plugins.tokyonight").setup()
         end,
+        cond = not_vscode,
     },
     {
         "jose-elias-alvarez/null-ls.nvim",
@@ -32,6 +36,7 @@ require("lazy").setup({
             "MunifTanjim/prettier.nvim",
             "ckipp01/stylua-nvim",
         },
+        cond = not_vscode,
     },
     "tpope/vim-fugitive",
     "tpope/vim-surround",
@@ -52,6 +57,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.cmp")
         end,
+        cond = not_vscode,
     },
     {
         "neovim/nvim-lspconfig",
@@ -66,6 +72,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.lspconfig")
         end,
+        cond = not_vscode,
     },
     {
         "williamboman/mason.nvim",
@@ -76,6 +83,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.mason")
         end,
+        cond = not_vscode,
     },
 
     -- Snippets
@@ -88,6 +96,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.luasnip")
         end,
+        cond = not_vscode,
     },
 
     -- Useful status updates for LSP
@@ -98,13 +107,16 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.fidget")
         end,
+        cond = not_vscode,
     },
     {
         "folke/trouble.nvim",
+        name = "Trouble",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
             require("mzawisa.plugins.trouble")
         end,
+        cond = not_vscode,
     },
 
     -- Comments
@@ -122,6 +134,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.neogen")
         end,
+        -- cond = not vanilla,
     },
     {
         "mbbill/undotree", -- ability to browse file history tree
@@ -129,6 +142,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.undotree")
         end,
+        cond = not_vscode,
     },
     {
         "nvim-lualine/lualine.nvim",
@@ -137,6 +151,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.lualine")
         end,
+        cond = not_vscode,
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -150,6 +165,7 @@ require("lazy").setup({
     },
     {
         "nvim-telescope/telescope.nvim",
+        name = "Telescope",
         version = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -161,6 +177,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.telescope")
         end,
+        cond = not_vscode,
     },
     {
         "ThePrimeagen/harpoon",
@@ -169,15 +186,19 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.harpoon")
         end,
+        cond = not_vscode,
     },
     {
         "voldikss/vim-floaterm",
+        name = "Floaterm",
         config = function()
             require("mzawisa.plugins.floaterm")
         end,
+        cond = not_vscode,
     },
     {
         "iamcco/markdown-preview.nvim",
+        name = "Markdown Preview",
         build = "cd app && npm install",
         init = function()
             vim.g.mkdp_filetypes = { "markdown" }
@@ -186,19 +207,24 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.markdown-preview")
         end,
+        cond = not_vscode,
     },
     {
         "NeogitOrg/neogit",
+        name = "Neogit",
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             require("mzawisa.plugins.git")
         end,
+        cond = not_vscode,
     },
     {
         "kdheepak/lazygit.nvim",
+        name = "Lazy Git",
         -- optional for floating window border decoration
         dependencies = {
             { "nvim-lua/plenary.nvim" },
         },
+        cond = not_vscode,
     },
 })
