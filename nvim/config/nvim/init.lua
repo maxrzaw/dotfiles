@@ -34,7 +34,6 @@ require("lazy").setup({
         name = "null-ls",
         dependencies = {
             "MunifTanjim/prettier.nvim",
-            "ckipp01/stylua-nvim",
         },
         cond = not_vscode,
     },
@@ -73,6 +72,11 @@ require("lazy").setup({
             require("mzawisa.plugins.lspconfig")
         end,
         cond = not_vscode,
+    },
+    {
+        "ckipp01/stylua-nvim",
+        cond = not_vscode,
+        ft = { "lua" },
     },
     {
         "williamboman/mason.nvim",

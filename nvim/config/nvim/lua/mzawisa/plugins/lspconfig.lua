@@ -141,49 +141,51 @@ if os.getenv("NEOVIM_WORK") then
     })
 
     -- Set up Sonarlint Language Server
-    require("sonarlint").setup({
-        filetypes = {
-            -- Tested
-            "typescript",
-            "javascript",
-            "html",
-            "text",
-            "css",
-            "scss",
-            -- Not Tested
-            "docker",
-            "terraform",
-            "xml",
-            "cs",
-            -- 'cpp',
-            -- -- Requires nvim-jdtls, otherwise an error message will be printed
-            "java",
-        },
-        server = {
-            cmd = {
-                "sonarlint-language-server",
-                -- Ensure that sonarlint-language-server uses stdio channel
-                "-stdio",
-                "-analyzers",
-                -- paths to the analyzers you need, using those for python and java in this example
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
-                vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
+    if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
+        require("sonarlint").setup({
+            filetypes = {
+                -- Tested
+                "typescript",
+                "javascript",
+                "html",
+                "text",
+                "css",
+                "scss",
+                -- Not Tested
+                "docker",
+                "terraform",
+                "xml",
+                "cs",
+                -- 'cpp',
+                -- -- Requires nvim-jdtls, otherwise an error message will be printed
+                "java",
             },
-            window = {
-                border = "rounded",
-                title_pos = "center",
-            },
-            settings = {
-                sonarlint = {
-                    rules = sonar_rules,
+            server = {
+                cmd = {
+                    "sonarlint-language-server",
+                    -- Ensure that sonarlint-language-server uses stdio channel
+                    "-stdio",
+                    "-analyzers",
+                    -- paths to the analyzers you need, using those for python and java in this example
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
+                },
+                window = {
+                    border = "rounded",
+                    title_pos = "center",
+                },
+                settings = {
+                    sonarlint = {
+                        rules = sonar_rules,
+                    },
                 },
             },
-        },
-    })
+        })
+    end
 end
 lspconfig.eslint.setup({
     on_init = disable_formatting_on_init,
@@ -204,7 +206,6 @@ lspconfig.eslint.setup({
 null_ls.setup({
     sources = {
         null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.formatting.stylua,
     },
 })
 
