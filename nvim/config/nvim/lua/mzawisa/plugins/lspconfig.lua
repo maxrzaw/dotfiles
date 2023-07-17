@@ -18,6 +18,11 @@ end
 
 -- LSP Formatting
 local lsp_formatting = function(bufnr)
+    local path = vim.api.nvim_buf_get_name(bufnr)
+    -- skip formatting if we are in Nova.UI and not in workspace
+    if string.find(path, "Nova.UI") and not string.find(path, "Nova.UI/apps/workspace/") then
+        return
+    end
     vim.lsp.buf.format({ bufnr = bufnr })
 end
 local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
@@ -187,6 +192,7 @@ if os.getenv("NEOVIM_WORK") then
         })
     end
 end
+
 lspconfig.eslint.setup({
     on_init = disable_formatting_on_init,
     filetypes = {
