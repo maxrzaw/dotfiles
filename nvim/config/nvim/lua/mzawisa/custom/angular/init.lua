@@ -10,7 +10,7 @@ local function load_file_into_buffer(file)
 end
 
 function M.start_angularls()
-    print("not implemented start_angularls")
+    vim.cmd("LspStart angularls")
 end
 
 function M.toggle_between_spec_and_file()
