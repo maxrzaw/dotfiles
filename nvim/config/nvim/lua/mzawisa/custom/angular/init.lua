@@ -9,6 +9,10 @@ local function load_file_into_buffer(file)
     vim.fn.execute("edit")
 end
 
+function M.start_angularls()
+    print("not implemented start_angularls")
+end
+
 function M.toggle_between_spec_and_file()
     local current_buffer = vim.api.nvim_buf_get_name(0)
     local buf_path = path:new(current_buffer)

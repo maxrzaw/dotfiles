@@ -1,6 +1,9 @@
-local keymap = require("mzawisa.keymap")
+local telescope = require("telescope")
 local builtin = require("telescope.builtin")
-require("telescope").setup({
+local keymap = require("mzawisa.keymap")
+local nnoremap = keymap.nnoremap
+
+telescope.setup({
     defaults = {
         layout_config = { width = 0.95 },
         path_display = { "smart" },
@@ -23,10 +26,10 @@ require("telescope").setup({
     },
 })
 
-require("telescope").load_extension("harpoon")
-require("telescope").load_extension("luasnip")
-require("telescope").load_extension("lazygit")
-local nnoremap = keymap.nnoremap
+telescope.load_extension("harpoon")
+telescope.load_extension("luasnip")
+telescope.load_extension("lazygit")
+telescope.load_extension("ui-select")
 
 nnoremap("<leader>ff", builtin.find_files, {})
 nnoremap("<leader>fg", builtin.live_grep, {})

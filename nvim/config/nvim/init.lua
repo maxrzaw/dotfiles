@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Set Up Plugins
 require("lazy").setup({
+    { "lazy.nvim" },
     {
         "folke/tokyonight.nvim",
         name = "Tokyo Night",
@@ -74,6 +75,13 @@ require("lazy").setup({
         cond = not_vscode,
     },
     {
+        "https://gitlab.com/maxzawisa/sonarlint.nvim",
+        name = "sonarlint.nvim",
+        branch = "fix-show-rule-description",
+        cond = is_work and not_vscode,
+        dependencies = { "mfussenegger/nvim-jdtls", cond = is_work and not_vscode },
+    },
+    {
         "ckipp01/stylua-nvim",
         cond = not_vscode,
         ft = { "lua" },
@@ -107,7 +115,7 @@ require("lazy").setup({
     {
         "j-hui/fidget.nvim",
         name = "Fidget",
-        version = "legacy",
+        tag = "legacy",
         config = function()
             require("mzawisa.plugins.fidget")
         end,
@@ -177,6 +185,7 @@ require("lazy").setup({
             "benfowler/telescope-luasnip.nvim",
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+            { "nvim-telescope/telescope-ui-select.nvim" },
         },
         config = function()
             require("mzawisa.plugins.telescope")
@@ -230,5 +239,11 @@ require("lazy").setup({
             { "nvim-lua/plenary.nvim" },
         },
         cond = not_vscode,
+    },
+    {
+        dir = "~/dev/azdo.nvim",
+        config = function()
+            require("azdo").setup({})
+        end,
     },
 })
