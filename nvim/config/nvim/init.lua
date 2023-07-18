@@ -26,7 +26,7 @@ require("lazy").setup({
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             -- load the colorscheme here
-            require("mzawisa.plugins.tokyonight").setup()
+            require("mzawisa.plugins.tokyonight").my_setup()
         end,
         cond = not_vscode,
     },
