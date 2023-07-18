@@ -4,28 +4,33 @@ function M.ColorMyPencils(color)
     color = color or "tokyonight"
     vim.cmd.colorscheme(color)
 
-    vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-    vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
-    vim.api.nvim_set_hl(0, "ColorColumn", { bg = "DarkRed" })
-    vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-    vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "none" })
+    -- vim.api.nvim_set_hl(0, "FloatBorder", { link = "TelescopeBorder" })
+    -- vim.api.nvim_set_hl(0, "FloatTitle", { link = "TelescopeTitle" })
 end
 
 -- Set up Tokyonight
-M.setup = function()
+M.my_setup = function()
     require("tokyonight").setup({
         style = "moon",
         transparent = true,
         terminal_colors = true,
-        italic_comments = false,
         styles = {
-            floats = "dark",
+            comments = { italic = true },
+            floats = "transparent",
             sidebars = "dark",
         },
-        sidebars = { "qf", "vista_kind" },
-        --colors = { hint = "orange", error = "#ff0000" },
+        sidebars = { "none" },
+        on_highlights = function(hl, c)
+            hl.TelescopeBorder = {
+                bold = true,
+                fg = c.fg_dark,
+            }
+            hl.TroubleNormal = {
+                link = "TelescopeNormal",
+            }
+        end,
     })
     M.ColorMyPencils()
 end
+
 return M
