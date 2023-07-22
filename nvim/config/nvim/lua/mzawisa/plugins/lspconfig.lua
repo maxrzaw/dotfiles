@@ -42,22 +42,72 @@ end
 -- LSP Keybindings
 local set_default_keybindings = function(bufnr)
     local opts = { buffer = bufnr, silent = true, noremap = true }
-    vim.keymap.set("n", "gt", "<cmd>TroubleToggle lsp_type_definitions<cr>", opts)
-    vim.keymap.set("n", "gr", "<cmd>TroubleToggle lsp_references<cr>", opts)
-    vim.keymap.set("n", "gd", "<cmd>TroubleToggle lsp_definitions<cr>", opts)
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-    vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-    vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, opts)
-    vim.keymap.set("n", "<leader>dN", vim.diagnostic.goto_prev, opts)
-    vim.keymap.set("n", "<leader>dl", "<cmd>Telescope diagnostics<CR>", opts)
-    vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, opts)
-    vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<space>f", function()
+    vim.keymap.set(
+        "n",
+        "gt",
+        "<cmd>TroubleToggle lsp_type_definitions<cr>",
+        vim.tbl_extend("error", opts, { desc = "Toggle Lsp Type Definitions" })
+    )
+    vim.keymap.set(
+        "n",
+        "gr",
+        "<cmd>TroubleToggle lsp_references<cr>",
+        vim.tbl_extend("error", opts, { desc = "Toggle Lsp References" })
+    )
+    vim.keymap.set(
+        "n",
+        "gd",
+        "<cmd>TroubleToggle lsp_definitions<cr>",
+        vim.tbl_extend("error", opts, { desc = "Toggle Lsp Definitions" })
+    )
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("error", opts, { desc = "Go To Declaration" }))
+    vim.keymap.set(
+        "n",
+        "gi",
+        vim.lsp.buf.implementation,
+        vim.tbl_extend("error", opts, { desc = "Go To Implementation" })
+    )
+    vim.keymap.set(
+        "n",
+        "<leader>vd",
+        vim.diagnostic.open_float,
+        vim.tbl_extend("error", opts, { desc = "View Diagnostics for current line" })
+    )
+    vim.keymap.set(
+        { "n", "v" },
+        "<leader>ca",
+        vim.lsp.buf.code_action,
+        vim.tbl_extend("error", opts, { desc = "Lsp Code Action" })
+    )
+    vim.keymap.set(
+        "n",
+        "<leader>dn",
+        vim.diagnostic.goto_next,
+        vim.tbl_extend("error", opts, { desc = "Go To Next Diagnostic" })
+    )
+    vim.keymap.set(
+        "n",
+        "<leader>dN",
+        vim.diagnostic.goto_prev,
+        vim.tbl_extend("error", opts, { desc = "Go To Prev Diagnostic" })
+    )
+    vim.keymap.set(
+        "n",
+        "<leader>dl",
+        "<cmd>Telescope diagnostics<CR>",
+        vim.tbl_extend("error", opts, { desc = "List All Diagnostics" })
+    )
+    vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, vim.tbl_extend("error", opts, { desc = "Rename Symbol" }))
+    vim.keymap.set(
+        "i",
+        "<C-k>",
+        vim.lsp.buf.signature_help,
+        vim.tbl_extend("error", opts, { desc = "Lsp Signature Help" })
+    )
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("error", opts, { desc = "Lsp Hover" }))
+    vim.keymap.set("n", "<leader>f", function()
         vim.lsp.buf.format({ async = true })
-    end, opts)
+    end, vim.tbl_extend("error", opts, { desc = "Format with Lsp" }))
 end
 
 -- Use LspAttach autocommand to only map the following keys
