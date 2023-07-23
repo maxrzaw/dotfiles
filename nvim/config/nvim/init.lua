@@ -2,6 +2,7 @@ require("mzawisa")
 -- Bootstrap Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 local is_work = os.getenv("NEOVIM_WORK")
+local is_pi = os.getenv("NEOVIM_PI")
 local not_vscode = not vim.g.vscode
 
 if not vim.loop.fs_stat(lazypath) then
@@ -245,5 +246,6 @@ require("lazy").setup({
         config = function()
             require("azdo").setup({})
         end,
+        cond = not is_pi,
     },
 })
