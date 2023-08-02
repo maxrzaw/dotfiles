@@ -50,9 +50,6 @@ return require('packer').startup(function(use)
         requires = {{ 'nvim-lua/plenary.nvim'}}
     }
 
-    -- Neogit
-    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
-
     -- Harpoon
     use {
         'ThePrimeagen/harpoon',
