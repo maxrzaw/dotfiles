@@ -8,7 +8,7 @@ require("trouble").setup({
     auto_jump = {
         "lsp_definitions",
         "lsp_type_definitions",
-        "lsp_references",
+        -- "lsp_references", -- This appears to be broken
     },
 })
 vim.keymap.set("n", "<leader>qq", "<cmd>TroubleToggle<cr>", { silent = true, noremap = true, desc = "Toggle Trouble" })
