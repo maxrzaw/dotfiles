@@ -27,7 +27,8 @@ local lsp_formatting = function(bufnr)
     vim.lsp.buf.format({ bufnr = bufnr })
 end
 local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-local set_format_on_save = function(client, bufnr)
+local set_format_on_save = function(client, bufnr, sync)
+    sync = sync or false
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = lspFormattingAugroup,
@@ -122,13 +123,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
         set_format_on_save(client, bufnr)
 
         -- Client specific kepmaps
-        if client.name == "angularls" then
-            vim.keymap.set(
-                "n",
-                "<leader>sp",
-                angular.toggle_between_spec_and_file,
-                { silent = true, noremap = true, buffer = true, desc = "Toggle between Angular Spec and File" }
-            )
+        if client ~= nil and client.name == "angularls" then
+            vim.keymap.set("n", "<leader>sp", angular.toggle_between_spec_and_file, {
+                silent = true,
+                noremap = true,
+                buffer = true,
+                desc = "Toggle between Angular Spec and File",
+            })
         end
     end,
 })
@@ -200,6 +201,8 @@ lspconfig.angularls.setup({
         new_config.cmd = ngls_cmd
     end,
 })
+
+lspconfig.terraformls.setup({})
 
 -- Set up Sonarlint Language Server
 if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
