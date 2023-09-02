@@ -272,6 +272,12 @@ lspconfig.eslint.setup({
     },
 })
 
+lspconfig.dockerls.setup({})
+
+lspconfig.docker_compose_language_service.setup({
+    root_dir = lspconfig.util.root_pattern("*compose.y*ml"),
+})
+
 null_ls.setup({
     sources = {
         null_ls.builtins.formatting.prettierd,
