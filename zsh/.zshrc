@@ -21,3 +21,6 @@ bindkey -M viins 'jk' vi-cmd-mode
 if [ -x "$(command -v lazygit)" ]; then
     alias lg=lazygit
 fi
+
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+# autoload -Uz compinit && compinit
