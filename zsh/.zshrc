@@ -22,5 +22,7 @@ if [ -x "$(command -v lazygit)" ]; then
     alias lg=lazygit
 fi
 
+# Better completion
+# This allows for case insensitive completion as a fallback
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 # autoload -Uz compinit && compinit
