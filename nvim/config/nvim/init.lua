@@ -1,10 +1,8 @@
 require("mzawisa")
 -- Bootstrap Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-local is_work = os.getenv("NEOVIM_WORK")
-local is_pi = os.getenv("NEOVIM_PI")
-local is_mini = os.getenv("NEOVIM_MINI")
-local not_vscode = not vim.g.vscode
+vim.g.is_work = os.getenv("NEOVIM_WORK")
+vim.g.is_pi = os.getenv("NEOVIM_PI")
 
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -21,6 +19,31 @@ vim.opt.rtp:prepend(lazypath)
 -- Set Up Plugins
 require("lazy").setup({
     { "lazy.nvim" },
+    { import = "mzawisa.plugins.alpha" },
+    {
+        "catppuccin/nvim",
+        name = "Catppuccin",
+        lazy = false, -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other start plugins
+        opts = {
+            transparent_background = true,
+            integrations = {
+                telescope = true,
+                harpoon = true,
+                mason = true,
+                cmp = true,
+                fidget = true,
+                neogit = true,
+                treesitter = true,
+                lsp_trouble = true,
+            },
+        },
+        config = function(_, opts)
+            require("catppuccin").setup(opts)
+            vim.cmd.colorscheme("catppuccin-mocha")
+        end,
+        cond = not vim.g.vscode,
+    },
     {
         "folke/tokyonight.nvim",
         name = "Tokyo Night",
@@ -30,7 +53,7 @@ require("lazy").setup({
             -- load the colorscheme here
             require("mzawisa.plugins.tokyonight").my_setup()
         end,
-        cond = not_vscode,
+        cond = false and not vim.g.vscode,
     },
     {
         "jose-elias-alvarez/null-ls.nvim",
@@ -38,7 +61,7 @@ require("lazy").setup({
         dependencies = {
             "MunifTanjim/prettier.nvim",
         },
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     "tpope/vim-fugitive",
     "tpope/vim-surround",
@@ -59,7 +82,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.cmp")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "neovim/nvim-lspconfig",
@@ -74,18 +97,18 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.lspconfig")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "https://gitlab.com/maxzawisa/sonarlint.nvim",
         name = "sonarlint.nvim",
         branch = "fix-show-rule-description",
-        cond = is_work and not_vscode,
-        dependencies = { "mfussenegger/nvim-jdtls", cond = is_work and not_vscode },
+        cond = vim.g.is_work and not vim.g.vscode,
+        dependencies = { "mfussenegger/nvim-jdtls", cond = vim.g.is_work and not vim.g.vscode },
     },
     {
         "ckipp01/stylua-nvim",
-        cond = not_vscode,
+        cond = not vim.g.vscode,
         ft = { "lua" },
     },
     {
@@ -97,7 +120,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.mason")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
 
     -- Snippets
@@ -110,7 +133,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.luasnip")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
 
     -- Useful status updates for LSP
@@ -121,7 +144,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.fidget")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "folke/trouble.nvim",
@@ -130,7 +153,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.trouble")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
 
     -- Comments
@@ -156,7 +179,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.undotree")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "nvim-lualine/lualine.nvim",
@@ -165,7 +188,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.lualine")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -192,7 +215,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.telescope")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "ThePrimeagen/harpoon",
@@ -201,7 +224,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.harpoon")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "voldikss/vim-floaterm",
@@ -209,7 +232,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.floaterm")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "iamcco/markdown-preview.nvim",
@@ -222,7 +245,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.markdown-preview")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "NeogitOrg/neogit",
@@ -231,7 +254,7 @@ require("lazy").setup({
         config = function()
             require("mzawisa.plugins.git")
         end,
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         "kdheepak/lazygit.nvim",
@@ -240,13 +263,29 @@ require("lazy").setup({
         dependencies = {
             { "nvim-lua/plenary.nvim" },
         },
-        cond = not_vscode,
+        cond = not vim.g.vscode,
     },
     {
         dir = "~/dev/azdo.nvim",
         config = function()
             require("azdo").setup({})
         end,
-        cond = not is_pi and not is_mini,
+        cond = not vim.g.is_pi,
+    },
+    {
+        "christoomey/vim-tmux-navigator",
+        config = function()
+            -- Turn off default tmux navigator mappings
+            vim.g.tmux_navigator_no_mappings = 1
+        end,
+        keys = {
+            { "<c-w><c-h>", "<cmd>TmuxNavigateLeft<cr>", mode = "n" },
+            { "<c-w><c-j>", "<cmd>TmuxNavigateDown<cr>", mode = "n" },
+            { "<c-w><c-k>", "<cmd>TmuxNavigateUp<cr>", mode = "n" },
+            { "<c-w><c-l>", "<cmd>TmuxNavigateRight<cr>", mode = "n" },
+        },
+    },
+    {
+        "tmux-plugins/vim-tmux",
     },
 })

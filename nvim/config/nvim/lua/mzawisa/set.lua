@@ -74,4 +74,5 @@ vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
 
+-- Enable workspace config files
 vim.opt.exrc = true
