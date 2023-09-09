@@ -110,6 +110,7 @@ require("lazy").setup({
         "ckipp01/stylua-nvim",
         cond = not vim.g.vscode,
         ft = { "lua" },
+        build = { "npm install -g @johnnymorganz/stylua-bin" },
     },
     {
         "williamboman/mason.nvim",
