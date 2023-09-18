@@ -13,22 +13,27 @@ function M.start_angularls()
     vim.cmd("LspStart angularls")
 end
 
-function M.toggle_between_spec_and_file()
+local function get_destination_without_extension()
     local current_buffer = vim.api.nvim_buf_get_name(0)
     local buf_path = path:new(current_buffer)
     local relative_path = buf_path:make_relative()
     local filename = string.match(relative_path, "([^/]+)$")
 
-    local full_destination = nil
-    if string.match(filename, ".spec.ts") then
-        -- if the current file is a spec file, then jump to the file it is testing
-        local file_name = string.match(filename, "(.-)%.spec")
-        full_destination = buf_path:parent() .. "/" .. file_name .. ".ts"
-    else
-        -- if the current file is not a spec file, then jump to the spec file
-        local filename_without_ext = string.match(filename, "(.-)%.ts")
-        full_destination = buf_path:parent() .. "/" .. filename_without_ext .. ".spec.ts"
+    local filename_without_ext = nil
+    if string.match(filename, ".html") then
+        filename_without_ext = string.match(filename, "(.-)%.html")
+    elseif string.match(filename, ".spec.ts") then
+        filename_without_ext = string.match(filename, "(.-)%.spec.ts")
+    elseif string.match(filename, ".ts") then
+        filename_without_ext = string.match(filename, "(.-)%.ts")
+    elseif string.match(filename, ".scss") then
+        filename_without_ext = string.match(filename, "(.-)%.scss")
     end
+    return buf_path:parent() .. "/" .. filename_without_ext
+end
+
+local function go_to_file_with_ext(ext)
+    local full_destination = get_destination_without_extension() .. ext
 
     local exists = vim.fn.filereadable(full_destination)
     -- don't open a buffer if the file doesn't exist since you may end up creating a file without knowing it
@@ -38,6 +43,46 @@ function M.toggle_between_spec_and_file()
     end
 
     load_file_into_buffer(full_destination)
+end
+
+function M.go_to_template_file()
+    go_to_file_with_ext(".html")
+end
+function M.go_to_spec_file()
+    go_to_file_with_ext(".spec.ts")
+end
+function M.go_to_component_file()
+    go_to_file_with_ext(".ts")
+end
+function M.go_to_style_file()
+    go_to_file_with_ext(".scss")
+end
+
+function M.set_quickswitch_keybindings()
+    vim.keymap.set("n", "<leader>sp", M.go_to_spec_file, {
+        silent = true,
+        noremap = true,
+        buffer = true,
+        desc = "Go to Angular Spec",
+    })
+    vim.keymap.set("n", "<leader>ss", M.go_to_style_file, {
+        silent = true,
+        noremap = true,
+        buffer = true,
+        desc = "Go to Angular Style",
+    })
+    vim.keymap.set("n", "<leader>tt", M.go_to_template_file, {
+        silent = true,
+        noremap = true,
+        buffer = true,
+        desc = "Go to Angular Template",
+    })
+    vim.keymap.set("n", "<leader>ts", M.go_to_component_file, {
+        silent = true,
+        noremap = true,
+        buffer = true,
+        desc = "Go to Angular Component",
+    })
 end
 
 return M

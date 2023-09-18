@@ -121,16 +121,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         set_default_keybindings(bufnr)
         set_format_on_save(client, bufnr)
-
-        -- Client specific kepmaps
-        if client ~= nil and client.name == "angularls" then
-            vim.keymap.set("n", "<leader>sp", angular.toggle_between_spec_and_file, {
-                silent = true,
-                noremap = true,
-                buffer = true,
-                desc = "Toggle between Angular Spec and File",
-            })
-        end
     end,
 })
 
