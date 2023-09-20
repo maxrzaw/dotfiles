@@ -53,12 +53,12 @@ return {
                 })
             end,
         },
-        {
-            "microsoft/vscode-js-debug",
-            build = {
-                "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
-            },
-        },
+        -- {
+        --     "microsoft/vscode-js-debug",
+        --     build = {
+        --         "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
+        --     },
+        -- },
     },
     config = function()
         local dap = require("dap")
@@ -66,58 +66,103 @@ return {
             type = "server",
             host = "localhost",
             port = "42069",
-            executable = {
-                command = "node",
-                args = { "/Users/max/.local/share/nvim/lazy/vscode-js-debug/out/src/vsDebugServer.js" },
-            },
+            command = "node",
         }
         dap.adapters["pwa-chrome"] = {
             type = "executable",
             host = "localhost",
             port = "42069",
             command = "node",
-            args = { "/Users/max/.local/share/nvim/lazy/vscode-js-debug/out/src/vsDebugServer.js" },
         }
-        for _, language in ipairs({ "typescript", "javascript" }) do
-            dap.configurations[language] = {
-                {
-                    type = "pwa-chrome",
-                    request = "attach",
-                    name = "Attach Chrome",
-                    -- trace = true, -- include debugger info
-                    rootPath = "${workspaceFolder}",
-                    cwd = "${workspaceFolder}",
-                    console = "integratedTerminal",
-                    internalConsoleOptions = "neverOpen",
-                },
-                {
-                    type = "pwa-chrome",
-                    request = "launch",
-                    name = "Launch Chrome",
-                    -- trace = true, -- include debugger info
-                    rootPath = "${workspaceFolder}",
-                    cwd = "${workspaceFolder}",
-                    console = "integratedTerminal",
-                    internalConsoleOptions = "neverOpen",
-                },
-                {
-                    type = "pwa-node",
-                    request = "launch",
-                    name = "Debug Jest Tests",
-                    -- trace = true, -- include debugger info
-                    runtimeExecutable = "node",
-                    runtimeArgs = {
-                        "./node_modules/jest/bin/jest.js",
-                        "--runInBand",
-                    },
-                    rootPath = "${workspaceFolder}",
-                    cwd = "${workspaceFolder}",
-                    console = "integratedTerminal",
-                    internalConsoleOptions = "neverOpen",
-                },
-            }
-        end
+        -- for _, language in ipairs({ "typescript", "javascript", "ts" }) do
+        --     dap.configurations[language] = {
+        --         {
+        --             type = "pwa-chrome",
+        --             request = "attach",
+        --             name = "Attach Chrome",
+        --             -- trace = true, -- include debugger info
+        --             rootPath = "${workspaceFolder}",
+        --             cwd = "${workspaceFolder}",
+        --             console = "integratedTerminal",
+        --             internalConsoleOptions = "neverOpen",
+        --         },
+        --         {
+        --             type = "pwa-chrome",
+        --             request = "launch",
+        --             name = "Launch Chrome",
+        --             -- trace = true, -- include debugger info
+        --             rootPath = "${workspaceFolder}",
+        --             cwd = "${workspaceFolder}",
+        --             console = "integratedTerminal",
+        --             internalConsoleOptions = "neverOpen",
+        --         },
+        --         {
+        --             type = "pwa-node",
+        --             request = "launch",
+        --             name = "Debug Jest Tests",
+        --             -- trace = true, -- include debugger info
+        --             runtimeExecutable = "node",
+        --             runtimeArgs = {
+        --                 "./node_modules/jest/bin/jest.js",
+        --                 "--runInBand",
+        --             },
+        --             rootPath = "${workspaceFolder}",
+        --             cwd = "${workspaceFolder}",
+        --             console = "integratedTerminal",
+        --             internalConsoleOptions = "neverOpen",
+        --         },
+        --     }
+        -- end
     end,
+    -- mason.nvim integration
+    {
+        "jay-babu/mason-nvim-dap.nvim",
+        dependencies = "Mason",
+        cmd = { "DapInstall", "DapUninstall" },
+        opts = {
+            -- Makes a best effort to setup the various debuggers with
+            -- reasonable debug configurations
+            automatic_installation = true,
+
+            -- You can provide additional configuration to the handlers,
+            -- see mason-nvim-dap README for more information
+            handlers = {
+                {
+                    name = "Chrome: Debug",
+                    type = "chrome",
+                    request = "attach",
+                    program = "${file}",
+                    cwd = vim.fn.getcwd(),
+                    sourceMaps = true,
+                    protocol = "inspector",
+                    host = "localhost",
+                    port = 4200,
+                    webRoot = "${workspaceFolder}",
+                },
+                {
+                    name = "Debug (Attach) - Remote",
+                    type = "chrome",
+                    request = "attach",
+                    -- program = "${file}",
+                    -- cwd = vim.fn.getcwd(),
+                    sourceMaps = true,
+                    --      reAttach = true,
+                    trace = true,
+                    -- protocol = "inspector",
+                    -- hostName = "127.0.0.1",
+                    port = 9222,
+                    webRoot = "${workspaceFolder}",
+                },
+            },
+
+            -- You'll need to check that you have the required things installed
+            -- online, please don't ask me how to install them :)
+            ensure_installed = {
+                "js",
+                -- Update this to ensure that you have the debuggers for the langs you want
+            },
+        },
+    },
     keys = {
         {
             "<leader>dB",

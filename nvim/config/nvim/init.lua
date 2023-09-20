@@ -20,7 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     { "lazy.nvim" },
     { import = "mzawisa.plugins.alpha" },
-    { import = "mzawisa.plugins.nvim-dap" },
+    { import = "mzawisa.plugins.debug" },
     {
         "catppuccin/nvim",
         name = "Catppuccin",
@@ -89,7 +89,7 @@ require("lazy").setup({
         "neovim/nvim-lspconfig",
         dependencies = {
             -- Mason
-            "Mason",
+            "williamboman/mason.nvim",
             -- Null Language Server
             "null-ls",
             -- Completion
@@ -118,7 +118,6 @@ require("lazy").setup({
     },
     {
         "williamboman/mason.nvim",
-        name = "Mason",
         dependencies = {
             "williamboman/mason-lspconfig.nvim",
         },
