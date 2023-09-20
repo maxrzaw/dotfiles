@@ -11,7 +11,7 @@ local mason_ensure_installed = {
     "prettier",
     "stylua",
     "typescript-language-server",
-    -- "angular-language-server",
+    "angular-language-server@15.2.1",
     -- "cmake-language-server",
     "docker-compose-language-service",
     "dockerfile-language-server",
