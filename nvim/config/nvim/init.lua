@@ -20,6 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     { "lazy.nvim" },
     { import = "mzawisa.plugins.alpha" },
+    { import = "mzawisa.plugins.nvim-dap" },
     {
         "catppuccin/nvim",
         name = "Catppuccin",
@@ -104,7 +105,10 @@ require("lazy").setup({
         name = "sonarlint.nvim",
         branch = "fix-show-rule-description",
         cond = vim.g.is_work and not vim.g.vscode,
-        dependencies = { "mfussenegger/nvim-jdtls", cond = vim.g.is_work and not vim.g.vscode },
+        dependencies = {
+            "mfussenegger/nvim-jdtls",
+            cond = vim.g.is_work and not vim.g.vscode,
+        },
     },
     {
         "ckipp01/stylua-nvim",
