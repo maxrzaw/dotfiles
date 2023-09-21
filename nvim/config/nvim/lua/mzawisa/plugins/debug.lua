@@ -15,19 +15,21 @@ return {
         -- Add your own debuggers here
         --
         {
-            "microsoft/vscode-js-debug",
-            build = { "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out" },
-        },
-        {
             "mxsdev/nvim-dap-vscode-js",
             opts = {
                 -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
-                debugger_path = "~/.local/share/nvim/lazy/vscode-js-debug", -- Path to vscode-js-debug installation.
+                debugger_path = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter", -- Path to vscode-js-debug installation.
                 -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
                 adapters = { "pwa-node", "pwa-chrome", "node-terminal" }, -- which adapters to register in nvim-dap
                 -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
                 -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
                 -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
+            },
+            dependencies = {
+                {
+                    "microsoft/vscode-js-debug",
+                    build = { "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out" },
+                },
             },
         },
     },
@@ -93,6 +95,16 @@ return {
         -- Install language specific config
         dap.configurations.typescript = {
             {
+                type = "pwa-chrome",
+                request = "attach",
+                program = "${file}",
+                name = "Attach Chrome",
+                sourceMaps = true,
+                protocol = "inspector",
+                webRoot = "${workspaceFolder}",
+                cwd = "${workspaceFolder}",
+            },
+            {
                 type = "pwa-node",
                 request = "launch",
                 name = "Launch file",
@@ -102,9 +114,24 @@ return {
             {
                 type = "pwa-node",
                 request = "attach",
-                name = "Attach",
+                name = "Attach Node",
                 processId = require("dap.utils").pick_process,
                 cwd = "${workspaceFolder}",
+            },
+            {
+                type = "pwa-node",
+                request = "launch",
+                name = "Debug Jest Tests",
+                -- trace = true, -- include debugger info
+                runtimeExecutable = "node",
+                runtimeArgs = {
+                    "./node_modules/jest/bin/jest.js",
+                    "--runInBand",
+                },
+                rootPath = "${workspaceFolder}",
+                cwd = "${workspaceFolder}",
+                console = "integratedTerminal",
+                internalConsoleOptions = "neverOpen",
             },
         }
     end,
