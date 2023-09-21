@@ -48,5 +48,5 @@
   "vim-surround": { "branch": "master", "commit": "3d188ed2113431cf8dac77be61b842acb64433d9" },
   "vim-tmux": { "branch": "master", "commit": "cfe76281efc29890548cf9eedd42ad51c7a1faf0" },
   "vim-tmux-navigator": { "branch": "master", "commit": "7db70e08ea03b3e4d91f63713d76134512e28d7e" },
-  "vscode-js-debug": { "branch": "main", "commit": "613b9eaebccd32b6c5bd7cd5d720a9053a9150b6" }
+  "vscode-js-debug": { "branch": "main", "commit": "7b40f5cc2727b1d45787b4c13119e079ec95286a" }
 }
