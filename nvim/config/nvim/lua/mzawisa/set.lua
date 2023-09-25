@@ -73,6 +73,8 @@ vim.opt.timeoutlen = 500 -- how long to wait between key combinations
 vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
+vim.g.netrw_altfile = 1
+vim.g.netrw_keepj = "keepj"
 
 -- Enable workspace config files
 vim.opt.exrc = true

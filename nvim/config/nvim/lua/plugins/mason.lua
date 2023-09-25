@@ -1,0 +1,31 @@
+return {
+    "williamboman/mason.nvim",
+    opts = {
+        max_concurrent_installers = 10,
+        ui = {
+            border = "rounded",
+        },
+        ensure_installed = {
+            "bash-language-server",
+            "css-lsp",
+            "eslint-lsp",
+            "html-lsp",
+            "json-lsp",
+            "lua-language-server",
+            "marksman",
+            "prettier",
+            "stylua",
+            "typescript-language-server",
+            "angular-language-server@15.2.1",
+            "js-debug-adapter@1.76.1",
+            -- "cmake-language-server",
+            "docker-compose-language-service",
+            "dockerfile-language-server",
+            -- "omnisharp",
+            -- "rust-analyzer",
+            -- "rustfmt",
+            -- "sonarlint-language-server",
+        },
+    },
+    cond = not vim.g.vscode,
+}

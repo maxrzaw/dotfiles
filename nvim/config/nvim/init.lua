@@ -19,8 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Set Up Plugins
 require("lazy").setup({
     { "lazy.nvim" },
-    { import = "mzawisa.plugins.alpha" },
-    { import = "mzawisa.plugins.debug" },
+    { import = "plugins" },
     {
         "catppuccin/nvim",
         name = "Catppuccin",
@@ -89,7 +88,12 @@ require("lazy").setup({
         "neovim/nvim-lspconfig",
         dependencies = {
             -- Mason
-            "williamboman/mason.nvim",
+            {
+                "williamboman/mason-lspconfig.nvim",
+                dependencies = {
+                    "williamboman/mason.nvim",
+                },
+            },
             -- Null Language Server
             "null-ls",
             -- Completion
@@ -116,17 +120,6 @@ require("lazy").setup({
         ft = { "lua" },
         build = { "npm install -g @johnnymorganz/stylua-bin" },
     },
-    {
-        "williamboman/mason.nvim",
-        dependencies = {
-            "williamboman/mason-lspconfig.nvim",
-        },
-        config = function()
-            require("mzawisa.plugins.mason")
-        end,
-        cond = not vim.g.vscode,
-    },
-
     -- Snippets
     {
         "L3MON4D3/LuaSnip",
@@ -171,7 +164,7 @@ require("lazy").setup({
     {
         "danymat/neogen",
         name = "Neogen",
-        dependencies = { "nvim-treesitter", "LuaSnip" },
+        dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
         config = function()
             require("mzawisa.plugins.neogen")
         end,
@@ -196,7 +189,6 @@ require("lazy").setup({
     },
     {
         "nvim-treesitter/nvim-treesitter",
-        name = "nvim-treesitter",
         build = function()
             require("nvim-treesitter.install").update({ with_sync = true })
         end,
@@ -206,7 +198,6 @@ require("lazy").setup({
     },
     {
         "nvim-telescope/telescope.nvim",
-        name = "Telescope",
         version = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -218,6 +209,14 @@ require("lazy").setup({
         },
         config = function()
             require("mzawisa.plugins.telescope")
+        end,
+        cond = not vim.g.vscode,
+    },
+    {
+        "nvim-telescope/telescope-file-browser.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+        config = function()
+            require("telescope").load_extension("file_browser")
         end,
         cond = not vim.g.vscode,
     },
@@ -262,7 +261,6 @@ require("lazy").setup({
     },
     {
         "kdheepak/lazygit.nvim",
-        name = "Lazy Git",
         -- optional for floating window border decoration
         dependencies = {
             { "nvim-lua/plenary.nvim" },
