@@ -1,6 +1,11 @@
 return {
     {
         "goolord/alpha-nvim",
+        dependencies = {
+            "nvim-telescope/telescope-file-browser.nvim",
+            "lazy.nvim",
+            "nvim-neo-tree/neo-tree.nvim",
+        },
         lazy = true,
         event = "VimEnter",
         opts = function()
@@ -45,13 +50,14 @@ return {
             local greeting = getGreeting(userName)
             dashboard.section.header.val = vim.split(logo .. "\n" .. greeting, "\n")
             dashboard.section.buttons.val = {
-                dashboard.button("n", " " .. " New file", ":ene <BAR> startinsert <CR>"),
-                dashboard.button("f", " " .. " Find file", ":Telescope find_files <CR>"),
-                dashboard.button("g", "󰷾 " .. " Find text", ":Telescope live_grep <CR>"),
-                dashboard.button("e", " " .. " File browser", ":Explore <CR>"),
+                dashboard.button("n", " " .. " New file", ":ene <BAR> startinsert <CR>"),
+                dashboard.button("e", "󰙅 " .. " File browser", ":Neotree<CR>"),
                 dashboard.button("r", "󰄉 " .. " Recent files", ":Telescope oldfiles <CR>"),
-                dashboard.button("c", " " .. " Config", ":e $MYVIMRC <CR>"),
+                dashboard.button("f", " " .. " Find file", ":Telescope find_files <CR>"),
+                dashboard.button("g", "󱎸 " .. " Find text", ":Telescope live_grep <CR>"),
                 dashboard.button("l", "󰒲 " .. " Lazy", ":Lazy<CR>"),
+                dashboard.button("m", "󰢷 " .. " Mason", ":Mason<CR>"),
+                dashboard.button("c", " " .. " Config", ":e $MYVIMRC <CR>"),
                 dashboard.button("q", " " .. " Quit", ":qa<CR>"),
             }
 

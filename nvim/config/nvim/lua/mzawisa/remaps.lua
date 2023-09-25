@@ -74,7 +74,6 @@ if vim.g.vscode then
     )
 else
     -- Remaps I do not want in vscode-neovim
-    nnoremap("<leader>e", "<cmd>Explore<CR>", {})
     vnoremap("J", ":m '>+1<CR>gv=gv", {})
     vnoremap("K", ":m '<-2<CR>gv=gv", {})
 
