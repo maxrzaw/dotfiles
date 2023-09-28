@@ -12,8 +12,8 @@ vim.opt.listchars = { tab = "▸ ", trail = "·" }
 if not vim.g.vscode then
     -- Folding
     vim.opt.foldmethod = "indent"
-    vim.opt.foldlevelstart = 3
-    vim.opt.foldminlines = 2
+    vim.opt.foldlevelstart = 6
+    vim.opt.foldminlines = 4
     --vim.opt.foldmethod = "expr"
 end
 
