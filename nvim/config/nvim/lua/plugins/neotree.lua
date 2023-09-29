@@ -63,7 +63,7 @@ return {
                 if helper.pinned() then
                     vim.cmd("Neotree left")
                 else
-                    vim.cmd("Neotree")
+                    vim.cmd("Neotree current %:p:h")
                 end
             end,
             desc = "Neotree",
