@@ -8,12 +8,31 @@ return {
         -- Creates a beautiful debugger UI
         "rcarriga/nvim-dap-ui",
 
+        -- Virtual Text
+        {
+            "theHamsta/nvim-dap-virtual-text",
+            opts = {
+                virt_text_pos = "eol",
+                only_first_definition = false,
+                highlight_new_as_changed = true,
+                all_references = true,
+                all_frames = true,
+            },
+        },
+
+        -- Persistent Breakpoints
+        {
+            "Weissle/persistent-breakpoints.nvim",
+            opts = {
+                load_breakpoints_event = "BufReadPost",
+            },
+        },
+
         -- Installs the debug adapters for you
         "williamboman/mason.nvim",
         "jay-babu/mason-nvim-dap.nvim",
 
         -- Add your own debuggers here
-        --
         {
             "mxsdev/nvim-dap-vscode-js",
             opts = {
@@ -25,12 +44,17 @@ return {
                 -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
                 -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
             },
-            dependencies = {
-                {
-                    "microsoft/vscode-js-debug",
-                    build = { "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out" },
-                },
-            },
+            -- Commenting out until I get this figured out I am using mason
+            -- dependencies = {
+            --     {
+            --         "microsoft/vscode-js-debug",
+            --         build = { "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out" },
+            --     },
+            -- },
+        },
+        {
+            "microsoft/vscode-node-debug2",
+            build = { "npm install && NODE_OPTIONS=--no-experimental-fetch npm run build" },
         },
     },
     config = function()
@@ -53,85 +77,138 @@ return {
             },
         })
 
+        local pb = require("persistent-breakpoints.api")
+
         -- Basic debugging keymaps, feel free to change to your liking!
         vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
         vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
         vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
         vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
-        vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-        vim.keymap.set("n", "<leader>B", function()
-            dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-        end, { desc = "Debug: Set Breakpoint" })
+        vim.keymap.set("n", "<leader>b", pb.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+        vim.keymap.set("n", "<leader>B", pb.set_conditional_breakpoint, { desc = "Debug: Set Breakpoint" })
+        vim.keymap.set(
+            { "n", "v" },
+            "<leader>dk",
+            "<cmd>lua require('dapui').eval()<cr>",
+            { desc = "Debug: Evaluate under cursor" }
+        )
+        vim.keymap.set({ "n", "v" }, "<Leader>dh", function()
+            require("dap.ui.widgets").hover()
+        end, { desc = "Debug: Dap Hover" })
+        vim.keymap.set({ "n", "v" }, "<Leader>dp", function()
+            require("dap.ui.widgets").preview()
+        end, { desc = "Debug: Dap Preview" })
+        vim.keymap.set("n", "<Leader>df", function()
+            local widgets = require("dap.ui.widgets")
+            widgets.centered_float(widgets.frames)
+        end, { desc = "Debug: Dap Frames" })
+        vim.keymap.set("n", "<Leader>ds", function()
+            local widgets = require("dap.ui.widgets")
+            widgets.centered_float(widgets.scopes)
+        end, { desc = "Debug: Dap Scopes" })
 
         -- Dap UI setup
         -- For more information, see |:help nvim-dap-ui|
         dapui.setup({
-            -- Set icons to characters that are more likely to work in every terminal.
-            --    Feel free to remove or use ones that you like more! :)
-            --    Don't feel like these are good choices.
+            layouts = {
+                {
+                    elements = {
+                        "console",
+                        "scopes",
+                    },
+                    size = 0.33,
+                    position = "bottom", -- Can be "bottom" or "top"
+                },
+                {
+                    -- You can change the order of elements in the sidebar
+                    elements = {
+                        -- Provide IDs as strings or tables with "id" and "size" keys
+                        { id = "repl", size = 0.25 },
+                        { id = "stacks", size = 0.45 },
+                        { id = "watches", size = 0.15 },
+                        { id = "breakpoints", size = 0.15 },
+                    },
+                    size = 0.33,
+                    position = "left", -- Can be "left" or "right"
+                },
+            },
             icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
             controls = {
                 icons = {
-                    pause = "⏸",
-                    play = "▶",
-                    step_into = "⏎",
-                    step_over = "⏭",
-                    step_out = "⏮",
-                    step_back = "b",
-                    run_last = "▶▶",
-                    terminate = "⏹",
+                    pause = "",
+                    play = "",
+                    step_into = "",
+                    step_over = "",
+                    step_out = "",
+                    step_back = "",
+                    run_last = "",
+                    terminate = "󰓛",
                     disconnect = "⏏",
                 },
             },
         })
 
         -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-        vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
-
+        vim.keymap.set("n", "<F6>", dapui.toggle, { desc = "Debug: Toggle UI" })
         dap.listeners.after.event_initialized["dapui_config"] = dapui.open
         dap.listeners.before.event_terminated["dapui_config"] = dapui.close
         dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
+        dap.adapters.node2 = {
+            type = "executable",
+            command = "node",
+            args = { os.getenv("HOME") .. "/.local/share/nvim/lazy/vscode-node-debug2/out/src/nodeDebug.js" },
+        }
+
         -- Install language specific config
+        -- I wasn't able to get this working with pwa-node, but neotest-jest does some magic and gets pwa-node working
         dap.configurations.typescript = {
             {
-                type = "pwa-chrome",
-                request = "attach",
-                program = "${file}",
-                name = "Attach Chrome",
+                name = "Debug Current Directory Tests",
+                type = "node2",
+                request = "launch",
+                cwd = vim.fn.getcwd(),
+                -- trace = true, -- include debugger info
+                runtimeArgs = {
+                    "--inspect-brk",
+                    "./node_modules/jest/bin/jest.js",
+                    "--",
+                    function()
+                        return vim.fn.expand("%:p:h")
+                    end,
+                },
+                args = { "--no-cache" },
                 sourceMaps = true,
                 protocol = "inspector",
-                webRoot = "${workspaceFolder}",
-                cwd = "${workspaceFolder}",
-            },
-            {
-                type = "pwa-node",
-                request = "launch",
-                name = "Launch file",
-                program = "${file}",
-                cwd = "${workspaceFolder}",
-            },
-            {
-                type = "pwa-node",
-                request = "attach",
-                name = "Attach Node",
-                processId = require("dap.utils").pick_process,
-                cwd = "${workspaceFolder}",
-            },
-            {
-                type = "pwa-node",
-                request = "launch",
-                name = "Debug Jest Tests",
-                -- trace = true, -- include debugger info
-                runtimeExecutable = "node",
-                runtimeArgs = {
-                    "./node_modules/jest/bin/jest.js",
-                    "--runInBand",
-                },
-                rootPath = "${workspaceFolder}",
-                cwd = "${workspaceFolder}",
+                skipFiles = { "<node_internals>/**/*.js" },
                 console = "integratedTerminal",
-                internalConsoleOptions = "neverOpen",
+                port = 9229,
+                disableOptimisticBPs = true,
+            },
+            {
+                name = "Debug Matching Name Tests",
+                type = "node2",
+                request = "launch",
+                cwd = vim.fn.getcwd(),
+                -- trace = true, -- include debugger info
+                runtimeArgs = {
+                    "--inspect-brk",
+                    "./node_modules/jest/bin/jest.js",
+                    function()
+                        return '--testNamePattern="' .. vim.fn.input("Test Name Pattern: ") .. '"'
+                    end,
+                    "--",
+                    function()
+                        return vim.fn.expand("%:p:h")
+                    end,
+                },
+                args = { "--no-cache" },
+                sourceMaps = true,
+                protocol = "inspector",
+                skipFiles = { "<node_internals>/**/*.js" },
+                console = "integratedTerminal",
+                port = 9229,
+                disableOptimisticBPs = true,
             },
         }
     end,
