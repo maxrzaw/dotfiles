@@ -21,7 +21,10 @@ end
 local lsp_formatting = function(bufnr)
     local path = vim.api.nvim_buf_get_name(bufnr)
     -- skip formatting if we are in Nova.UI and not in workspace
-    if string.find(path, "Nova.UI") and not string.find(path, "Nova.UI/apps/workspace/") then
+    if
+        string.find(path, "Nova.UI")
+        and not (string.find(path, "Nova.UI/apps/workspace/") or string.find(path, "Nova.UI/apps/closing/"))
+    then
         return
     end
     vim.lsp.buf.format({ bufnr = bufnr })
