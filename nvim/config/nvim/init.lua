@@ -21,6 +21,12 @@ require("lazy").setup({
     { "lazy.nvim" },
     { import = "plugins" },
     {
+        "folke/neodev.nvim",
+        opts = {
+            library = { plugins = { "neotest" }, types = true },
+        },
+    },
+    {
         "catppuccin/nvim",
         name = "Catppuccin",
         lazy = false, -- make sure we load this during startup if it is your main colorscheme
