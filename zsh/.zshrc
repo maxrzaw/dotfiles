@@ -6,6 +6,7 @@ if [ -x "$(command -v nvim)" ]; then
 fi
 git config --global core.editor $VIM
 alias vim=$VIM
+alias mux=tmuxinator
 export EDITOR=$VIM
 export GIT_EDITOR=$VIM
 

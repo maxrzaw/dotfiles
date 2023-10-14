@@ -27,5 +27,11 @@ return {
             -- "sonarlint-language-server",
         },
     },
+    config = function(_, opts)
+        require("mason").setup(opts)
+        vim.api.nvim_create_user_command("MasonInstallAll", function()
+            vim.cmd("MasonInstall " .. table.concat(opts.ensure_installed, " "))
+        end, {})
+    end,
     cond = not vim.g.vscode,
 }
