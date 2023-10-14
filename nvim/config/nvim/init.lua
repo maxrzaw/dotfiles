@@ -195,6 +195,9 @@ require("lazy").setup({
     },
     {
         "nvim-treesitter/nvim-treesitter",
+        dependencies = {
+            { "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" },
+        },
         build = function()
             require("nvim-treesitter.install").update({ with_sync = true })
         end,
