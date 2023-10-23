@@ -168,7 +168,7 @@ return {
                 type = "node2",
                 request = "launch",
                 cwd = vim.fn.getcwd(),
-                -- trace = true, -- include debugger info
+                trace = true, -- include debugger info
                 runtimeArgs = {
                     "--inspect-brk",
                     "./node_modules/jest/bin/jest.js",
