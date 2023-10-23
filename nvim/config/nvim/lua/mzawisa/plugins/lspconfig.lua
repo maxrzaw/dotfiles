@@ -23,7 +23,13 @@ local lsp_formatting = function(bufnr)
     -- skip formatting if we are in Nova.UI and not in workspace
     if
         string.find(path, "Nova.UI")
-        and not (string.find(path, "Nova.UI/apps/workspace/") or string.find(path, "Nova.UI/apps/closing/"))
+        and not (
+            false
+            or string.find(path, "Nova.UI/apps/workspace/")
+            or string.find(path, "Nova.UI/libs/workspace%-store/")
+            or string.find(path, "Nova.UI/apps/nova/")
+            or string.find(path, "Nova.UI/apps/closing/")
+        )
     then
         return
     end
