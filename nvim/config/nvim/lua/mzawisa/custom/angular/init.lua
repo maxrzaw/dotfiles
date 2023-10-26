@@ -6,13 +6,21 @@ M.enabled = false
 local function load_file_into_buffer(file)
     local uri = vim.uri_from_fname(file)
     local bufnrs = vim.api.nvim_list_bufs()
+    local bufnr = -1
     for _, v in pairs(bufnrs) do
         local buf_name = vim.api.nvim_buf_get_name(v)
-        print(buf_name)
+        if buf_name == file then
+            bufnr = v
+            break
+        end
     end
-    local new_buff = vim.uri_to_bufnr(uri)
-    vim.api.nvim_win_set_buf(0, new_buff)
-    vim.fn.execute("edit")
+    if bufnr == -1 then
+        local new_buff = vim.uri_to_bufnr(uri)
+        vim.api.nvim_win_set_buf(0, new_buff)
+        vim.fn.execute("edit")
+    else
+        vim.api.nvim_win_set_buf(0, bufnr)
+    end
 end
 
 function M.start_angularls()
