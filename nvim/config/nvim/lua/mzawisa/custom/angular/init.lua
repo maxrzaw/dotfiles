@@ -1,9 +1,15 @@
 local path = require("plenary.path")
 
 local M = {}
+M.enabled = false
 
 local function load_file_into_buffer(file)
     local uri = vim.uri_from_fname(file)
+    local bufnrs = vim.api.nvim_list_bufs()
+    for _, v in pairs(bufnrs) do
+        local buf_name = vim.api.nvim_buf_get_name(v)
+        print(buf_name)
+    end
     local new_buff = vim.uri_to_bufnr(uri)
     vim.api.nvim_win_set_buf(0, new_buff)
     vim.fn.execute("edit")
@@ -56,6 +62,10 @@ function M.go_to_component_file()
 end
 function M.go_to_style_file()
     go_to_file_with_ext(".scss")
+end
+
+function M.set_enabled(value)
+    M.enabled = value
 end
 
 function M.set_quickswitch_keybindings()
