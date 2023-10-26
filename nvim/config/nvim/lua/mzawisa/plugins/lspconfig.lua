@@ -50,8 +50,9 @@ local set_format_on_save = function(client, bufnr, sync)
 end
 
 -- LSP Keybindings
-local set_default_keybindings = function(bufnr)
+local set_default_keybindings = function(client, bufnr)
     local opts = { buffer = bufnr, silent = true, noremap = true }
+
     vim.keymap.set(
         "n",
         "gt",
@@ -118,6 +119,10 @@ local set_default_keybindings = function(bufnr)
     vim.keymap.set("n", "<leader>f", function()
         vim.lsp.buf.format({ async = true })
     end, vim.tbl_extend("error", opts, { desc = "Format with Lsp" }))
+
+    if client.name == "angularls" then
+        angular.set_quickswitch_keybindings()
+    end
 end
 
 -- Use LspAttach autocommand to only map the following keys
@@ -128,7 +133,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local bufnr = args.buf
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-        set_default_keybindings(bufnr)
+        set_default_keybindings(client, bufnr)
         set_format_on_save(client, bufnr)
     end,
 })
@@ -193,7 +198,7 @@ local ngls_cmd = {
 }
 
 lspconfig.angularls.setup({
-    autostart = false,
+    autostart = true,
     cmd = ngls_cmd,
     root_dir = lspconfig.util.root_pattern(".git"),
     on_new_config = function(new_config)
@@ -275,7 +280,10 @@ lspconfig.dockerls.setup({})
 
 lspconfig.docker_compose_language_service.setup({
     root_dir = lspconfig.util.root_pattern("*compose.y*ml"),
+    filetypes = { "yaml.docker-compose", "yml.docker-compose", "yaml.compose", "yml.compose" },
 })
+
+lspconfig.gopls.setup({})
 
 null_ls.setup({
     sources = {
