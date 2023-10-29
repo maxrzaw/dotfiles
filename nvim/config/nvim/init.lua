@@ -343,4 +343,12 @@ require("lazy").setup({
     {
         "tmux-plugins/vim-tmux",
     },
+    {
+        "2kabhishek/nerdy.nvim",
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "stevearc/dressing.nvim",
+        },
+        cmd = "Nerdy",
+    },
 })
