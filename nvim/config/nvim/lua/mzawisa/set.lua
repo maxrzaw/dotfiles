@@ -63,7 +63,7 @@ vim.opt.backupdir = vim.fn.stdpath("config") .. "/backup"
 vim.opt.directory = vim.fn.stdpath("config") .. "/swp"
 vim.opt.history = 1000
 vim.opt.undofile = true
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undodir = vim.fn.stdpath("config") .. "/undo"
 
 vim.opt.updatetime = 300
 vim.opt.timeoutlen = 500 -- how long to wait between key combinations
