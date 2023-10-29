@@ -29,6 +29,9 @@ return {
             position = "current",
         },
         filesystem = {
+            filtered_items = {
+                visible = true,
+            },
             hijack_netrw_behavior = "open_current",
             components = {
                 harpoon_index = function(config, node, _)
