@@ -36,8 +36,7 @@ local lsp_formatting = function(bufnr)
     vim.lsp.buf.format({ bufnr = bufnr })
 end
 local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-local set_format_on_save = function(client, bufnr, sync)
-    sync = sync or false
+local set_format_on_save = function(client, bufnr)
     if client.server_capabilities.documentFormattingProvider then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = lspFormattingAugroup,
