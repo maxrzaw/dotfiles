@@ -270,6 +270,30 @@ require("lazy").setup({
         cond = not vim.g.vscode,
     },
     {
+        "lewis6991/gitsigns.nvim",
+        opts = {
+            signcolumn = true,
+            numhl = false,
+            linehl = false,
+            word_diff = false,
+            current_line_blame = true,
+            current_line_blame_opts = {
+                virt_text = true,
+                virt_text_pos = "eol",
+                ignore_whitespace = true,
+                delay = 2000,
+            },
+        },
+        init = function()
+            vim.api.nvim_set_keymap(
+                "n",
+                "<leader>gB",
+                "<cmd>lua require('gitsigns').blame_line({full = true})<cr>",
+                { noremap = true, silent = true, desc = "Gitsigns Show Full Line Blame" }
+            )
+        end,
+    },
+    {
         "kdheepak/lazygit.nvim",
         -- optional for floating window border decoration
         dependencies = {

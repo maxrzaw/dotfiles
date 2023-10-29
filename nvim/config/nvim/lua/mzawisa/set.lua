@@ -51,10 +51,9 @@ vim.opt.termguicolors = true
 vim.opt.mouse = "a"
 vim.opt.showmatch = true
 -- These might need to be off in vscode
-vim.opt.cmdheight = 1
+vim.opt.cmdheight = 0 -- Hide the command bar because I have a statusline
 vim.opt.wildmenu = true
 vim.opt.autoread = true
-vim.opt.showcmd = true
 vim.opt.signcolumn = "yes"
 
 -- Backup, history, and undo
