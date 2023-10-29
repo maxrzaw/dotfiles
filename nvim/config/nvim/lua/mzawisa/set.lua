@@ -50,11 +50,12 @@ vim.opt.errorbells = false
 vim.opt.termguicolors = true
 vim.opt.mouse = "a"
 vim.opt.showmatch = true
--- These might need to be off in vscode
-vim.opt.cmdheight = 0 -- Hide the command bar because I have a statusline
+vim.opt.showmode = false
+vim.opt.cmdheight = 1
 vim.opt.wildmenu = true
 vim.opt.autoread = true
 vim.opt.signcolumn = "yes"
+vim.opt.shortmess:append({ W = true, I = true, c = true, C = true })
 
 -- Backup, history, and undo
 vim.opt.backup = false
@@ -74,6 +75,8 @@ vim.g.netrw_preview = 1
 vim.g.netrw_winsize = 40
 vim.g.netrw_altfile = 1
 vim.g.netrw_keepj = "keepj"
+
+vim.opt.smoothscroll = true
 
 -- Enable workspace config files
 vim.opt.exrc = true

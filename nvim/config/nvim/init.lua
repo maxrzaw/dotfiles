@@ -31,22 +31,39 @@ require("lazy").setup({
         name = "Catppuccin",
         lazy = false, -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
-        opts = {
-            transparent_background = true,
-            integrations = {
-                telescope = true,
-                harpoon = true,
-                mason = true,
-                cmp = true,
-                fidget = true,
-                neogit = true,
-                treesitter = true,
-                lsp_trouble = true,
-            },
-        },
-        config = function(_, opts)
-            require("catppuccin").setup(opts)
-            vim.cmd.colorscheme("catppuccin-mocha")
+        config = function()
+            require("catppuccin").setup({
+                flavour = "mocha",
+                transparent_background = true,
+                term_colors = true,
+                integrations = {
+                    alpha = true,
+                    cmp = true,
+                    dap = {
+                        enabled = true,
+                        enable_ui = true,
+                    },
+                    fidget = true,
+                    gitsigns = true,
+                    harpoon = true,
+                    lsp_trouble = true,
+                    mason = true,
+                    neogit = true,
+                    neotree = true,
+                    neotest = true,
+                    telescope = true,
+                    treesitter = true,
+                },
+                custom_highlights = function(mocha)
+                    return {
+                        LineNr = { fg = mocha.overlay1 },
+                        NeoTreeDotfile = { fg = mocha.subtext0 },
+                        NeoTreeFileStats = { fg = mocha.overlay2 },
+                        NeoTreeMessage = { fg = mocha.overlay2 },
+                    }
+                end,
+            })
+            vim.cmd.colorscheme("catppuccin")
         end,
         cond = not vim.g.vscode,
     },
@@ -104,6 +121,8 @@ require("lazy").setup({
             "null-ls",
             -- Completion
             "nvim-cmp",
+            -- OmniSharp Extended
+            "Hoffs/omnisharp-extended-lsp.nvim",
         },
         config = function()
             require("mzawisa.plugins.lspconfig")
