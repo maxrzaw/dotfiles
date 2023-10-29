@@ -166,9 +166,12 @@ lspconfig.lua_ls.setup({
 
 if not os.getenv("NEOVIM_WORK") then
     lspconfig.omnisharp.setup({
-        on_attach = function(client, bufnr)
-            vim.keymap.set("n", "<leader>b", ":dotnet build", { buffer = bufnr })
-        end,
+        handlers = {
+            ["textDocument/definition"] = require("omnisharp_extended").handler,
+        },
+        cmd = { "/Users/max/.local/share/nvim/mason/bin/omnisharp" },
+        organize_imports_on_format = true,
+        enable_roslyn_analyzers = true,
     })
 end
 
