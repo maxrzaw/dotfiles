@@ -54,7 +54,7 @@ return {
         },
         {
             "microsoft/vscode-node-debug2",
-            build = { "npm install && NODE_OPTIONS=--no-experimental-fetch npm run build" },
+            build = { "npm install && NODE_OPTIONS=--no-experimental-fetch npm run build && git restore ." },
         },
     },
     config = function()
