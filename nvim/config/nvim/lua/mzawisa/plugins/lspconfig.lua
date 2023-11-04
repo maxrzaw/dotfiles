@@ -200,7 +200,7 @@ local ngls_cmd = {
 }
 
 lspconfig.angularls.setup({
-    autostart = true,
+    autostart = false,
     cmd = ngls_cmd,
     root_dir = lspconfig.util.root_pattern(".git"),
     on_new_config = function(new_config)
@@ -286,12 +286,7 @@ lspconfig.docker_compose_language_service.setup({
 })
 
 lspconfig.gopls.setup({})
-
-null_ls.setup({
-    sources = {
-        null_ls.builtins.formatting.prettierd,
-    },
-})
+lspconfig.tailwindcss.setup({})
 
 cmp.setup.filetype("gitcommit", {
     sources = cmp.config.sources({
