@@ -79,10 +79,27 @@ require("lazy").setup({
         cond = false and not vim.g.vscode,
     },
     {
-        "jose-elias-alvarez/null-ls.nvim",
-        name = "null-ls",
+        "nvimtools/none-ls.nvim",
+        build = "npm install -g markdownlint-cli @fsouza/prettierd",
+        config = function()
+            local null_ls = require("null-ls")
+            null_ls.setup({
+                sources = {
+                    null_ls.builtins.code_actions.refactoring,
+                    null_ls.builtins.formatting.prettierd,
+                    null_ls.builtins.formatting.trim_whitespace,
+                    null_ls.builtins.diagnostics.commitlint,
+                    null_ls.builtins.diagnostics.todo_comments,
+                    null_ls.builtins.diagnostics.dotenv_linter,
+                    null_ls.builtins.diagnostics.editorconfig_checker,
+                    null_ls.builtins.diagnostics.markdownlint,
+                    null_ls.builtins.hover.printenv,
+                    null_ls.builtins.hover.dictionary,
+                },
+            })
+        end,
         dependencies = {
-            "MunifTanjim/prettier.nvim",
+            "nvim-lua/plenary.nvim",
         },
         cond = not vim.g.vscode,
     },
@@ -118,12 +135,13 @@ require("lazy").setup({
                 },
             },
             -- Null Language Server
-            "null-ls",
+            "nvimtools/none-ls.nvim",
             -- Completion
             "nvim-cmp",
             -- OmniSharp Extended
             "Hoffs/omnisharp-extended-lsp.nvim",
         },
+        build = "npm install -g @tailwindcss/language-server",
         config = function()
             require("mzawisa.plugins.lspconfig")
         end,
@@ -138,12 +156,6 @@ require("lazy").setup({
             "mfussenegger/nvim-jdtls",
             cond = vim.g.is_work and not vim.g.vscode,
         },
-    },
-    {
-        "ckipp01/stylua-nvim",
-        cond = not vim.g.vscode,
-        ft = { "lua" },
-        build = { "npm install -g @johnnymorganz/stylua-bin" },
     },
     -- Snippets
     {
