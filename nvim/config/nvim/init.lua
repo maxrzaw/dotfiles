@@ -80,18 +80,17 @@ require("lazy").setup({
     },
     {
         "nvimtools/none-ls.nvim",
-        build = "npm install -g markdownlint-cli @fsouza/prettierd",
+        build = "npm install -g markdownlint-cli @fsouza/prettierd && curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s",
         config = function()
             local null_ls = require("null-ls")
             null_ls.setup({
                 sources = {
                     null_ls.builtins.code_actions.refactoring,
-                    null_ls.builtins.formatting.prettierd,
+                    null_ls.builtins.formatting.prettier,
                     null_ls.builtins.formatting.trim_whitespace,
                     null_ls.builtins.diagnostics.commitlint,
                     null_ls.builtins.diagnostics.todo_comments,
                     null_ls.builtins.diagnostics.dotenv_linter,
-                    null_ls.builtins.diagnostics.editorconfig_checker,
                     null_ls.builtins.diagnostics.markdownlint,
                     null_ls.builtins.hover.printenv,
                     null_ls.builtins.hover.dictionary,
