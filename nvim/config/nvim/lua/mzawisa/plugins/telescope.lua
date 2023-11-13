@@ -29,7 +29,7 @@ telescope.setup({
 telescope.load_extension("harpoon")
 telescope.load_extension("luasnip")
 telescope.load_extension("lazygit")
-telescope.load_extension("ui-select")
+-- telescope.load_extension("ui-select")
 
 nnoremap("<leader>ff", builtin.find_files, {})
 nnoremap("<leader>fgf", builtin.git_files, {})
