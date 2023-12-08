@@ -27,8 +27,10 @@ local lsp_formatting = function(bufnr)
             false
             or string.find(path, "Nova.UI/apps/workspace/")
             or string.find(path, "Nova.UI/libs/workspace%-store/")
+            or string.find(path, "Nova.UI/libs/shared/")
             or string.find(path, "Nova.UI/apps/nova/")
             or string.find(path, "Nova.UI/apps/closing/")
+            or string.find(path, "Nova.UI/apps/appraisal/")
         )
     then
         return
