@@ -3,6 +3,10 @@ local path = require("plenary.path")
 local M = {}
 M.enabled = false
 
+function M.start_angularls()
+    vim.cmd("LspStart angularls")
+end
+
 local function load_file_into_buffer(file)
     local uri = vim.uri_from_fname(file)
     local bufnrs = vim.api.nvim_list_bufs()
@@ -21,10 +25,6 @@ local function load_file_into_buffer(file)
     else
         vim.api.nvim_win_set_buf(0, bufnr)
     end
-end
-
-function M.start_angularls()
-    vim.cmd("LspStart angularls")
 end
 
 local function get_destination_without_extension()
@@ -72,10 +72,6 @@ function M.go_to_style_file()
     go_to_file_with_ext(".scss")
 end
 
-function M.set_enabled(value)
-    M.enabled = value
-end
-
 function M.set_quickswitch_keybindings()
     vim.keymap.set("n", "<leader>sp", M.go_to_spec_file, {
         silent = true,
@@ -101,6 +97,15 @@ function M.set_quickswitch_keybindings()
         buffer = true,
         desc = "Go to Angular Component",
     })
+end
+
+function M.setup()
+    M.enabled = true
+    vim.api.nvim_create_autocmd({ "BufWinEnter" }, { pattern = { "*.ts", "*.html" }, callback = M.start_angularls })
+    vim.api.nvim_create_autocmd(
+        { "BufWinEnter" },
+        { pattern = { "*.ts", "*.html", "*.scss" }, callback = M.set_quickswitch_keybindings }
+    )
 end
 
 return M
