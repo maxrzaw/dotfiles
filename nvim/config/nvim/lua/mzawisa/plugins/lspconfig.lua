@@ -136,6 +136,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         set_default_keybindings(client, bufnr)
         set_format_on_save(client, bufnr)
+        if client ~= nil and client.name == "tsserver" and angular.enabled then
+            client.server_capabilities.renameProvider = false
+        end
     end,
 })
 
@@ -201,15 +204,6 @@ local ngls_cmd = {
     default_node_modules,
 }
 
-lspconfig.angularls.setup({
-    autostart = false,
-    cmd = ngls_cmd,
-    root_dir = lspconfig.util.root_pattern(".git"),
-    on_new_config = function(new_config)
-        new_config.cmd = ngls_cmd
-    end,
-})
-
 lspconfig.terraformls.setup({})
 
 -- Set up Sonarlint Language Server
@@ -258,6 +252,15 @@ if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
         },
     })
 end
+
+lspconfig.angularls.setup({
+    autostart = false,
+    cmd = ngls_cmd,
+    root_dir = lspconfig.util.root_pattern(".git"),
+    on_new_config = function(new_config)
+        new_config.cmd = ngls_cmd
+    end,
+})
 
 lspconfig.tsserver.setup({
     root_dir = lspconfig.util.root_pattern(".git"),
