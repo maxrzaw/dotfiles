@@ -1,6 +1,5 @@
 local cmp = require("cmp")
 local lspconfig = require("lspconfig")
-local null_ls = require("null-ls")
 local sonar_rules = require("mzawisa.plugins.sonarlint_helper").rules
 local angular = require("mzawisa.custom.angular")
 
@@ -244,6 +243,7 @@ if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
                 border = "rounded",
                 title_pos = "center",
             },
+            display_rule = "float",
             settings = {
                 sonarlint = {
                     rules = sonar_rules,
