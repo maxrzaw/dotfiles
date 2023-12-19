@@ -17,11 +17,12 @@ cmp.setup({
         documentation = cmp.config.window.bordered(),
     },
     sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "nvim_lsp_signature_help" },
+        { name = "copilot" },
+        { name = "nvim_lsp", max_item_count = 5 },
+        { name = "nvim_lsp_signature_help", max_item_count = 5 },
         { name = "path" },
-        { name = "luasnip" },
-        { name = "buffer", keyword_length = 5 },
+        { name = "luasnip", max_item_count = 5 },
+        { name = "buffer", keyword_length = 5, max_item_count = 5 },
         { name = "luasnip_choice" },
     }),
     formatting = {
@@ -33,6 +34,7 @@ cmp.setup({
                 path = "[path]",
                 luasnip = "[snip]",
                 gh_issues = "[issues]",
+                Copilot = "[]",
             },
             -- show symbol then text annotations
             mode = "symbol_text",
