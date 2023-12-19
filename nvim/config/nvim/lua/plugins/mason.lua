@@ -26,7 +26,7 @@ return {
             -- "omnisharp",
             -- "rust-analyzer",
             -- "rustfmt",
-            -- "sonarlint-language-server",
+            "sonarlint-language-server",
         },
     },
     config = function(_, opts)
