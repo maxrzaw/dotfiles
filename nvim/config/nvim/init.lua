@@ -155,6 +155,7 @@ require("lazy").setup({
             "https://gitlab.com/mzawisa/sonarlint.nvim",
             name = "sonarlint.nvim",
             branch = "show-rule-description-as-preview",
+            dev = true,
             cond = vim.g.is_work and not vim.g.vscode,
             dependencies = {
                 "mfussenegger/nvim-jdtls",
