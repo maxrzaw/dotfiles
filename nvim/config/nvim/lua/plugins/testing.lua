@@ -24,7 +24,7 @@ return {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
             "antoinemadec/FixCursorHold.nvim",
-            { "maxrzaw/neotest-jest", branch = "fakeAsync" },
+            { "maxrzaw/neotest-jest", branch = "fakeAsync", dev = false },
         },
         config = function()
             require("neotest").setup({
