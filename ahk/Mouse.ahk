@@ -9,6 +9,36 @@
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
 
+; (Control + Alt + Shift + PgUp) is mapped to the down button in LogiOptions
+^!+PgUp::
+    if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
+    {
+        ; Cancel the existing screenshot
+        Send {Esc}
+        WinHide
+    }
+    else
+    {
+        ; Take a screenshot
+        Send, {PrintScreen}
+    }
+return
+
+; Remaps the PrintScreen key
+PrintScreen::
+    if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
+    {
+        ; Cancel the existing screenshot
+        Send {Esc}
+        WinHide
+    }
+    else
+    {
+        ; Take a screenshot
+        Send, {PrintScreen}
+    }
+return
+
 ; Remaps the "snipping tool" output from LogiOptions (LWin + LShift + s) to PrtScn
 <#<+s::
     if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
