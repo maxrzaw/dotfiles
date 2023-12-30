@@ -3,6 +3,7 @@ require("mzawisa")
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 vim.g.is_work = os.getenv("NEOVIM_WORK")
 vim.g.is_pi = os.getenv("NEOVIM_PI")
+vim.g.is_windows = vim.fn.has("win32") or vim.fn.has("win64")
 
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -335,14 +336,14 @@ require("lazy").setup({
             dependencies = {
                 { "nvim-lua/plenary.nvim" },
             },
-            cond = not vim.g.vscode,
+            cond = not vim.g.vscode and not vim.g.is_windows,
         },
         {
             dir = "~/dev/azdo.nvim",
             config = function()
                 require("azdo").setup({})
             end,
-            cond = not vim.g.is_pi,
+            cond = not vim.g.is_pi and not vim.g.is_windows,
         },
         {
             "christoomey/vim-tmux-navigator",
