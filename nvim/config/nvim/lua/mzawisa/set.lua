@@ -77,7 +77,7 @@ vim.g.netrw_winsize = 40
 vim.g.netrw_altfile = 1
 vim.g.netrw_keepj = "keepj"
 
-if not vim.g.is_windows then
+if not (vim.fn.has("win32") == 1) then
     vim.opt.smoothscroll = true
 end
 
@@ -85,3 +85,12 @@ end
 vim.opt.exrc = true
 
 vim.g.OmniSharp_server_use_net6 = 1
+
+-- needed for windows maybe?
+if (vim.fn.has("win32") == 1) then
+    vim.opt.shell = 'bash.exe'
+    vim.opt.shellcmdflag='-c'
+    --vim.g.coc_node_path = '/c/Program Files/nodejs/node'
+end
+require 'nvim-treesitter.install'.compilers = { "clang" }
+require 'nvim-treesitter.install'.prefer_git = false
