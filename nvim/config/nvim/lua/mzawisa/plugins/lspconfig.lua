@@ -34,8 +34,14 @@ local lsp_formatting = function(bufnr)
     then
         return
     end
+
+    if not require("mzawisa.custom.formatting-toggle").formatting_enabled() then
+        return
+    end
+
     vim.lsp.buf.format({ bufnr = bufnr })
 end
+
 local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 local set_format_on_save = function(client, bufnr)
     if client.server_capabilities.documentFormattingProvider then
