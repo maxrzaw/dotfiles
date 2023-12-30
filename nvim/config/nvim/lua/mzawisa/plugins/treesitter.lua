@@ -1,14 +1,14 @@
 require("nvim-treesitter.install").prefer_git = false
-require("nvim-treesitter.install").compilers = { "clang" }
+require("nvim-treesitter.install").compilers = { "gcc" }
 require("nvim-treesitter.configs").setup({
     -- A list of parser names, or "all"
-    ensure_installed = { "vimdoc", "javascript", "typescript", "c", "lua", "cpp", "c_sharp", "rust" },
+    --ensure_installed = { "vimdoc", "javascript", "typescript", "lua", "c_sharp" },
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,
 
     -- Automatically install missing parsers when entering buffer
-    auto_install = true,
+    auto_install = false,
 
     -- List of parsers to ignore installing (for "all")
     ignore_install = {},
