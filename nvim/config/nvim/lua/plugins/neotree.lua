@@ -36,17 +36,26 @@ return {
             hijack_netrw_behavior = "open_current",
             components = {
                 harpoon_index = function(config, node, _)
-                    local Marked = require("harpoon.mark")
+                    local harpoon_list = require("harpoon"):list()
                     local path = node:get_id()
-                    local succuss, index = pcall(Marked.get_index_of, path)
-                    if succuss and index and index > 0 then
-                        return {
-                            text = string.format("  %d", index), -- <-- Add your favorite harpoon like arrow here
-                            highlight = config.highlight or "NeoTreeDirectoryIcon",
-                        }
-                    else
-                        return {}
+                    local harpoon_key = vim.uv.cwd()
+
+                    for i, item in ipairs(harpoon_list.items) do
+                        local value = item.value
+                        if string.sub(item.value, 1, 1) ~= "/" then
+                            value = harpoon_key .. "/" .. item.value
+                        end
+
+                        if value == path then
+                            vim.print(path)
+                            return {
+                                text = string.format("  %d", i), -- <-- Add your favorite harpoon like arrow here
+                                highlight = config.highlight
+                                    or "NeoTreeDirectoryIcon",
+                            }
+                        end
                     end
+                    return {}
                 end,
             },
             renderers = {

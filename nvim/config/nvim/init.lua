@@ -252,7 +252,7 @@ require("lazy").setup({
             version = "0.1.x",
             dependencies = {
                 "nvim-lua/plenary.nvim",
-                "Harpoon",
+                -- "ThePrimeagen/harpoon",
                 "benfowler/telescope-luasnip.nvim",
                 -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
                 { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -268,15 +268,6 @@ require("lazy").setup({
             dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
             config = function()
                 require("telescope").load_extension("file_browser")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "ThePrimeagen/harpoon",
-            name = "Harpoon",
-            dependencies = { "nvim-lua/plenary.nvim" },
-            config = function()
-                require("mzawisa.plugins.harpoon")
             end,
             cond = not vim.g.vscode,
         },
