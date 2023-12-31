@@ -1,9 +1,9 @@
 require("mzawisa")
 -- Bootstrap Lazy
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 vim.g.is_work = os.getenv("NEOVIM_WORK")
 vim.g.is_pi = os.getenv("NEOVIM_PI")
 
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
         "git",
@@ -21,6 +21,11 @@ require("lazy").setup({
     dev = {
         path = "~/dev",
         patterns = { "mzawisa", "maxrzaw", "https://gitlab.com/schrieveslaach" },
+        fallback = true,
+    },
+    ui = {
+        border = "rounded",
+        title = " Lazy ",
     },
     spec = {
         { "lazy.nvim" },
