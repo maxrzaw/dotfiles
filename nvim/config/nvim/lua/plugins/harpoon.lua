@@ -18,6 +18,32 @@ local function find_project_root()
     return vim.uv.cwd()
 end
 
+---@param current_filename string current file
+---@param filename string filename to make relative to current file
+---@param root string Don't go further than this directory
+---@return string
+local function make_relative(current_filename, filename, root)
+    local Path = require("plenary.path")
+    local dir = Path:new(current_filename):parent().filename
+    local path = Path:new(filename):make_relative(dir)
+
+    local common_parent = ""
+    local prefix = ""
+    for _, parent in ipairs(Path:new(current_filename):parents()) do
+        if parent == root or string.find(parent, root) == nil then
+            return Path:new(path):normalize(dir)
+        end
+        if string.find(path, parent) ~= nil then
+            common_parent = parent
+            break
+        end
+        prefix = prefix .. "../"
+    end
+    path = path:gsub(common_parent .. "/", prefix)
+
+    return path
+end
+
 return {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
@@ -70,12 +96,7 @@ return {
                     }
                 end,
                 display = function(ui_context, list_item)
-                    local dir = Path:new(ui_context):parent().filename
-                    local path = Path:new(list_item.value):normalize(dir)
-                    -- TODO: transform path to relative when ther relationship to current file is
-                    -- `../file` or `../dir/file`
-                    -- Basically any time where the backtracking is needed
-                    return path
+                    return make_relative(ui_context, list_item.value, find_project_root())
                 end,
                 BufLeave = function(arg, list)
                     local bufnr = arg.buf
