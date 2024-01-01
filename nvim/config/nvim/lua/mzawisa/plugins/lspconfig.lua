@@ -122,9 +122,6 @@ local set_default_keybindings = function(client, bufnr)
         vim.tbl_extend("error", opts, { desc = "Lsp Signature Help" })
     )
     vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("error", opts, { desc = "Lsp Hover" }))
-    vim.keymap.set("n", "<leader>f", function()
-        vim.lsp.buf.format({ async = true })
-    end, vim.tbl_extend("error", opts, { desc = "Format with Lsp" }))
 
     if client.name == "angularls" then
         angular.set_quickswitch_keybindings()
@@ -188,8 +185,6 @@ end
 -- Set up Angular Language Server
 -- wierd things required for angular monorepo
 local function get_node_modules(root_dir)
-    -- return util.find_node_modules_ancestor(root_dir) .. '/node_modules' or ''
-    -- util.find_node_modules_ancestor()
     local root_node = root_dir .. "/node_modules"
     local stats = vim.loop.fs_stat(root_node)
     if stats == nil then
@@ -262,14 +257,14 @@ lspconfig.terraformls.setup({})
 lspconfig.angularls.setup({
     autostart = false,
     cmd = ngls_cmd,
-    root_dir = lspconfig.util.root_pattern(".git"),
+    root_dir = lspconfig.util.root_pattern(".git", "package.json"),
     on_new_config = function(new_config)
         new_config.cmd = ngls_cmd
     end,
 })
 
 lspconfig.tsserver.setup({
-    root_dir = lspconfig.util.root_pattern(".git"),
+    root_dir = lspconfig.util.root_pattern(".git", "package.json"),
     on_init = disable_formatting_on_init,
 })
 
