@@ -1,3 +1,23 @@
+-- Function to find the root directory of the project
+local function find_project_root()
+    ---@type string
+    local current_dir = vim.uv.cwd()
+    local marker_files = { ".git", "package.json", ".sln" }
+
+    -- Check each parent directory for the existence of a marker file or directory
+    while current_dir ~= "/" do
+        for _, marker in ipairs(marker_files) do
+            local marker_path = current_dir .. "/" .. marker
+            if vim.fn.isdirectory(marker_path) == 1 or vim.fn.filereadable(marker_path) == 1 then
+                return current_dir
+            end
+        end
+        current_dir = vim.fn.resolve(current_dir .. "/..")
+    end
+    -- If no marker file or directory is found, return the original directory
+    return vim.uv.cwd()
+end
+
 return {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
@@ -5,28 +25,91 @@ return {
     lazy = false,
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
-        local harpoon = require("harpoon")
+        local Path = require("plenary.path")
+        local Harpoon = require("harpoon")
+        local default_config = Harpoon.config.default
 
-        harpoon:setup({
+        Harpoon:setup({
             settings = {
                 save_on_toggle = true,
-                sync_on_ui_close = false,
+                sync_on_ui_close = true,
                 key = function()
-                    return vim.loop.cwd()
+                    return find_project_root()
+                end,
+            },
+            relative = {
+                select = function(list_item, list, options)
+                    default_config.select(list_item, list, options)
+                end,
+                get_root_dir = function()
+                    return find_project_root()
+                end,
+                equals = function(a, b)
+                    return a.value == b.value
+                end,
+                create_list_item = function(config, name)
+                    local path = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+                    name = name or path
+                    if string.sub(name, 1, 1) ~= "/" then
+                        local dir = Path:new(path):parent().filename
+                        path = dir .. "/" .. name
+                    end
+                    local bufnr = vim.fn.bufnr(path, false)
+
+                    local pos = { 1, 0 }
+                    if bufnr ~= -1 then
+                        pos = vim.api.nvim_win_get_cursor(0)
+                    end
+
+                    return {
+                        value = path,
+                        context = {
+                            row = pos[1],
+                            col = pos[2],
+                        },
+                    }
+                end,
+                display = function(ui_context, list_item)
+                    local dir = Path:new(ui_context):parent().filename
+                    local path = Path:new(list_item.value):normalize(dir)
+                    -- TODO: transform path to relative when ther relationship to current file is
+                    -- `../file` or `../dir/file`
+                    -- Basically any time where the backtracking is needed
+                    return path
+                end,
+                BufLeave = function(arg, list)
+                    local bufnr = arg.buf
+                    local bufname = vim.api.nvim_buf_get_name(bufnr)
+                    local item = nil
+                    for _, it in ipairs(list.items) do
+                        local value = it.value
+                        if value == bufname then
+                            item = it
+                        end
+                    end
+
+                    if item then
+                        local pos = vim.api.nvim_win_get_cursor(0)
+
+                        item.context.row = pos[1]
+                        item.context.col = pos[2]
+                    end
                 end,
             },
         })
 
         -- Harpoon
         vim.keymap.set("n", "<leader>m", function()
-            harpoon:list():append()
+            Harpoon:list("relative"):append()
         end)
         vim.keymap.set("n", "<leader>h", function()
-            harpoon.ui:toggle_quick_menu(harpoon:list(), {
+            local path = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+            Harpoon.ui:toggle_quick_menu(Harpoon:list("relative"), {
                 border = "rounded",
-                title_pos = "left",
-                title = " Harpoon ",
+                title_pos = "center",
+                title = " >-> Harpoon <-< ",
                 ui_max_width = 80,
+                context = path,
             })
         end)
     end,
