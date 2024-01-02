@@ -60,7 +60,8 @@ return {
                 save_on_toggle = true,
                 sync_on_ui_close = true,
                 key = function()
-                    return find_project_root()
+                    return vim.uv.cwd()
+                    -- return find_project_root()
                 end,
             },
             relative = {
@@ -121,11 +122,13 @@ return {
 
         -- Harpoon
         vim.keymap.set("n", "<leader>m", function()
-            Harpoon:list("relative"):append()
+            Harpoon:list():append()
+            -- Harpoon:list("relative"):append()
         end)
         vim.keymap.set("n", "<leader>h", function()
             local path = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-            Harpoon.ui:toggle_quick_menu(Harpoon:list("relative"), {
+            -- Harpoon.ui:toggle_quick_menu(Harpoon:list("relative"), {
+            Harpoon.ui:toggle_quick_menu(Harpoon:list(), {
                 border = "rounded",
                 title_pos = "center",
                 title = " >-> Harpoon <-< ",
