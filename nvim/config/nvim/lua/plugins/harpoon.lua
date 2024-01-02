@@ -60,8 +60,8 @@ return {
                 save_on_toggle = true,
                 sync_on_ui_close = true,
                 key = function()
-                    return vim.uv.cwd()
-                    -- return find_project_root()
+                    -- return vim.uv.cwd()
+                    return find_project_root()
                 end,
             },
             relative = {
@@ -97,7 +97,10 @@ return {
                     }
                 end,
                 display = function(ui_context, list_item)
-                    return make_relative(ui_context, list_item.value, find_project_root())
+                    if ui_context ~= nil then
+                        return make_relative(ui_context, list_item.value, find_project_root())
+                    end
+                    return default_config.display(ui_context, list_item)
                 end,
                 BufLeave = function(arg, list)
                     local bufnr = arg.buf
