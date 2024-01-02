@@ -36,7 +36,8 @@ return {
             hijack_netrw_behavior = "open_current",
             components = {
                 harpoon_index = function(config, node, _)
-                    local harpoon_list = require("harpoon"):list("relative")
+                    -- local harpoon_list = require("harpoon"):list("relative")
+                    local harpoon_list = require("harpoon"):list()
                     local path = node:get_id()
 
                     for i, item in ipairs(harpoon_list.items) do
