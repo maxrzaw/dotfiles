@@ -2,7 +2,6 @@ return {
     {
         "ckipp01/stylua-nvim",
         cond = not vim.g.vscode,
-        ft = { "lua" },
         build = { "npm install -g @johnnymorganz/stylua-bin" },
         config = function()
             local formatting_toggle = require("mzawisa.custom.formatting-toggle")
