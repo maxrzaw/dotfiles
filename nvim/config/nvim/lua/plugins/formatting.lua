@@ -1,7 +1,7 @@
 return {
     {
         "ckipp01/stylua-nvim",
-        cond = not vim.g.vscode,
+        cond = false,
         ft = { "lua" },
         build = { "npm install -g @johnnymorganz/stylua-bin" },
         config = function()
