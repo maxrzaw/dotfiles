@@ -1,5 +1,6 @@
 return {
     {
+        cond = false,
         "goolord/alpha-nvim",
         dependencies = {
             "nvim-telescope/telescope-file-browser.nvim",

@@ -58,7 +58,6 @@ require("lazy").setup({
                         neotree = true,
                         neotest = true,
                         telescope = true,
-                        treesitter = true,
                     },
                     custom_highlights = function(mocha)
                         return {
@@ -207,7 +206,7 @@ require("lazy").setup({
         {
             "danymat/neogen",
             name = "Neogen",
-            dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
+            dependencies = { "LuaSnip" },
             config = function()
                 require("mzawisa.plugins.neogen")
             end,
@@ -229,19 +228,6 @@ require("lazy").setup({
                 require("mzawisa.plugins.lualine")
             end,
             cond = not vim.g.vscode,
-        },
-        {
-            "nvim-treesitter/nvim-treesitter",
-            dependencies = {
-                { "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" },
-                { "windwp/nvim-ts-autotag" },
-            },
-            build = function()
-                require("nvim-treesitter.install").update({ with_sync = true })
-            end,
-            config = function()
-                require("mzawisa.plugins.treesitter")
-            end,
         },
         {
             "nvim-telescope/telescope.nvim",
