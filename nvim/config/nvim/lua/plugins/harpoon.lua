@@ -1,3 +1,12 @@
+-- Function to get the current git branch or nil if there is no branch
+local function get_git_branch()
+    local git_branch = vim.fn.systemlist("git branch --show-current")
+    if git_branch[1] == "fatal: not a git repository (or any of the parent directories): .git" then
+        return nil
+    end
+    return git_branch[1]
+end
+
 -- Function to find the root directory of the project
 local function find_project_root()
     ---@type string
