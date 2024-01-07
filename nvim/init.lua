@@ -1,7 +1,6 @@
 require("mzawisa.set")
 require("mzawisa.autocmds")
 require("mzawisa.remaps")
-local get_opts = require("mzawisa.keymap").get_opts
 
 -- Bootstrap Lazy
 vim.g.is_work = os.getenv("NEOVIM_WORK")
@@ -107,25 +106,6 @@ require("lazy").setup({
         },
         "tpope/vim-surround",
         {
-            "hrsh7th/nvim-cmp",
-            name = "nvim-cmp",
-            dependencies = {
-                "doxnit/cmp-luasnip-choice",
-                "hrsh7th/cmp-buffer",
-                "hrsh7th/cmp-nvim-lsp",
-                "hrsh7th/cmp-nvim-lsp-signature-help",
-                "hrsh7th/cmp-nvim-lua",
-                "hrsh7th/cmp-path",
-                "onsails/lspkind.nvim",
-                "saadparwaiz1/cmp_luasnip",
-                { "petertriho/cmp-git", dependencies = { "nvim-lua/plenary.nvim" } },
-            },
-            config = function()
-                require("mzawisa.plugins.cmp")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
             "https://gitlab.com/mzawisa/sonarlint.nvim",
             name = "sonarlint.nvim",
             branch = "show-rule-description-as-preview",
@@ -135,18 +115,6 @@ require("lazy").setup({
                 "mfussenegger/nvim-jdtls",
                 cond = vim.g.is_work and not vim.g.vscode,
             },
-        },
-        -- Snippets
-        {
-            "L3MON4D3/LuaSnip",
-            name = "LuaSnip",
-            dependencies = {
-                "rafamadriz/friendly-snippets",
-            },
-            config = function()
-                require("mzawisa.plugins.luasnip")
-            end,
-            cond = not vim.g.vscode,
         },
 
         -- Useful status updates for LSP
@@ -160,27 +128,6 @@ require("lazy").setup({
                     blend = 0,
                 },
             },
-            cond = not vim.g.vscode,
-        },
-        {
-            "folke/trouble.nvim",
-            name = "Trouble",
-            dependencies = { "nvim-tree/nvim-web-devicons" },
-            config = function()
-                require("trouble").setup({
-                    auto_close = true,
-                    action_keys = {
-                        toggle_fold = { "<leader>z", "<leader>Z" },
-                    },
-                    height = 15,
-                    auto_jump = {
-                        "lsp_definitions",
-                        "lsp_type_definitions",
-                        -- "lsp_references", -- This appears to be broken
-                    },
-                })
-                vim.keymap.set("n", "<leader>qq", "<cmd>TroubleToggle<cr>", get_opts("Toggle Trouble"))
-            end,
             cond = not vim.g.vscode,
         },
         {
@@ -200,19 +147,6 @@ require("lazy").setup({
                 vim.keymap.set({ "t", "n" }, "<C-T>", "<cmd>FloatermToggle<cr>", { noremap = true, silent = true })
                 vim.g.floaterm_width = 0.9
                 vim.g.floaterm_height = 0.9
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "iamcco/markdown-preview.nvim",
-            name = "Markdown Preview",
-            build = "cd app && npm install && git restore .",
-            init = function()
-                vim.g.mkdp_filetypes = { "markdown" }
-            end,
-            ft = { "markdown" },
-            config = function()
-                require("mzawisa.plugins.markdown-preview")
             end,
             cond = not vim.g.vscode,
         },

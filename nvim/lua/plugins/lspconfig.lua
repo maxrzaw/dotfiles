@@ -15,11 +15,13 @@ return {
         "nvim-cmp",
         -- OmniSharp Extended
         "Hoffs/omnisharp-extended-lsp.nvim",
+        -- Special LSP config for neovim development
+        "folke/neodev.nvim",
     },
     config = function()
         local cmp = require("cmp")
         local lspconfig = require("lspconfig")
-        local sonar_rules = require("mzawisa.plugins.sonarlint_helper").rules
+        local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
 
         -- Add nvim_cmp default capabilities to lspconfig default capabilities
@@ -183,7 +185,7 @@ return {
                     -- Disable Telemetry
                     telemetry = { enable = false },
                     diagnostics = {
-                        globals = { "vim" },
+                        globals = { "vim", "describe", "it", "before_each", "after_each" },
                     },
                     runtime = {
                         version = "LuaJIT",
@@ -191,10 +193,11 @@ return {
                     },
                     workspace = {
                         checkThirdParty = false,
-                        library = {
-                            vim.fn.expand("$VIMRUNTIME/lua"),
-                            vim.fn.stdpath("config") .. "/lua",
-                        },
+                        -- --The below was replaced by neodev.nvim
+                        -- library = {
+                        --     vim.fn.expand("$VIMRUNTIME/lua"),
+                        --     vim.fn.stdpath("config") .. "/lua",
+                        -- },
                     },
                 },
             },

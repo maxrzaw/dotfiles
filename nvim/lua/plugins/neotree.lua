@@ -1,4 +1,12 @@
 local helper = require("mzawisa.custom.neotree")
+local function open()
+    if helper.pinned() then
+        vim.cmd("Neotree left")
+    else
+        vim.cmd("Neotree close")
+        vim.cmd("Neotree current %:p:h")
+    end
+end
 return {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -8,14 +16,15 @@ return {
         "MunifTanjim/nui.nvim",
     },
     opts = {
+        close_if_last_window = true,
         popup_border_style = "rounded",
         event_handlers = {
-            {
-                event = "neo_tree_window_after_close",
-                handler = function(_)
-                    helper.unpin()
-                end,
-            },
+            -- {
+            --     event = "neo_tree_window_after_close",
+            --     handler = function(_)
+            --         helper.unpin()
+            --     end,
+            -- },
             {
                 event = "file_opened",
                 handler = function(_)
@@ -36,7 +45,6 @@ return {
             hijack_netrw_behavior = "open_current",
             components = {
                 harpoon_index = function(config, node, _)
-                    -- local harpoon_list = require("harpoon"):list("relative")
                     local harpoon_list = require("harpoon"):list()
                     local path = node:get_id()
 
@@ -67,22 +75,16 @@ return {
     keys = {
         {
             "<leader>e",
-            function()
-                if helper.pinned() then
-                    vim.cmd("Neotree left")
-                else
-                    vim.cmd("Neotree current %:p:h")
-                end
-            end,
-            desc = "Neotree",
+            open,
+            desc = "Neotree Open",
         },
         {
             "<leader>E",
             function()
-                helper.pin()
-                vim.cmd("Neotree left")
+                helper.toggle()
+                open()
             end,
-            desc = "Neotree left",
+            desc = "Neotree Toggle Pinned and Open",
         },
     },
 }
