@@ -1,5 +1,4 @@
-nvim/config/nvim/backup
-nvim/config/nvim/plugin
-nvim/config/nvim/spell
-nvim/config/nvim/swp
-nvim/config/nvim/undo
+nvim/backup
+nvim/spell
+nvim/swp
+nvim/undo

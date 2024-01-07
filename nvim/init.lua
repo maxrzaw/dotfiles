@@ -82,17 +82,6 @@ require("lazy").setup({
             cond = not vim.g.vscode,
         },
         {
-            "folke/tokyonight.nvim",
-            name = "Tokyo Night",
-            lazy = false, -- make sure we load this during startup if it is your main colorscheme
-            priority = 1000, -- make sure to load this before all the other start plugins
-            config = function()
-                -- load the colorscheme here
-                require("mzawisa.plugins.tokyonight").my_setup()
-            end,
-            cond = false and not vim.g.vscode,
-        },
-        {
             "nvimtools/none-ls.nvim",
             build = "npm install -g markdownlint-cli @fsouza/prettierd && curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s",
             config = function()
@@ -116,7 +105,6 @@ require("lazy").setup({
             },
             cond = not vim.g.vscode,
         },
-        "tpope/vim-fugitive",
         "tpope/vim-surround",
         {
             "hrsh7th/nvim-cmp",
@@ -134,29 +122,6 @@ require("lazy").setup({
             },
             config = function()
                 require("mzawisa.plugins.cmp")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "neovim/nvim-lspconfig",
-            dependencies = {
-                -- Mason
-                {
-                    "williamboman/mason-lspconfig.nvim",
-                    dependencies = {
-                        "williamboman/mason.nvim",
-                    },
-                },
-                -- Null Language Server
-                "nvimtools/none-ls.nvim",
-                -- Completion
-                "nvim-cmp",
-                -- OmniSharp Extended
-                "Hoffs/omnisharp-extended-lsp.nvim",
-            },
-            build = "npm install -g @tailwindcss/language-server",
-            config = function()
-                require("mzawisa.plugins.lspconfig")
             end,
             cond = not vim.g.vscode,
         },
@@ -189,9 +154,12 @@ require("lazy").setup({
             "j-hui/fidget.nvim",
             name = "Fidget",
             tag = "legacy",
-            config = function()
-                require("mzawisa.plugins.fidget")
-            end,
+            opts = {
+                window = {
+                    border = "rounded",
+                    blend = 0,
+                },
+            },
             cond = not vim.g.vscode,
         },
         {
@@ -199,66 +167,39 @@ require("lazy").setup({
             name = "Trouble",
             dependencies = { "nvim-tree/nvim-web-devicons" },
             config = function()
-                require("mzawisa.plugins.trouble")
+                require("trouble").setup({
+                    auto_close = true,
+                    action_keys = {
+                        toggle_fold = { "<leader>z", "<leader>Z" },
+                    },
+                    height = 15,
+                    auto_jump = {
+                        "lsp_definitions",
+                        "lsp_type_definitions",
+                        -- "lsp_references", -- This appears to be broken
+                    },
+                })
+                vim.keymap.set("n", "<leader>qq", "<cmd>TroubleToggle<cr>", get_opts("Toggle Trouble"))
             end,
             cond = not vim.g.vscode,
-        },
-
-        -- Comments
-        {
-            "numToStr/Comment.nvim",
-            name = "Comment",
-            config = function()
-                require("Comment").setup()
-            end,
-        },
-        {
-            "danymat/neogen",
-            name = "Neogen",
-            dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
-            config = function()
-                require("neogen").setup({
-                    snippet_engine = "luasnip",
-                    enabled = true,
-                })
-                vim.keymap.set("n", "<leader>dc", ":lua require('neogen').generate()<cr>", get_opts("Neogen Generate"))
-            end,
         },
         {
             "mbbill/undotree", -- ability to browse file history tree
             name = "Undo Tree",
             config = function()
-                require("mzawisa.plugins.undotree")
+                vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { silent = true, noremap = true })
             end,
             cond = not vim.g.vscode,
-        },
-        {
-            "nvim-lualine/lualine.nvim",
-            name = "Lualine",
-            dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
-            config = function()
-                require("mzawisa.plugins.lualine")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "nvim-treesitter/nvim-treesitter",
-            dependencies = {
-                { "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" },
-                { "windwp/nvim-ts-autotag" },
-            },
-            build = function()
-                require("nvim-treesitter.install").update({ with_sync = true })
-            end,
-            config = function()
-                require("mzawisa.plugins.treesitter")
-            end,
         },
         {
             "voldikss/vim-floaterm",
             name = "Floaterm",
             config = function()
-                require("mzawisa.plugins.floaterm")
+                vim.g.floaterm_title = ""
+                -- Terminal Mode
+                vim.keymap.set({ "t", "n" }, "<C-T>", "<cmd>FloatermToggle<cr>", { noremap = true, silent = true })
+                vim.g.floaterm_width = 0.9
+                vim.g.floaterm_height = 0.9
             end,
             cond = not vim.g.vscode,
         },
@@ -276,68 +217,11 @@ require("lazy").setup({
             cond = not vim.g.vscode,
         },
         {
-            "NeogitOrg/neogit",
-            name = "Neogit",
-            dependencies = { "nvim-lua/plenary.nvim" },
-            config = function()
-                require("mzawisa.plugins.git")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "lewis6991/gitsigns.nvim",
-            opts = {
-                signcolumn = true,
-                numhl = false,
-                linehl = false,
-                word_diff = false,
-                current_line_blame = true,
-                current_line_blame_opts = {
-                    virt_text = true,
-                    virt_text_pos = "eol",
-                    ignore_whitespace = true,
-                    delay = 2000,
-                },
-                preview_config = {
-                    border = "rounded",
-                },
-            },
-            init = function()
-                local gitsigns = require("gitsigns")
-                vim.keymap.set("n", "<leader>gB", function()
-                    gitsigns.blame_line({ full = true })
-                end, get_opts("Gitsigns Show Full Line Blame"))
-            end,
-        },
-        {
-            "kdheepak/lazygit.nvim",
-            dependencies = {
-                { "nvim-lua/plenary.nvim" },
-            },
-            cond = not vim.g.vscode,
-        },
-        {
             dir = "~/dev/azdo.nvim",
             config = function()
                 require("azdo").setup({})
             end,
             cond = not vim.g.is_pi,
-        },
-        {
-            "christoomey/vim-tmux-navigator",
-            config = function()
-                -- Turn off default tmux navigator mappings
-                vim.g.tmux_navigator_no_mappings = 1
-            end,
-            keys = {
-                { "<c-w><c-h>", "<cmd>TmuxNavigateLeft<cr>", mode = "n" },
-                { "<c-w><c-j>", "<cmd>TmuxNavigateDown<cr>", mode = "n" },
-                { "<c-w><c-k>", "<cmd>TmuxNavigateUp<cr>", mode = "n" },
-                { "<c-w><c-l>", "<cmd>TmuxNavigateRight<cr>", mode = "n" },
-            },
-        },
-        {
-            "tmux-plugins/vim-tmux",
         },
         {
             "2kabhishek/nerdy.nvim",
