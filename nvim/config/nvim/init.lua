@@ -1,4 +1,8 @@
-require("mzawisa")
+require("mzawisa.set")
+require("mzawisa.autocmds")
+require("mzawisa.remaps")
+local get_opts = require("mzawisa.keymap").get_opts
+
 -- Bootstrap Lazy
 vim.g.is_work = os.getenv("NEOVIM_WORK")
 vim.g.is_pi = os.getenv("NEOVIM_PI")
@@ -205,7 +209,7 @@ require("lazy").setup({
             "numToStr/Comment.nvim",
             name = "Comment",
             config = function()
-                require("mzawisa.plugins.comment")
+                require("Comment").setup()
             end,
         },
         {
@@ -213,9 +217,12 @@ require("lazy").setup({
             name = "Neogen",
             dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
             config = function()
-                require("mzawisa.plugins.neogen")
+                require("neogen").setup({
+                    snippet_engine = "luasnip",
+                    enabled = true,
+                })
+                vim.keymap.set("n", "<leader>dc", ":lua require('neogen').generate()<cr>", get_opts("Neogen Generate"))
             end,
-            -- cond = not vanilla,
         },
         {
             "mbbill/undotree", -- ability to browse file history tree
@@ -246,30 +253,6 @@ require("lazy").setup({
             config = function()
                 require("mzawisa.plugins.treesitter")
             end,
-        },
-        {
-            "nvim-telescope/telescope.nvim",
-            version = "0.1.x",
-            dependencies = {
-                "nvim-lua/plenary.nvim",
-                -- "ThePrimeagen/harpoon",
-                "benfowler/telescope-luasnip.nvim",
-                -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
-                { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-                { "nvim-telescope/telescope-ui-select.nvim" },
-            },
-            config = function()
-                require("mzawisa.plugins.telescope")
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
-            "nvim-telescope/telescope-file-browser.nvim",
-            dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
-            config = function()
-                require("telescope").load_extension("file_browser")
-            end,
-            cond = not vim.g.vscode,
         },
         {
             "voldikss/vim-floaterm",
@@ -315,19 +298,19 @@ require("lazy").setup({
                     ignore_whitespace = true,
                     delay = 2000,
                 },
+                preview_config = {
+                    border = "rounded",
+                },
             },
             init = function()
-                vim.api.nvim_set_keymap(
-                    "n",
-                    "<leader>gB",
-                    "<cmd>lua require('gitsigns').blame_line({full = true})<cr>",
-                    { noremap = true, silent = true, desc = "Gitsigns Show Full Line Blame" }
-                )
+                local gitsigns = require("gitsigns")
+                vim.keymap.set("n", "<leader>gB", function()
+                    gitsigns.blame_line({ full = true })
+                end, get_opts("Gitsigns Show Full Line Blame"))
             end,
         },
         {
             "kdheepak/lazygit.nvim",
-            -- optional for floating window border decoration
             dependencies = {
                 { "nvim-lua/plenary.nvim" },
             },

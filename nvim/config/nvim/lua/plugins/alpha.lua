@@ -49,12 +49,15 @@ return {
             local userName = "Max"
             local greeting = getGreeting(userName)
             dashboard.section.header.val = vim.split(logo .. "\n" .. greeting, "\n")
+            local recent_files = ":lua require('telescope.builtin').oldfiles({hidden = true})<CR>"
+            local find_files = ":lua require('telescope.builtin').find_files({hidden = true})<CR>"
+            local live_grep = ":lua require('telescope.builtin').live_grep({hidden = true})<CR>"
             dashboard.section.buttons.val = {
                 dashboard.button("n", " " .. " New file", ":ene <BAR> startinsert <CR>"),
                 dashboard.button("e", "󰙅 " .. " File browser", ":Neotree<CR>"),
-                dashboard.button("r", "󰄉 " .. " Recent files", ":Telescope oldfiles <CR>"),
-                dashboard.button("f", " " .. " Find file", ":Telescope find_files <CR>"),
-                dashboard.button("g", "󱎸 " .. " Find text", ":Telescope live_grep <CR>"),
+                dashboard.button("r", "󰄉 " .. " Recent files", recent_files),
+                dashboard.button("f", " " .. " Find file", find_files),
+                dashboard.button("g", "󱎸 " .. " Find text", live_grep),
                 dashboard.button("l", "󰒲 " .. " Lazy", ":Lazy<CR>"),
                 dashboard.button("m", "󰢷 " .. " Mason", ":Mason<CR>"),
                 dashboard.button("c", " " .. " Config", ":e $MYVIMRC <CR>"),
