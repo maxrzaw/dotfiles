@@ -83,7 +83,7 @@ return {
                 equals = function(a, b)
                     return a.value == b.value
                 end,
-                create_list_item = function(config, name)
+                create_list_item = function(config, item)
                     local path = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
                     name = name or path
                     if string.sub(name, 1, 1) ~= "/" then

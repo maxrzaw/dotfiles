@@ -1,5 +1,12 @@
 local M = {}
 
+---@return table
+---@param description string
+---@param opts? table
+function M.get_opts(description, opts)
+    return vim.tbl_extend("force", { noremap = true, silent = true, desc = description }, opts or {})
+end
+
 local function bind(op, outer_opts)
     outer_opts = outer_opts or { noremap = true, silent = true }
     return function(lhs, rhs, opts)

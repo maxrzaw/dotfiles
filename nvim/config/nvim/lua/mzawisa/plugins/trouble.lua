@@ -1,4 +1,3 @@
-local nnoremap = require("mzawisa.keymap").nnoremap
 require("trouble").setup({
     auto_close = true,
     action_keys = {
