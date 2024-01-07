@@ -3,20 +3,40 @@ return {
     {
         "numToStr/Comment.nvim",
         name = "Comment",
-        config = function()
-            require("Comment").setup()
-        end,
+        lazy = false,
+        opts = {},
     },
     {
         "danymat/neogen",
         name = "Neogen",
         dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
-        config = function()
-            require("neogen").setup({
-                snippet_engine = "luasnip",
-                enabled = true,
-            })
-            vim.keymap.set("n", "<leader>dc", ":lua require('neogen').generate()<cr>", get_opts("Neogen Generate"))
+        ft = {
+            "sh",
+            "c",
+            "cs",
+            "cpp",
+            "go",
+            "java",
+            "javascript",
+            "javascriptreact",
+            "kotlin",
+            "lua",
+            "php",
+            "python",
+            "ruby",
+            "rust",
+            "typescript",
+            "typescriptreact",
+            "vue",
+        },
+        opts = {
+            snippet_engine = "luasnip",
+            enabled = true,
+        },
+        init = function()
+            vim.keymap.set("n", "<leader>dc", function()
+                require("neogen").generate()
+            end, get_opts("Neogen Generate"))
         end,
     },
 }

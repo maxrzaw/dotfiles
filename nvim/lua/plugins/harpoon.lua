@@ -1,57 +1,4 @@
--- Function to get the current git branch or nil if there is no branch
-local function get_git_branch()
-    local git_branch = vim.fn.systemlist("git branch --show-current")
-    if git_branch[1] == "fatal: not a git repository (or any of the parent directories): .git" then
-        return nil
-    end
-    return git_branch[1]
-end
-
--- Function to find the root directory of the project
-local function find_project_root()
-    ---@type string
-    local current_dir = vim.uv.cwd()
-    local marker_files = { ".git", "package.json", ".sln" }
-
-    -- Check each parent directory for the existence of a marker file or directory
-    while current_dir ~= "/" do
-        for _, marker in ipairs(marker_files) do
-            local marker_path = current_dir .. "/" .. marker
-            if vim.fn.isdirectory(marker_path) == 1 or vim.fn.filereadable(marker_path) == 1 then
-                return current_dir
-            end
-        end
-        current_dir = vim.fn.resolve(current_dir .. "/..")
-    end
-    -- If no marker file or directory is found, return the original directory
-    return vim.uv.cwd()
-end
-
----@param current_filename string current file
----@param filename string filename to make relative to current file
----@param root string Don't go further than this directory
----@return string
-local function make_relative(current_filename, filename, root)
-    local Path = require("plenary.path")
-    local dir = Path:new(current_filename):parent().filename
-    local path = Path:new(filename):make_relative(dir)
-
-    local common_parent = ""
-    local prefix = ""
-    for _, parent in ipairs(Path:new(current_filename):parents()) do
-        if parent == root or string.find(parent, root) == nil then
-            return Path:new(path):normalize(dir)
-        end
-        if string.find(path, parent) ~= nil then
-            common_parent = parent
-            break
-        end
-        prefix = prefix .. "../"
-    end
-    path = path:gsub(common_parent .. "/", prefix)
-
-    return path
-end
+local utils = require("mzawisa.utils")
 
 return {
     "ThePrimeagen/harpoon",
@@ -70,7 +17,7 @@ return {
                 sync_on_ui_close = true,
                 key = function()
                     -- return vim.uv.cwd()
-                    return find_project_root()
+                    return utils.find_project_root()
                 end,
             },
             relative = {
@@ -78,17 +25,17 @@ return {
                     default_config.select(list_item, list, options)
                 end,
                 get_root_dir = function()
-                    return find_project_root()
+                    return utils.find_project_root()
                 end,
                 equals = function(a, b)
                     return a.value == b.value
                 end,
-                create_list_item = function(config, item)
+                create_list_item = function(_, item)
                     local path = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-                    name = name or path
-                    if string.sub(name, 1, 1) ~= "/" then
+                    item = item or path
+                    if string.sub(item, 1, 1) ~= "/" then
                         local dir = Path:new(path):parent().filename
-                        path = dir .. "/" .. name
+                        path = dir .. "/" .. item
                     end
                     local bufnr = vim.fn.bufnr(path, false)
 
@@ -107,7 +54,7 @@ return {
                 end,
                 display = function(ui_context, list_item)
                     if ui_context ~= nil then
-                        return make_relative(ui_context, list_item.value, find_project_root())
+                        return utils.make_relative(ui_context, list_item.value, utils.find_project_root())
                     end
                     return default_config.display(ui_context, list_item)
                 end,
@@ -131,6 +78,22 @@ return {
                 end,
             },
         })
+
+        -- vim.api.nvim_create_autocmd({ "QuitPre" }, {
+        --     pattern = "*",
+        --     callback = function()
+        --         local bufnr = vim.api.nvim_get_current_buf()
+        --         local path = vim.api.nvim_buf_get_name(bufnr)
+        --         Harpoon.logger:log("QuitPre", bufnr, path)
+        --         for _, it in ipairs(Harpoon:list().items) do
+        --             local value = it.value
+        --             if value == path then
+        --                 Harpoon:list():append()
+        --                 break
+        --             end
+        --         end
+        --     end,
+        -- })
 
         -- Harpoon
         vim.keymap.set("n", "<leader>m", function()

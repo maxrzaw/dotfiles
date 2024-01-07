@@ -27,6 +27,7 @@ return {
             { "maxrzaw/neotest-jest", branch = "fakeAsync", dev = false },
         },
         config = function()
+            ---@diagnostic disable-next-line: missing-fields
             require("neotest").setup({
                 adapters = {
                     require("neotest-jest")({
