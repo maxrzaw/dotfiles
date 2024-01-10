@@ -1,6 +1,5 @@
+--- Set a bunch of options
 require("mzawisa.set")
-require("mzawisa.autocmds")
-require("mzawisa.remaps")
 
 -- Bootstrap Lazy
 vim.g.is_work = os.getenv("NEOVIM_WORK")
@@ -23,7 +22,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     dev = {
         path = "~/dev",
-        patterns = { "mzawisa", "maxrzaw", "https://gitlab.com/schrieveslaach" },
+        patterns = { "maxzawisa", "mzawisa", "maxrzaw", "https://gitlab.com/schrieveslaach" },
         fallback = true,
     },
     ui = {
@@ -167,3 +166,7 @@ require("lazy").setup({
         },
     },
 })
+
+--- The rest of my user configuration
+require("mzawisa.autocmds")
+require("mzawisa.remaps")

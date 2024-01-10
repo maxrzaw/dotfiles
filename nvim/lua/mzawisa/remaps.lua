@@ -7,8 +7,6 @@ local nmap = keymap.nmap
 local xmap = keymap.xmap
 local omap = keymap.omap
 
-vim.g.mapleader = " "
-
 -- Yank the rest of a line
 nnoremap("Y", "yg$", {})
 
@@ -91,3 +89,9 @@ else
     -- Folding
     nnoremap("<leader>z", "za", {})
 end
+
+--- Set up Keymap to toggle formatting
+vim.keymap.set("n", "<leader>ft", function()
+    require("mzawisa.custom.formatting-toggle").toggle()
+    require("lualine").refresh()
+end, { silent = true })

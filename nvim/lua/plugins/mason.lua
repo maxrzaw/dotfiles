@@ -8,7 +8,7 @@ return {
         ensure_installed = {
             "markdownlint",
             "prettierd",
-            "tailwind-language-server",
+            "tailwindcss-language-server",
             "bash-language-server",
             "css-lsp",
             "eslint-lsp",
