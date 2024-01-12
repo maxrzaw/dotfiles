@@ -52,6 +52,6 @@ return {
         dependencies = {
             { "nvim-lua/plenary.nvim" },
         },
-        cond = not vim.g.vscode,
+        cond = not vim.g.vscode and not vim.g.windows,
     },
 }
