@@ -10,6 +10,7 @@ vim.opt.smarttab = true
 vim.opt.list = true -- enable the below listchars
 vim.opt.listchars = { tab = "▸ ", trail = "·" }
 
+vim.g.is_windows = vim.fn.has("win32") or vim.fn.has("win64")
 if not vim.g.vscode then
     -- Folding
     vim.opt.foldmethod = "indent"
@@ -77,9 +78,17 @@ vim.g.netrw_winsize = 40
 vim.g.netrw_altfile = 1
 vim.g.netrw_keepj = "keepj"
 
-vim.opt.smoothscroll = true
+if (vim.version().minor >= 10) then
+    vim.opt.smoothscroll = true
+end
 
 -- Enable workspace config files
 vim.opt.exrc = true
 
 vim.g.OmniSharp_server_use_net6 = 1
+
+-- needed for windows maybe?
+if vim.g.windows then
+    vim.opt.shell = "bash.exe"
+    vim.opt.shellcmdflag = "-c"
+end

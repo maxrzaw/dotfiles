@@ -2,6 +2,7 @@
 return {
     {
         "David-Kunz/jester",
+        cond = not vim.g.windows,
         opts = {
             cmd = "npx jest -t '$result' -- $file",
             dap = {
@@ -20,6 +21,7 @@ return {
     },
     {
         "nvim-neotest/neotest",
+        cond = not vim.g.windows,
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter",
