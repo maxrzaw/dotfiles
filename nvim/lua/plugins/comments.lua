@@ -9,7 +9,7 @@ return {
     {
         "danymat/neogen",
         name = "Neogen",
-        dependencies = { "nvim-treesitter/nvim-treesitter", "LuaSnip" },
+        dependencies = { "nvim-treesitter", "LuaSnip" },
         ft = {
             "sh",
             "c",

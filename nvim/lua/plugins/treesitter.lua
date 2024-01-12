@@ -1,8 +1,10 @@
 return {
     {
-        "nvim-treesitter/nvim-treesitter",
+        -- "nvim-treesitter/nvim-treesitter",
+        "dlvandenberg/nvim-treesitter",
+        branch = "feature-angular",
+        name = "nvim-treesitter",
         dependencies = {
-            { "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" },
             { "windwp/nvim-ts-autotag" },
         },
         build = function()
@@ -11,7 +13,19 @@ return {
         config = function()
             require("nvim-treesitter.configs").setup({
                 -- A list of parser names, or "all"
-                ensure_installed = { "vimdoc", "javascript", "typescript", "c", "lua", "cpp", "c_sharp", "rust" },
+                ensure_installed = {
+                    "vimdoc",
+                    "javascript",
+                    "typescript",
+                    "c",
+                    "lua",
+                    "cpp",
+                    "c_sharp",
+                    "rust",
+                    "angular",
+                    "html",
+                    "markdown",
+                },
 
                 -- Install parsers synchronously (only applied to `ensure_installed`)
                 sync_install = false,
