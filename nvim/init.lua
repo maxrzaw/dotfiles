@@ -105,10 +105,10 @@ require("lazy").setup({
         },
         "tpope/vim-surround",
         {
-            "https://gitlab.com/mzawisa/sonarlint.nvim",
+            "https://gitlab.com/maxzawisa/sonarlint.nvim",
             name = "sonarlint.nvim",
             branch = "show-rule-description-as-preview",
-            dev = true,
+            dev = true and not vim.g.windows,
             cond = vim.g.is_work and not vim.g.vscode,
             dependencies = {
                 "mfussenegger/nvim-jdtls",
@@ -146,6 +146,7 @@ require("lazy").setup({
                 vim.keymap.set({ "t", "n" }, "<C-T>", "<cmd>FloatermToggle<cr>", { noremap = true, silent = true })
                 vim.g.floaterm_width = 0.9
                 vim.g.floaterm_height = 0.9
+                vim.g.floaterm_borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
             end,
             cond = not vim.g.vscode,
         },

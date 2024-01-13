@@ -69,9 +69,6 @@ return {
             })
 
             telescope.load_extension("luasnip")
-            if not vim.g.windows then
-                telescope.load_extension("lazygit")
-            end
             telescope.load_extension("ui-select")
 
             vim.keymap.set("n", "<leader>ff", function()

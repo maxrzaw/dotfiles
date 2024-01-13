@@ -13,12 +13,6 @@ return {
         config = function()
             local neogit = require("neogit")
             neogit.setup({})
-
-            vim.api.nvim_create_autocmd({ "BufEnter" }, {
-                callback = function()
-                    require("lazygit.utils").project_root_dir()
-                end,
-            })
         end,
         cond = not vim.g.vscode,
     },
@@ -52,6 +46,13 @@ return {
         dependencies = {
             { "nvim-lua/plenary.nvim" },
         },
+        config = function()
+            vim.api.nvim_create_autocmd({ "BufEnter" }, {
+                callback = function()
+                    require("lazygit.utils").project_root_dir()
+                end,
+            })
+        end,
         cond = not vim.g.vscode and not vim.g.windows,
     },
 }
