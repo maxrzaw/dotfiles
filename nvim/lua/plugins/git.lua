@@ -53,6 +53,6 @@ return {
                 end,
             })
         end,
-        cond = not vim.g.vscode and vim.g.windows ~= 1,
+        cond = not vim.g.vscode,
     },
 }
