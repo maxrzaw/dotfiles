@@ -14,7 +14,7 @@ end
 ---@return string
 function M.find_project_root()
     ---@type string
-    local current_dir = vim.uv.cwd()
+    local current_dir = vim.loop.cwd()
     local marker_files = { ".git", "package.json", ".sln" }
 
     -- Check each parent directory for the existence of a marker file or directory
@@ -28,7 +28,7 @@ function M.find_project_root()
         current_dir = vim.fn.resolve(current_dir .. "/..")
     end
     -- If no marker file or directory is found, return the original directory
-    return vim.uv.cwd()
+    return vim.loop.cwd()
 end
 
 --- Function to make a filename relative to the current file
