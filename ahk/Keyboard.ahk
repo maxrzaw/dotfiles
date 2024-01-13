@@ -1,4 +1,4 @@
-﻿; Scripts that do not involve my MX Master 3
+; Scripts that do not involve my MX Master 3
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #NoTrayIcon ; Does not show up in the tray
@@ -22,8 +22,9 @@ SetNumLockState, AlwaysOn
 }
 
 ; Always on Top
-^SPACE::
-{
-    WinSet, AlwaysOnTop, Toggle, A ; ctrl + space
-}
+; I kept accidentally hitting this, so I disabled it
+; ^SPACE::
+; {
+;     WinSet, AlwaysOnTop, Toggle, A ; ctrl + space
+; }
 
