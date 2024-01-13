@@ -1,0 +1,67 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "f5",
+    "command": "mssql.runQuery",
+    "when": "editorTextFocus && editorLangId == 'sql'"
+  },
+  // VSCode IntelliSense with Vim Key Strokes
+  {
+    "key": "ctrl+j",
+    "command": "selectNextSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "selectPrevSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+  },
+  // Use vim window switching
+  // j and k will not work when autocomplete is available since this is second
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.navigateDown",
+    "when": "neovim.mode != insert"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.navigateUp",
+    "when": "neovim.mode != insert"
+  },
+  {
+    "key": "ctrl+h",
+    "command": "editor.action.triggerParameterHints",
+    "when": "neovim.mode == insert && editorHasSignatureHelpProvider && editorTextFocus"
+  },
+  {
+    "key": "ctrl+h",
+    "command": "workbench.action.navigateLeft",
+    "when": "neovim.mode != insert"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.navigateRight",
+    "when": "neovim.mode != insert && !terminalFocus"
+  },
+  {
+    "command": "vscode-neovim.compositeEscape1",
+    "key": "j",
+    "when": "neovim.mode == insert && editorTextFocus",
+    "args": "j"
+  },
+  {
+    "command": "vscode-neovim.compositeEscape2",
+    "key": "k",
+    "when": "neovim.mode == insert && editorTextFocus",
+    "args": "k"
+  },
+  {
+    "key": "ctrl+w",
+    "command": "workbench.action.closeActiveEditor",
+    "when": "false"
+  },
+  {
+    "key": "ctrl+w",
+    "command": "-workbench.action.closeActiveEditor"
+  }
+]

@@ -1,17 +1,17 @@
-﻿; Scripts that involve my MX Master 3
+; Scripts that involve my MX Master 3
 ; A lot of these are dependent on the specific mappings I made in Logitech Options.
-; I mapped one thumb button to screenshot tool (sends Win + Shift + S) and the 
+; I mapped one thumb button to screenshot tool (sends Win + Shift + S) and the
 ; other thumb button to 'Page Down' since I rarely use that key.
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #NoTrayIcon ; Does not show up in the tray
 ; #Warn  ; Enable warnings to assist with detecting common errors.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
 
-; Remaps the "snipping tool" output from LogiOptions (LWin + LShift + s) to PrtScn
-<#<+s::
-    if WinActive("ahk_exe Snagit32.exe")
+; (Control + Alt + Shift + PgUp) is mapped to the down button in LogiOptions
+^!+PgUp::
+    if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
     {
         ; Cancel the existing screenshot
         Send {Esc}
@@ -50,5 +50,35 @@ return
     {
         WinGet, Title, ProcessName, A
         MsgBox, The active ProcessName is "%Title%"
+    }
+return
+
+; Remaps the PrintScreen key
+PrintScreen::
+    if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
+    {
+        ; Cancel the existing screenshot
+        Send {Esc}
+        WinHide
+    }
+    else
+    {
+        ; Take a screenshot
+        Send, {PrintScreen}
+    }
+return
+
+; Remaps the "snipping tool" output from LogiOptions (LWin + LShift + s) to PrtScn
+<#<+s::
+    if WinActive("ahk_exe Snagit32.exe") Or WinActive("ahk_exe SnagitCapture.exe")
+    {
+        ; Cancel the existing screenshot
+        Send {Esc}
+        WinHide
+    }
+    else
+    {
+        ; Take a screenshot
+        Send, {PrintScreen}
     }
 return
