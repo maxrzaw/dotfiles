@@ -108,7 +108,7 @@ require("lazy").setup({
             "https://gitlab.com/maxzawisa/sonarlint.nvim",
             name = "sonarlint.nvim",
             branch = "show-rule-description-as-preview",
-            dev = true and not vim.g.windows,
+            dev = true and vim.g.windows ~= 1,
             cond = vim.g.is_work and not vim.g.vscode,
             dependencies = {
                 "mfussenegger/nvim-jdtls",
@@ -155,7 +155,7 @@ require("lazy").setup({
             config = function()
                 require("azdo").setup({})
             end,
-            cond = not vim.g.is_pi and not vim.g.windows,
+            cond = not vim.g.is_pi and vim.g.windows ~= 1,
         },
         {
             "2kabhishek/nerdy.nvim",
