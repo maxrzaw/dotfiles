@@ -4,7 +4,7 @@ return {
         "dlvandenberg/nvim-treesitter",
         branch = "feature-angular",
         name = "nvim-treesitter",
-        cond = not vim.g.windows,
+        cond = vim.g.windows ~= 1,
         dependencies = {
             { "windwp/nvim-ts-autotag" },
         },
