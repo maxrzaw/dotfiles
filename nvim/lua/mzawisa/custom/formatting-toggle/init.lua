@@ -5,12 +5,26 @@ if persisted == nil then
     Persist:set("formatting_enabled", true)
 end
 
-M._formatting_enabled = Persist:get("formatting_enabled")
+--- Is Formatting enabled?
+---@type boolean
+M._formatting_enabled = Persist:get("formatting_enabled") or false
+
+---@type string[]
+M._ignore_paths = {}
+
+--- Add Paths to the list of paths that should not be formatted when paths are checked
+---@param paths string[]
+function M.add_ignore_paths(paths)
+    for _, path in ipairs(paths) do
+        table.insert(M._ignore_paths, path)
+    end
+end
 
 local function sync()
     Persist:set("formatting_enabled", M._formatting_enabled)
     Persist:sync()
 end
+
 function M.disable()
     M._formatting_enabled = false
     sync()
@@ -31,8 +45,20 @@ function M.toggle()
     sync()
 end
 
-function M.formatting_enabled()
-    return M._formatting_enabled
+--- Is formatting enabled?
+---@param path string? Optional parameter to check if formatting is disabled for a specific path
+---@return boolean
+function M.formatting_enabled(path)
+    local should_format = true
+    if path ~= nil then
+        for _, p in ipairs(M._ignore_paths) do
+            if string.find(path, p) then
+                should_format = false
+                break
+            end
+        end
+    end
+    return M._formatting_enabled and should_format
 end
 
 function M.lualine()
