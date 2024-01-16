@@ -11,7 +11,6 @@ return {
             "lua-language-server",
             "typescript-language-server",
             "angular-language-server",
-            -- "angular-language-server@15.2.1",
             "markdownlint",
             "marksman",
             "commitlint",
