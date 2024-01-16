@@ -40,23 +40,7 @@ return {
         -- LSP Formatting
         local lsp_formatting = function(bufnr)
             local path = vim.api.nvim_buf_get_name(bufnr)
-            -- skip formatting if we are in Nova.UI and not in workspace
-            if
-                string.find(path, "Nova.UI")
-                and not (
-                    false
-                    or string.find(path, "Nova.UI/apps/workspace/")
-                    or string.find(path, "Nova.UI/libs/workspace%-store/")
-                    or string.find(path, "Nova.UI/libs/shared/")
-                    or string.find(path, "Nova.UI/apps/nova/")
-                    or string.find(path, "Nova.UI/apps/closing/")
-                    or string.find(path, "Nova.UI/apps/appraisal/")
-                )
-            then
-                return
-            end
-
-            if not require("mzawisa.custom.formatting-toggle").formatting_enabled() then
+            if not require("mzawisa.custom.formatting-toggle").formatting_enabled(path) then
                 return
             end
 
