@@ -49,16 +49,16 @@ end
 ---@param path string? Optional parameter to check if formatting is disabled for a specific path
 ---@return boolean
 function M.formatting_enabled(path)
-    local should_format = true
-    if path ~= nil then
+    local enabled = M._formatting_enabled
+    if path ~= nil and enabled then
         for _, p in ipairs(M._ignore_paths) do
             if string.find(path, p) then
-                should_format = false
+                enabled = false
                 break
             end
         end
     end
-    return M._formatting_enabled and should_format
+    return enabled
 end
 
 function M.lualine()
