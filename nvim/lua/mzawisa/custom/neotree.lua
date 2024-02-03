@@ -22,11 +22,6 @@ function M.unpin()
     sync()
 end
 
-function M.toggle()
-    M._pinned = not M._pinned
-    sync()
-end
-
 function M.pinned()
     return M._pinned
 end

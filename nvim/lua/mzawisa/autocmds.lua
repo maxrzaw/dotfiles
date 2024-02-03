@@ -94,3 +94,20 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.spell = true
     end,
 })
+
+-- Add Auto Command to close neotree when I switch to another buffer
+vim.api.nvim_create_autocmd("BufEnter", {
+    callback = function(ev)
+        local filetype = vim.bo[ev.buf].filetype
+        local win = vim.api.nvim_win_get_config(vim.api.nvim_get_current_win())
+
+        -- Skip floating windows and neotree itself
+        if filetype == "neo-tree" or win.relative == "editor" then
+            return
+        end
+
+        if not require("mzawisa.custom.neotree").pinned() then
+            require("neo-tree.command").execute({ action = "close" })
+        end
+    end,
+})
