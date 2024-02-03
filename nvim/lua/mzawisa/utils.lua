@@ -58,4 +58,17 @@ function M.make_relative(current_filename, filename, root)
     return path
 end
 
+--- Function to check if value is in a table
+--- @param table table
+--- @param value any
+--- @return boolean
+function M.tbl_contains(table, value)
+    for _, v in ipairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
 return M
