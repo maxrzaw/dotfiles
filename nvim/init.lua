@@ -138,19 +138,6 @@ require("lazy").setup({
             cond = not vim.g.vscode,
         },
         {
-            "voldikss/vim-floaterm",
-            name = "Floaterm",
-            config = function()
-                vim.g.floaterm_title = ""
-                -- Terminal Mode
-                vim.keymap.set({ "t", "n" }, "<C-T>", "<cmd>FloatermToggle<cr>", { noremap = true, silent = true })
-                vim.g.floaterm_width = 0.9
-                vim.g.floaterm_height = 0.9
-                vim.g.floaterm_borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
             dir = "~/dev/azdo.nvim",
             config = function()
                 require("azdo").setup({})
