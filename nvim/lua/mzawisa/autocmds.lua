@@ -1,5 +1,6 @@
-local function augroup(name)
-    return vim.api.nvim_create_augroup("mzawisa_" .. name, { clear = true })
+local tbl_contains = require("mzawisa.utils").tbl_contains
+local function augroup(name, opts)
+    return vim.api.nvim_create_augroup("mzawisa_" .. name, opts or { clear = true })
 end
 
 -- resize splits if window got resized
@@ -53,6 +54,34 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function(event)
         vim.bo[event.buf].buflisted = false
         vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+    end,
+})
+
+local number_group = augroup("line_numbers", { clear = false })
+local number_exclude_filetypes = { "alpha" }
+
+-- Turn off line numbers when I leave a buffer
+vim.api.nvim_create_autocmd({ "WinLeave" }, {
+    group = number_group,
+    callback = function(ev)
+        -- Set numbers off for the current buffer
+        if tbl_contains(number_exclude_filetypes, vim.bo[ev.buf].filetype) then
+            return
+        end
+        vim.opt_local.relativenumber = false
+        vim.opt_local.number = true
+    end,
+})
+
+-- Hide line numbers in these filetypes
+vim.api.nvim_create_autocmd({ "WinEnter" }, {
+    group = number_group,
+    callback = function(ev)
+        -- Set numbers off for the current buffer
+        if tbl_contains(number_exclude_filetypes, vim.bo[ev.buf].filetype) then
+            return
+        end
+        vim.opt_local.relativenumber = true
     end,
 })
 

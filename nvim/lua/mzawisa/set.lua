@@ -31,11 +31,6 @@ if not vim.g.vscode then
     vim.opt.number = true
     vim.opt.relativenumber = true
     vim.opt.colorcolumn = { 120 }
-    -- Relativenumber for current buffer only
-    vim.cmd([[
-        autocmd BufLeave * : setlocal norelativenumber
-        autocmd BufEnter * : setlocal relativenumber
-]])
 end
 
 -- Line Wrapping
