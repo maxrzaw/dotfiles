@@ -63,11 +63,11 @@ vim.opt.shortmess:append({ W = true, I = true, c = true, C = true })
 -- Backup, history, and undo
 vim.opt.backup = false
 vim.opt.writebackup = false
-vim.opt.backupdir = vim.fn.stdpath("config") .. "/backup"
-vim.opt.directory = vim.fn.stdpath("config") .. "/swp"
+vim.opt.backupdir = vim.fn.stdpath("data") .. "/backup"
+vim.opt.directory = vim.fn.stdpath("data") .. "/swp"
 vim.opt.history = 1000
 vim.opt.undofile = true
-vim.opt.undodir = vim.fn.stdpath("config") .. "/undo"
+vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
 
 vim.opt.updatetime = 300
 vim.opt.timeoutlen = 500 -- how long to wait between key combinations
@@ -79,7 +79,7 @@ vim.g.netrw_winsize = 40
 vim.g.netrw_altfile = 1
 vim.g.netrw_keepj = "keepj"
 
-if (vim.version().minor >= 10) then
+if vim.version().minor >= 10 then
     vim.opt.smoothscroll = true
 end
 
