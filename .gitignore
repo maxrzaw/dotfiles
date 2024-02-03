@@ -2,3 +2,4 @@ nvim/backup
 nvim/spell
 nvim/swp
 nvim/undo
+nvim/lazy-lock.json
