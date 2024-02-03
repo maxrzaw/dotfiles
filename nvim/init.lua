@@ -60,7 +60,6 @@ require("lazy").setup({
                         harpoon = true,
                         lsp_trouble = true,
                         mason = true,
-                        neogit = true,
                         neotree = true,
                         neotest = true,
                         telescope = true,
