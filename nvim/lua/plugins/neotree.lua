@@ -1,12 +1,4 @@
-local helper = require("mzawisa.custom.neotree")
-local function open()
-    if helper.pinned() then
-        vim.cmd("Neotree left")
-    else
-        vim.cmd("Neotree close")
-        vim.cmd("Neotree current %:p:h")
-    end
-end
+local neotree_helper = require("mzawisa.custom.neotree")
 return {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -19,16 +11,10 @@ return {
         close_if_last_window = true,
         popup_border_style = "rounded",
         event_handlers = {
-            -- {
-            --     event = "neo_tree_window_after_close",
-            --     handler = function(_)
-            --         helper.unpin()
-            --     end,
-            -- },
             {
                 event = "file_opened",
                 handler = function(_)
-                    if not helper.pinned() then
+                    if not neotree_helper.pinned() then
                         require("neo-tree.command").execute({ action = "close" })
                     end
                 end,
@@ -41,7 +27,7 @@ return {
             },
         },
         window = {
-            position = "current",
+            position = "left",
         },
         filesystem = {
             bind_to_cwd = false,
@@ -81,16 +67,27 @@ return {
     keys = {
         {
             "<leader>e",
-            open,
+            function()
+                require("neo-tree.command").execute({ action = "focus", position = "left" })
+            end,
             desc = "Neotree Open",
         },
         {
             "<leader>E",
             function()
-                helper.toggle()
-                open()
+                neotree_helper.pin()
+                require("neo-tree.command").execute({ action = "focus", position = "left" })
             end,
-            desc = "Neotree Toggle Pinned and Open",
+            desc = "Neotree Open and Pin",
+        },
+        {
+            "q",
+            function()
+                neotree_helper.unpin()
+                require("neo-tree.command").execute({ action = "close" })
+            end,
+            ft = { "neo-tree" },
+            desc = "Neotree Close",
         },
     },
 }
