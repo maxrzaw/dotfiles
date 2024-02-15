@@ -13,7 +13,6 @@ return {
             "angular-language-server",
             "markdownlint",
             "marksman",
-            "commitlint",
             "prettierd",
             "tailwindcss-language-server",
             "bash-language-server",
