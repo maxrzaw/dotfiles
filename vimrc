@@ -15,6 +15,8 @@ set shiftwidth=4 " When shifting, indent using 4 spaces.
 set autoindent " new lines inherit the indentation of previous lines.
 set smartindent
 set smarttab
+set list
+set listchars=tab:▸\ ,trail:.
 
 
 " Search Options
@@ -36,13 +38,15 @@ set relativenumber
 
 set background=dark
 "colorscheme desert " Sets the default color scheme.
-set textwidth=80 " Sets the text width.
-set wrap " Enable line wrapping.
+set textwidth=120 " Sets the text width.
+set nowrap " Enable line wrapping.
 if exists('+colorcolumn') " Adds color column at 80 characters.
-  set colorcolumn=80
+  set colorcolumn=120
 endif
 set title " Sets the title of the window to the current file name.
 set showmatch " Highlight matching parenthesis.
+set scrolloff=8
+set sidescrolloff=8
 
 
 " Miscellaneous Options
@@ -51,6 +55,22 @@ set showcmd " Show partial commands.
 set wildmenu " Allows tab completion in menu.
 set cmdheight=2 " Sets menu height to 2 lines.
 set autoread " Reload files if changed externally.
+set signcolumn=yes
+set shortmess+=W
+set shortmess+=c
+set shortmess+=C
+set nobackup
+set nowritebackup
+set updatetime=300
+set timeoutlen=500
+set exrc
+
+" netrw
+let g:netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
+let g:netrw_preview = 1
+let g:netrw_winsize = 40
+let g:netrw_altfile = 1
+let g:netrw_keepj = "keepj"
 
 
 " Mappings
@@ -68,9 +88,6 @@ set backspace=indent,eol,start
 " Moving lines
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-
-" Powerline
-" set rtp+=/usr/local/lib/python3.9/site-packages/powerline/bindings/vim
 
 
 nmap <leader>e <CMD>Explore<CR>
