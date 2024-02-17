@@ -64,6 +64,9 @@ set nowritebackup
 set updatetime=300
 set timeoutlen=500
 set exrc
+set undofile
+set undodir=~/.vim/undodir
+set ruler
 
 " netrw
 let g:netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
