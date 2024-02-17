@@ -24,6 +24,7 @@
     sw = switch
     swc = switch -c
     swl = switch -
+    pushf = push --force-with-lease
 [push]
     default = simple
 [pull]
