@@ -9,6 +9,7 @@ return {
     {
         "NeogitOrg/neogit",
         name = "Neogit",
+        lazy = true,
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local neogit = require("neogit")
