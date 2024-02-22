@@ -26,7 +26,7 @@ return
 
 ; (Control + Alt + Shift + PgDn) is mapped to the down button in LogiOptions
 ^!+PgDn::
-    if WinActive("ahk_exe Teams.exe")
+    if WinActive("ahk_exe Teams.exe") Or WinActive("ahk_exe ms-teams.exe")
     {
         ; Mute/Unmute in Teams
         Send ^+m
