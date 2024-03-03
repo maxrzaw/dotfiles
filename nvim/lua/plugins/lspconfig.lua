@@ -311,6 +311,7 @@ return {
 
         lspconfig.gopls.setup({})
         lspconfig.tailwindcss.setup({})
+        lspconfig.cssls.setup({})
 
         cmp.setup.filetype("gitcommit", {
             sources = cmp.config.sources({
