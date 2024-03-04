@@ -77,25 +77,25 @@ function M.set_quickswitch_keybindings()
         silent = true,
         noremap = true,
         buffer = true,
-        desc = "Go to Angular Spec",
+        desc = "Angular: Go to [Sp]ec",
     })
     vim.keymap.set("n", "<leader>ss", M.go_to_style_file, {
         silent = true,
         noremap = true,
         buffer = true,
-        desc = "Go to Angular Style",
+        desc = "Angular: Go to [S]tyle [S]heet",
     })
     vim.keymap.set("n", "<leader>tt", M.go_to_template_file, {
         silent = true,
         noremap = true,
         buffer = true,
-        desc = "Go to Angular Template",
+        desc = "Angular: Go to [T]emplate",
     })
     vim.keymap.set("n", "<leader>ts", M.go_to_component_file, {
         silent = true,
         noremap = true,
         buffer = true,
-        desc = "Go to Angular Component",
+        desc = "Angular: Go to [T]ype[S]cript Component",
     })
 end
 

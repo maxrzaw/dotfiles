@@ -65,6 +65,7 @@ vim.opt.undofile = true
 vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
 
 vim.opt.updatetime = 300
+vim.opt.timeout = true
 vim.opt.timeoutlen = 500 -- how long to wait between key combinations
 
 -- netrw

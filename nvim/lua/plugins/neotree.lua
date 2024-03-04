@@ -81,7 +81,7 @@ return {
             function()
                 require("neo-tree.command").execute({ action = "focus", position = "left" })
             end,
-            desc = "Neotree Open",
+            desc = "Neotree: Open",
         },
         {
             "<leader>E",
@@ -89,7 +89,7 @@ return {
                 neotree_helper.pin()
                 require("neo-tree.command").execute({ action = "focus", position = "left" })
             end,
-            desc = "Neotree Open and Pin",
+            desc = "Neotree: Open and Pin",
         },
     },
 }
