@@ -25,7 +25,7 @@ nnoremap("<leader>y", '"+y', {})
 vnoremap("<leader>y", '"+y', {})
 nmap("<leader>Y", '"+Y', { silent = true }) -- I want this to remap
 
-nnoremap("<leader>gb", "<cmd>Git blame<cr>", {})
+nnoremap("<leader>gb", "<cmd>Git blame<cr>", { desc = "[G]it [B]lame" })
 
 -- vscode-neovim specific mappings
 if vim.g.vscode then
@@ -93,4 +93,4 @@ end
 vim.keymap.set("n", "<leader>ft", function()
     require("mzawisa.custom.formatting-toggle").toggle()
     require("lualine").refresh()
-end, { silent = true })
+end, { silent = true, desc = "[F]ormatting: [T]oggle" })

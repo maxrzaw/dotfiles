@@ -68,75 +68,75 @@ return {
                 "n",
                 "gt",
                 "<cmd>TroubleToggle lsp_type_definitions<cr>",
-                vim.tbl_extend("error", opts, { desc = "Toggle Lsp Type Definitions" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [T]ype Definitions" })
             )
             vim.keymap.set(
                 "n",
                 "gr",
                 "<cmd>TroubleToggle lsp_references<cr>",
-                vim.tbl_extend("error", opts, { desc = "Toggle Lsp References" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [R]eferences" })
             )
             vim.keymap.set(
                 "n",
                 "gd",
                 "<cmd>TroubleToggle lsp_definitions<cr>",
-                vim.tbl_extend("error", opts, { desc = "Toggle Lsp Definitions" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [D]efinitions" })
             )
             vim.keymap.set(
                 "n",
                 "gD",
                 vim.lsp.buf.declaration,
-                vim.tbl_extend("error", opts, { desc = "Go To Declaration" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [G]o To [D]eclaration" })
             )
             vim.keymap.set(
                 "n",
                 "gi",
                 vim.lsp.buf.implementation,
-                vim.tbl_extend("error", opts, { desc = "Go To Implementation" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [G]o To [I]mplementation" })
             )
             vim.keymap.set(
                 "n",
                 "<leader>vd",
                 vim.diagnostic.open_float,
-                vim.tbl_extend("error", opts, { desc = "View Diagnostics for current line" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [V]iew [D]iagnostics for current line" })
             )
             vim.keymap.set(
                 { "n", "v" },
                 "<leader>ca",
                 vim.lsp.buf.code_action,
-                vim.tbl_extend("error", opts, { desc = "Lsp Code Action" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [C]ode [A]ction" })
             )
             vim.keymap.set(
                 "n",
                 "<leader>dn",
                 vim.diagnostic.goto_next,
-                vim.tbl_extend("error", opts, { desc = "Go To Next Diagnostic" })
+                vim.tbl_extend("error", opts, { desc = "LSP: Go To [N]ext [D]iagnostic" })
             )
             vim.keymap.set(
                 "n",
                 "<leader>dN",
                 vim.diagnostic.goto_prev,
-                vim.tbl_extend("error", opts, { desc = "Go To Prev Diagnostic" })
+                vim.tbl_extend("error", opts, { desc = "LSP: Go To Prev [D]iagnostic" })
             )
             vim.keymap.set(
                 "n",
                 "<leader>dl",
                 "<cmd>Telescope diagnostics<CR>",
-                vim.tbl_extend("error", opts, { desc = "List All Diagnostics" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [L]ist All [D]iagnostics" })
             )
             vim.keymap.set(
                 "n",
                 "<leader>r",
                 vim.lsp.buf.rename,
-                vim.tbl_extend("error", opts, { desc = "Rename Symbol" })
+                vim.tbl_extend("error", opts, { desc = "LSP: [R]ename Symbol" })
             )
             vim.keymap.set(
                 "i",
                 "<C-k>",
                 vim.lsp.buf.signature_help,
-                vim.tbl_extend("error", opts, { desc = "Lsp Signature Help" })
+                vim.tbl_extend("error", opts, { desc = "LSP: Signature Help" })
             )
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("error", opts, { desc = "Lsp Hover" }))
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("error", opts, { desc = "LSP: Hover" }))
 
             if client.name == "angularls" then
                 angular.set_quickswitch_keybindings()

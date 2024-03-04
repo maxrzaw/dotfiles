@@ -15,38 +15,30 @@ return {
         config = function()
             local builtin = require("telescope.builtin")
             local actions = require("telescope.actions")
-            local transform_mod = require("telescope.actions.mt").transform_mod
             local trouble = require("trouble.providers.telescope")
-
-            local open_quickfix_with_trouble = transform_mod({
-                x = function(_)
-                    print("open quickfix with trouble called")
-                    require("trouble").open("quickfix")
-                end,
-            })
 
             local telescope = require("telescope")
             telescope.setup({
                 defaults = {
                     layout_config = { width = 0.95 },
                     path_display = { "smart" },
-                    file_ignore_patterns = { "node_modules", ".git" },
+                    file_ignore_patterns = { "node_modules/", ".git/", "bin/", "obj/" },
                     mappings = {
                         i = {
                             ["<C-t>"] = trouble.open_with_trouble,
                             ["<C-q>"] = function(prompt_bufnr)
                                 actions.send_to_qflist(prompt_bufnr)
-                                print("open quickfix with trouble called")
                                 require("trouble").open("quickfix")
                             end,
+                            ["<C-h>"] = "which_key",
                         },
                         n = {
                             ["<C-t>"] = trouble.open_with_trouble,
                             ["<C-q>"] = function(prompt_bufnr)
                                 actions.send_to_qflist(prompt_bufnr)
-                                print("open quickfix with trouble called")
                                 require("trouble").open("quickfix")
                             end,
+                            ["<C-h>"] = "which_key",
                         },
                     },
                 },
@@ -72,19 +64,19 @@ return {
             telescope.load_extension("ui-select")
 
             vim.keymap.set("n", "<leader>ff", function()
-                builtin.find_files({ hidden = true })
-            end, get_opts("Telescope Find Files"))
-            vim.keymap.set("n", "<leader>fgf", builtin.git_files, get_opts("Telescope Git Files"))
-            vim.keymap.set("n", "<leader>fr", builtin.oldfiles, get_opts("Telescope Old Files"))
-            vim.keymap.set("n", "<leader>fg", builtin.live_grep, get_opts("Telescope Live Grep"))
-            vim.keymap.set("n", "<leader>fb", builtin.buffers, get_opts("Telescope Buffers"))
-            vim.keymap.set("n", "<leader>fh", builtin.help_tags, get_opts("Telescope Help Tags"))
-            vim.keymap.set("n", "<leader>fgs", builtin.git_status, get_opts("Telescope Git Status"))
-            vim.keymap.set("n", "<leader>fgb", builtin.git_branches, get_opts("Telescope Git Branches"))
-            vim.keymap.set("n", "<leader>fgc", builtin.git_commits, get_opts("Telescope Git Commits"))
-            vim.keymap.set("n", "<leader>fq", builtin.quickfix, get_opts("Telescope Quickfix"))
-            vim.keymap.set("n", "<leader>fj", builtin.jumplist, get_opts("Telescope Jumplist"))
-            vim.keymap.set("n", "<leader>fk", builtin.keymaps, get_opts("Telescope Keymaps"))
+                builtin.find_files({ hidden = true, no_ignore = true, no_ignore_parent = true })
+            end, get_opts("Telescope: [F]ind [F]iles"))
+            vim.keymap.set("n", "<leader>fgf", builtin.git_files, get_opts("Telescope: [F]ind [G]it [F]iles"))
+            vim.keymap.set("n", "<leader>fr", builtin.oldfiles, get_opts("Telescope: [F]ind [R]ecent Files"))
+            vim.keymap.set("n", "<leader>fg", builtin.live_grep, get_opts("Telescope: [F]ind Live [G]rep"))
+            vim.keymap.set("n", "<leader>fb", builtin.buffers, get_opts("Telescope: [F]ind [B]uffers"))
+            vim.keymap.set("n", "<leader>fh", builtin.help_tags, get_opts("Telescope: [F]ind [H]elp Tags"))
+            vim.keymap.set("n", "<leader>fgs", builtin.git_status, get_opts("Telescope: [F]ind [G]it [S]tatus"))
+            vim.keymap.set("n", "<leader>fgb", builtin.git_branches, get_opts("Telescope: [F]ind [G]it [B]ranches"))
+            vim.keymap.set("n", "<leader>fgc", builtin.git_commits, get_opts("Telescope: [F]ind [G]it [C]ommits"))
+            vim.keymap.set("n", "<leader>fq", builtin.quickfix, get_opts("Telescope: [F]ind [Q]uickfix List"))
+            vim.keymap.set("n", "<leader>fj", builtin.jumplist, get_opts("Telescope: [F]ind [J]umplist"))
+            vim.keymap.set("n", "<leader>fk", builtin.keymaps, get_opts("Telescope: [F]ind [K]eymaps"))
         end,
     },
 }

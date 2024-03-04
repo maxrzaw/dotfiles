@@ -84,8 +84,8 @@ return {
         vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
         vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
         vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
-        vim.keymap.set("n", "<leader>b", pb.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-        vim.keymap.set("n", "<leader>B", pb.set_conditional_breakpoint, { desc = "Debug: Set Breakpoint" })
+        vim.keymap.set("n", "<leader>b", pb.toggle_breakpoint, { desc = "Debug: Toggle [B]reakpoint" })
+        vim.keymap.set("n", "<leader>B", pb.set_conditional_breakpoint, { desc = "Debug: Set [B]reakpoint" })
         vim.keymap.set(
             { "n", "v" },
             "<leader>dk",
@@ -94,18 +94,18 @@ return {
         )
         vim.keymap.set({ "n", "v" }, "<Leader>dh", function()
             require("dap.ui.widgets").hover()
-        end, { desc = "Debug: Dap Hover" })
+        end, { desc = "Debug: [D]ap [H]over" })
         vim.keymap.set({ "n", "v" }, "<Leader>dp", function()
             require("dap.ui.widgets").preview()
-        end, { desc = "Debug: Dap Preview" })
+        end, { desc = "Debug: [D]ap [P]review" })
         vim.keymap.set("n", "<Leader>df", function()
             local widgets = require("dap.ui.widgets")
             widgets.centered_float(widgets.frames)
-        end, { desc = "Debug: Dap Frames" })
+        end, { desc = "Debug: [D]ap [F]rames" })
         vim.keymap.set("n", "<Leader>ds", function()
             local widgets = require("dap.ui.widgets")
             widgets.centered_float(widgets.scopes)
-        end, { desc = "Debug: Dap Scopes" })
+        end, { desc = "Debug: [D]ap [S]copes" })
 
         -- Dap UI setup
         -- For more information, see |:help nvim-dap-ui|
