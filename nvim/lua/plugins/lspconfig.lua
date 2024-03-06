@@ -153,9 +153,9 @@ return {
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
                 set_default_keybindings(client, bufnr)
                 set_format_on_save(client, bufnr)
-                if client ~= nil and client.name == "tsserver" and angular.enabled then
-                    client.server_capabilities.renameProvider = false
-                end
+                -- if client ~= nil and client.name == "tsserver" and angular.enabled then
+                --     client.server_capabilities.renameProvider = false
+                -- end
             end,
         })
 
