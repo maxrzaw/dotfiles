@@ -6,7 +6,10 @@ return {
     -- NOTE: And you can specify dependencies as well
     dependencies = {
         -- Creates a beautiful debugger UI
-        "rcarriga/nvim-dap-ui",
+        {
+            "rcarriga/nvim-dap-ui",
+            dependencies = {"nvim-neotest/nvim-nio"}
+        },
 
         -- Virtual Text
         {
