@@ -16,6 +16,7 @@
     pb = push -u origin HEAD
     plog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%ae>%Creset' --abbrev-commit
     rb = rebase
+    rbc = rebase --continue
     sa = stash apply
     sd = stash drop
     sl = stash list
@@ -28,7 +29,7 @@
 [push]
     default = simple
 [pull]
-rebase = true
+    rebase = true
 [filter "lfs"]
     clean = git-lfs clean -- %f
     smudge = git-lfs smudge -- %f
