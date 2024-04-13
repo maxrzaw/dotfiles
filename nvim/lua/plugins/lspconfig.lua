@@ -272,7 +272,7 @@ return {
 
         lspconfig.angularls.setup({
             autostart = false,
-            filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "angular" },
+            filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx" },
             cmd = ngls_cmd,
             root_dir = lspconfig.util.root_pattern(".git", "package.json"),
             on_new_config = function(new_config)
@@ -298,7 +298,6 @@ return {
                 "svelte",
                 "astro",
                 "html",
-                "angular",
             },
         })
 
