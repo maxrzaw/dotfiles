@@ -102,12 +102,6 @@ end
 function M.setup()
     M.enabled = true
     vim.api.nvim_create_autocmd({ "BufWinEnter" }, { pattern = { "*.ts", "*.html" }, callback = M.start_angularls })
-    vim.api.nvim_create_autocmd({ "BufRead", "BufEnter" }, {
-        pattern = { "*.component.html" },
-        callback = function()
-            vim.cmd("set filetype=angular")
-        end,
-    })
     vim.api.nvim_create_autocmd(
         { "BufWinEnter" },
         { pattern = { "*.ts", "*.html", "*.scss" }, callback = M.set_quickswitch_keybindings }

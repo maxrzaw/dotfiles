@@ -1,8 +1,6 @@
 return {
     {
-        -- "nvim-treesitter/nvim-treesitter",
-        "dlvandenberg/nvim-treesitter",
-        branch = "feature-angular",
+        "nvim-treesitter/nvim-treesitter",
         name = "nvim-treesitter",
         cond = vim.g.windows ~= 1,
         dependencies = {
@@ -59,6 +57,7 @@ return {
                     enable = true,
                 },
             })
+            vim.treesitter.language.register("terraform", "terraform-vars")
         end,
     },
 }
