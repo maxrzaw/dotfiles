@@ -105,10 +105,10 @@ require("lazy").setup({
         },
         "tpope/vim-surround",
         {
-            "https://gitlab.com/maxzawisa/sonarlint.nvim",
+            "https://gitlab.com/schrieveslaach/sonarlint.nvim",
             name = "sonarlint.nvim",
-            branch = "show-rule-description-as-preview",
-            dev = true and vim.g.windows ~= 1,
+            branch = "main",
+            dev = false,
             cond = vim.g.is_work and not vim.g.vscode,
             dependencies = {
                 "mfussenegger/nvim-jdtls",
