@@ -223,52 +223,52 @@ return {
         lspconfig.terraformls.setup({})
 
         -- Set up Sonarlint Language Server
-        -- if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
-        --     require("sonarlint").setup({
-        --         filetypes = {
-        --             -- Tested
-        --             "typescript",
-        --             "javascript",
-        --             "html",
-        --             "text",
-        --             "css",
-        --             "scss",
-        --             -- Not Tested
-        --             "docker",
-        --             "terraform",
-        --             "xml",
-        --             "cs",
-        --             -- 'cpp',
-        --             -- -- Requires nvim-jdtls, otherwise an error message will be printed
-        --             "java",
-        --         },
-        --         server = {
-        --             cmd = {
-        --                 "sonarlint-language-server",
-        --                 -- Ensure that sonarlint-language-server uses stdio channel
-        --                 "-stdio",
-        --                 "-analyzers",
-        --                 -- paths to the analyzers you need, using those for python and java in this example
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
-        --                 vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
-        --             },
-        --             window = {
-        --                 border = "rounded",
-        --                 title_pos = "center",
-        --             },
-        --             display_rule = "float",
-        --             settings = {
-        --                 sonarlint = {
-        --                     rules = sonar_rules,
-        --                 },
-        --             },
-        --         },
-        --     })
-        -- end
+        if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
+            require("sonarlint").setup({
+                filetypes = {
+                    -- Tested
+                    "typescript",
+                    "javascript",
+                    "html",
+                    "text",
+                    "css",
+                    "scss",
+                    -- Not Tested
+                    "docker",
+                    "terraform",
+                    "xml",
+                    "cs",
+                    -- 'cpp',
+                    -- -- Requires nvim-jdtls, otherwise an error message will be printed
+                    "java",
+                },
+                server = {
+                    cmd = {
+                        "sonarlint-language-server",
+                        -- Ensure that sonarlint-language-server uses stdio channel
+                        "-stdio",
+                        "-analyzers",
+                        -- paths to the analyzers you need, using those for python and java in this example
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonariac.jar"),
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
+                        vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
+                    },
+                    window = {
+                        border = "rounded",
+                        title_pos = "center",
+                    },
+                    display_rule = "float",
+                    settings = {
+                        sonarlint = {
+                            rules = sonar_rules,
+                        },
+                    },
+                },
+            })
+        end
 
         lspconfig.angularls.setup({
             autostart = false,
