@@ -7,10 +7,20 @@ fi
 git config --global core.editor $VIM
 alias vim=$VIM
 alias mux=tmuxinator
+alias wtitle="wezterm cli set-tab-title"
+
 export EDITOR=$VIM
 export GIT_EDITOR=$VIM
 
 alias got='git'
+
+# This works with wezterm/mzawisa/workspaces.lua
+wez() {
+    printf "\033]1337;SetUserVar=%s=%s\007" user-workspace-command `echo -n $1 | base64`
+}
+
+# This is the default, but with the truncation limit increased
+export ZSH_THEME_TERM_TAB_TITLE_IDLE="%50<..<%~%<<"
 
 setopt correct
 setopt globdots
