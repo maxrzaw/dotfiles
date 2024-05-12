@@ -3,7 +3,7 @@ return {
         "ckipp01/stylua-nvim",
         ft = { "lua" },
         lazy = true,
-        cond = not vim.g.vscode,
+        cond = not vim.g.vscode and vim.g.windows ~= 1,
         build = { "npm install -g @johnnymorganz/stylua-bin" },
         config = function()
             require("stylua-nvim").setup({})
