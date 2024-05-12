@@ -1,17 +1,22 @@
 local wezterm = require("wezterm")
 local M = {}
 local catppuccin = require("mzawisa.colorscheme")
+local utils = require("mzawisa.utils")
 local mocha = catppuccin.select(catppuccin.colors, "mocha", "mauve").tab_bar
 
 local utf8 = require("utf8")
 local SOLID_LEFT_ARROW = utf8.char(0xe0ba)
-local SOLID_LEFT_MOST = utf8.char(0x2588)
+local SOLID_BLOCK = utf8.char(0x2588)
 local SOLID_RIGHT_ARROW = utf8.char(0xe0bc)
 local WSL_ICON = utf8.char(0xebc6)
-local VIM_ICON = utf8.char(0xe62b)
+local VIM_ICON = utf8.char(0xe6ae)
 local SERVER_ICON = utf8.char(0xf01c5)
 local TEST_ICON = utf8.char(0xea79)
 local PLUS_ICON = utf8.char(0xf44d)
+-- local WINDOWS_ICON = utf8.char(0xf05b3)
+local WINDOWS_ICON = utf8.char(0xe62a)
+local CMD_ICON = utf8.char(0xebc4)
+local GIT_ICON = utf8.char(0xf02a2)
 
 local TAB_BAR_BG = mocha.background
 local ACTIVE_TAB_BG = mocha.active_tab.bg_color
@@ -33,7 +38,12 @@ local tab_title = function(tab_info)
     end
     -- Otherwise, use the title from the active pane
     -- in that tab
-    return tab_info.active_pane.title
+    title = tab_info.active_pane.title
+    local basename = utils.basename(title)
+    if basename:match(".exe") then
+        return basename:gsub(".exe", "")
+    end
+    return title
 end
 
 local icon_title = function(title)
@@ -44,13 +54,26 @@ local icon_title = function(title)
         return SERVER_ICON .. " " .. "Server"
     elseif lower:match("test") then
         return TEST_ICON .. " " .. "Tests"
-    elseif lower:match("wsl") then
-        return WSL_ICON .. " " .. title
     end
     return nil
 end
 
+local domain_icon_prefix = function(tab_id)
+    local mux_tab = wezterm.mux.get_tab(tab_id)
+    local mux_pane = mux_tab:active_pane()
+    local domain_name = mux_pane:get_domain_name()
+    if domain_name:match("WSL") then
+        return " " .. WSL_ICON .. ": "
+    else
+        return " " .. WINDOWS_ICON .. ": "
+    end
+end
+
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+    local domain_icon = domain_icon_prefix(tab.tab_id)
+    local process_name = tab.active_pane.foreground_process_name
+    -- wezterm.log_info("Process Name: " .. process_name)
+
     local edge_background = TAB_BAR_BG
     local background = NORMAL_TAB_BG
     local foreground = NORMAL_TAB_FG
@@ -71,10 +94,10 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 
     -- ensure that the titles fit in the available space,
     -- and that we have room for the edges.
-    title = " " .. wezterm.truncate_right(title, max_width - 2) .. " "
+    title = domain_icon .. wezterm.truncate_right(title, max_width - 7) .. " "
 
     local is_first = tab.tab_id == tabs[1].tab_id
-    local left_edge = is_first and SOLID_LEFT_MOST or SOLID_LEFT_ARROW
+    local left_edge = is_first and SOLID_BLOCK or SOLID_LEFT_ARROW
     return {
         { Attribute = { Intensity = "Bold" } },
         { Background = { Color = edge_background } },
@@ -90,8 +113,18 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     }
 end)
 
+wezterm.on('update-right-status', function(window, pane)
+    local date = wezterm.strftime '%Y-%m-%d %H:%M:%S'
+    local workspace = window:active_workspace()
+    window:set_right_status(wezterm.format {
+        { Text = workspace },
+        { Text = date },
+        { Text = SOLID_RIGHT_ARROW },
+        { Text = SOLID_LEFT_ARROW },
+    })
+end)
+
 M.setup = function(config)
-    wezterm.log_info(wezterm.color.get_builtin_schemes()["Catppuccin Mocha"])
     -- Tab Bar
     config.use_fancy_tab_bar = false
     config.tab_bar_at_bottom = false
@@ -103,7 +136,7 @@ M.setup = function(config)
         bottom = 0,
     }
     config.window_decorations = "RESIZE"
-    config.tab_max_width = 52
+    config.tab_max_width = 57
     config.tab_bar_style = {
         new_tab = wezterm.format({
             { Attribute = { Intensity = "Bold" } },
