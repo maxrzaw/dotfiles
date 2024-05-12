@@ -159,33 +159,35 @@ return {
             end,
         })
 
-        local runtime_path = vim.split(package.path, ";")
-        table.insert(runtime_path, "lua/?.lua")
-        table.insert(runtime_path, "lua/?/init.lua")
-        lspconfig.lua_ls.setup({
-            on_init = disable_formatting_on_init,
-            settings = {
-                Lua = {
-                    -- Disable Telemetry
-                    telemetry = { enable = false },
-                    diagnostics = {
-                        globals = { "vim", "describe", "it", "before_each", "after_each" },
-                    },
-                    runtime = {
-                        version = "LuaJIT",
-                        path = runtime_path,
-                    },
-                    workspace = {
-                        checkThirdParty = false,
-                        -- --The below was replaced by neodev.nvim
-                        -- library = {
-                        --     vim.fn.expand("$VIMRUNTIME/lua"),
-                        --     vim.fn.stdpath("config") .. "/lua",
-                        -- },
+        if vim.g.windows ~= 1 then
+            local runtime_path = vim.split(package.path, ";")
+            table.insert(runtime_path, "lua/?.lua")
+            table.insert(runtime_path, "lua/?/init.lua")
+            lspconfig.lua_ls.setup({
+                on_init = disable_formatting_on_init,
+                settings = {
+                    Lua = {
+                        -- Disable Telemetry
+                        telemetry = { enable = false },
+                        diagnostics = {
+                            globals = { "vim", "describe", "it", "before_each", "after_each" },
+                        },
+                        runtime = {
+                            version = "LuaJIT",
+                            path = runtime_path,
+                        },
+                        workspace = {
+                            checkThirdParty = false,
+                            -- --The below was replaced by neodev.nvim
+                            -- library = {
+                            --     vim.fn.expand("$VIMRUNTIME/lua"),
+                            --     vim.fn.stdpath("config") .. "/lua",
+                            -- },
+                        },
                     },
                 },
-            },
-        })
+            })
+        end
 
         if not os.getenv("NEOVIM_WORK") then
             lspconfig.omnisharp.setup({
