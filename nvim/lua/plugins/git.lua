@@ -7,17 +7,6 @@ return {
         end,
     },
     {
-        "NeogitOrg/neogit",
-        name = "Neogit",
-        lazy = true,
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local neogit = require("neogit")
-            neogit.setup({})
-        end,
-        cond = not vim.g.vscode,
-    },
-    {
         "lewis6991/gitsigns.nvim",
         opts = {
             signcolumn = true,
