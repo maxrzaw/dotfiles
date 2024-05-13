@@ -7,11 +7,14 @@ local mocha = catppuccin.colors.mocha
 
 local utf8 = require("utf8")
 local TMUX_ICON = utf8.char(0xebc8)
-local SOLID_LEFT_SLANT = utf8.char(0xe0ba)
-local SOLID_RIGHT_SLANT = utf8.char(0xe0bc)
-local LEFT_ARROW = utf8.char(0xe0b3)
-local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
-local SOLID_LEFT_CIRCLE = utf8.char(0xe0b6)
+local LOWER_RIGHT_TRIANGLE = utf8.char(0xe0ba)
+local UPPER_LEFT_TRIANGLE = utf8.char(0xe0bc)
+local LOWER_LEFT_TRIANGLE = utf8.char(0xe0b8)
+local UPPER_RIGHT_TRIANGLE = utf8.char(0xe0be)
+local THIN_LEFT_ARROW = utf8.char(0xe0b3)
+local LEFT_ARROW = utf8.char(0xe0b2)
+local RIGHT_ARROW = utf8.char(0xe0b0)
+local LEFT_CIRCLE = utf8.char(0xe0b6)
 local WSL_ICON = utf8.char(0xebc6)
 local VIM_ICON = utf8.char(0xe6ae)
 local SERVER_ICON = utf8.char(0xf01c5)
@@ -114,13 +117,13 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
         { Attribute = { Intensity = "Bold" } },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_LEFT_SLANT },
+        { Text = LOWER_RIGHT_TRIANGLE },
         { Background = { Color = background } },
         { Foreground = { Color = foreground } },
         { Text = title },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_RIGHT_SLANT },
+        { Text = UPPER_LEFT_TRIANGLE },
         { Attribute = { Intensity = "Normal" } },
     }
 end)
@@ -201,14 +204,18 @@ wezterm.on("update-right-status", function(window, pane)
         local cell_no = num_cells + 1
         if is_first then
             table.insert(elements, { Foreground = { Color = colors[cell_no] } })
-            table.insert(elements, { Text = SOLID_LEFT_SLANT })
+            table.insert(elements, { Background = { Color = mocha.crust } })
+            table.insert(elements, { Text = UPPER_RIGHT_TRIANGLE })
         end
         table.insert(elements, { Foreground = { Color = text_fg } })
         table.insert(elements, { Background = { Color = colors[cell_no] } })
         table.insert(elements, { Text = " " .. text .. " " })
         if not is_last then
+            table.insert(elements, { Foreground = { Color = colors[cell_no] } })
+            table.insert(elements, { Background = { Color = mocha.crust } })
+            table.insert(elements, { Text = LOWER_LEFT_TRIANGLE })
             table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
-            table.insert(elements, { Text = SOLID_LEFT_SLANT })
+            table.insert(elements, { Text = UPPER_RIGHT_TRIANGLE })
         end
         num_cells = num_cells + 1
     end
@@ -232,7 +239,7 @@ wezterm.on("update-status", function(window, pane)
         { Text = workspace },
         { Background = { Color = mocha.crust } },
         { Foreground = { Color = mocha.blue } },
-        { Text = SOLID_RIGHT_SLANT .. "  " },
+        { Text = UPPER_LEFT_TRIANGLE .. "  " },
         { Attribute = { Intensity = "Normal" } },
     }))
 end)
@@ -255,26 +262,26 @@ M.setup = function(config)
             { Attribute = { Intensity = "Bold" } },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = NORMAL_TAB_BG } },
-            { Text = SOLID_LEFT_SLANT },
+            { Text = LOWER_RIGHT_TRIANGLE },
             { Background = { Color = NORMAL_TAB_BG } },
             { Foreground = { Color = NORMAL_TAB_FG } },
             { Text = " " .. PLUS_ICON .. " " },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = NORMAL_TAB_BG } },
-            { Text = SOLID_RIGHT_SLANT },
+            { Text = UPPER_LEFT_TRIANGLE },
             { Attribute = { Intensity = "Normal" } },
         }),
         new_tab_hover = wezterm.format({
             { Attribute = { Intensity = "Bold" } },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = HOVER_TAB_BG } },
-            { Text = SOLID_LEFT_SLANT },
+            { Text = LOWER_RIGHT_TRIANGLE },
             { Background = { Color = HOVER_TAB_BG } },
             { Foreground = { Color = HOVER_TAB_FG } },
             { Text = " " .. PLUS_ICON .. " " },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = HOVER_TAB_BG } },
-            { Text = SOLID_RIGHT_SLANT },
+            { Text = UPPER_LEFT_TRIANGLE },
             { Attribute = { Intensity = "Normal" } },
         }),
     }
