@@ -13,7 +13,6 @@ local VIM_ICON = utf8.char(0xe6ae)
 local SERVER_ICON = utf8.char(0xf01c5)
 local TEST_ICON = utf8.char(0xea79)
 local PLUS_ICON = utf8.char(0xf44d)
--- local WINDOWS_ICON = utf8.char(0xf05b3)
 local WINDOWS_ICON = utf8.char(0xe62a)
 local CMD_ICON = utf8.char(0xebc4)
 local GIT_ICON = utf8.char(0xf02a2)
@@ -64,12 +63,15 @@ local domain_icon_prefix = function(tab_id)
     local domain_name = mux_pane:get_domain_name()
     if domain_name:match("WSL") then
         return " " .. WSL_ICON .. ": "
-    else
+    elseif wezterm.target_triple == "x86_64-pc-windows-msvc" then
         return " " .. WINDOWS_ICON .. ": "
+    else
+        return " "
     end
 end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+    wezterm.log_info("max_width: " .. max_width)
     local domain_icon = domain_icon_prefix(tab.tab_id)
     local process_name = tab.active_pane.foreground_process_name
     -- wezterm.log_info("Process Name: " .. process_name)
@@ -89,12 +91,11 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     local edge_foreground = background
 
     local t_title = tab_title(tab)
-    local i_title = icon_title(t_title)
-    local title = i_title or t_title
+    local title = domain_icon .. (icon_title(t_title) or t_title)
 
     -- ensure that the titles fit in the available space,
-    -- and that we have room for the edges.
-    title = domain_icon .. wezterm.truncate_right(title, max_width - 7) .. " "
+    -- and that we have room for the right edge.
+    title = wezterm.truncate_right(title, max_width - 1) .. " "
 
     local is_first = tab.tab_id == tabs[1].tab_id
     local left_edge = is_first and SOLID_BLOCK or SOLID_LEFT_ARROW
@@ -113,15 +114,15 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     }
 end)
 
-wezterm.on('update-right-status', function(window, pane)
-    local date = wezterm.strftime '%Y-%m-%d %H:%M:%S'
+wezterm.on("update-right-status", function(window, pane)
+    local date = wezterm.strftime("%Y-%m-%d %H:%M:%S")
     local workspace = window:active_workspace()
-    window:set_right_status(wezterm.format {
+    window:set_right_status(wezterm.format({
         { Text = workspace },
         { Text = date },
         { Text = SOLID_RIGHT_ARROW },
         { Text = SOLID_LEFT_ARROW },
-    })
+    }))
 end)
 
 M.setup = function(config)
@@ -136,7 +137,7 @@ M.setup = function(config)
         bottom = 0,
     }
     config.window_decorations = "RESIZE"
-    config.tab_max_width = 57
+    config.tab_max_width = 80
     config.tab_bar_style = {
         new_tab = wezterm.format({
             { Attribute = { Intensity = "Bold" } },
