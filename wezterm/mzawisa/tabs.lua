@@ -2,12 +2,16 @@ local wezterm = require("wezterm")
 local M = {}
 local catppuccin = require("mzawisa.colorscheme")
 local utils = require("mzawisa.utils")
-local mocha = catppuccin.select(catppuccin.colors, "mocha", "mauve").tab_bar
+local tab_bar_colors = catppuccin.select(catppuccin.colors, "mocha", "mauve").tab_bar
+local mocha = catppuccin.colors.mocha
 
 local utf8 = require("utf8")
-local SOLID_LEFT_ARROW = utf8.char(0xe0ba)
-local SOLID_BLOCK = utf8.char(0x2588)
-local SOLID_RIGHT_ARROW = utf8.char(0xe0bc)
+local TMUX_ICON = utf8.char(0xebc8)
+local SOLID_LEFT_SLANT = utf8.char(0xe0ba)
+local SOLID_RIGHT_SLANT = utf8.char(0xe0bc)
+local LEFT_ARROW = utf8.char(0xe0b3)
+local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
+local SOLID_LEFT_CIRCLE = utf8.char(0xe0b6)
 local WSL_ICON = utf8.char(0xebc6)
 local VIM_ICON = utf8.char(0xe6ae)
 local SERVER_ICON = utf8.char(0xf01c5)
@@ -17,13 +21,22 @@ local WINDOWS_ICON = utf8.char(0xe62a)
 local CMD_ICON = utf8.char(0xebc4)
 local GIT_ICON = utf8.char(0xf02a2)
 
-local TAB_BAR_BG = mocha.background
-local ACTIVE_TAB_BG = mocha.active_tab.bg_color
-local ACTIVE_TAB_FG = mocha.active_tab.fg_color
-local HOVER_TAB_BG = mocha.new_tab.bg_color
-local HOVER_TAB_FG = mocha.new_tab.fg_color
-local NORMAL_TAB_BG = mocha.inactive_tab_hover.bg_color
-local NORMAL_TAB_FG = mocha.inactive_tab_hover.fg_color
+local TAB_BAR_BG = tab_bar_colors.background
+local ACTIVE_TAB_BG = tab_bar_colors.active_tab.bg_color
+local ACTIVE_TAB_FG = tab_bar_colors.active_tab.fg_color
+local HOVER_TAB_BG = tab_bar_colors.new_tab.bg_color
+local HOVER_TAB_FG = tab_bar_colors.new_tab.fg_color
+local NORMAL_TAB_BG = tab_bar_colors.inactive_tab_hover.bg_color
+local NORMAL_TAB_FG = tab_bar_colors.inactive_tab_hover.fg_color
+
+local COLOR_WHEEL = {
+    mocha.mauve,
+    mocha.green,
+    mocha.yellow,
+    mocha.blue,
+    mocha.teal,
+    mocha.peach,
+}
 
 -- This function returns the suggested title for a tab.
 -- It prefers the title that was set via `tab:set_title()`
@@ -97,31 +110,130 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     -- and that we have room for the right edge.
     title = wezterm.truncate_right(title, max_width - 1) .. " "
 
-    local is_first = tab.tab_id == tabs[1].tab_id
-    local left_edge = is_first and SOLID_BLOCK or SOLID_LEFT_ARROW
     return {
         { Attribute = { Intensity = "Bold" } },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
-        { Text = left_edge },
+        { Text = SOLID_LEFT_SLANT },
         { Background = { Color = background } },
         { Foreground = { Color = foreground } },
         { Text = title },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_RIGHT_ARROW },
+        { Text = SOLID_RIGHT_SLANT },
         { Attribute = { Intensity = "Normal" } },
     }
 end)
 
 wezterm.on("update-right-status", function(window, pane)
-    local date = wezterm.strftime("%Y-%m-%d %H:%M:%S")
-    local workspace = window:active_workspace()
-    window:set_right_status(wezterm.format({
+    -- Each element holds the text for a cell in a "powerline" style << fade
+    local cells = {}
+
+    -- Figure out the cwd and host of the current pane.
+    -- This will pick up the hostname for the remote host if your
+    -- shell is using OSC 7 on the remote host.
+    local cwd_uri = pane:get_current_working_dir()
+    if cwd_uri then
+        local cwd = ""
+        local hostname = ""
+
+        if type(cwd_uri) == "userdata" then
+            -- Running on a newer version of wezterm and we have
+            -- a URL object here, making this simple!
+
+            cwd = cwd_uri.file_path
+            hostname = cwd_uri.host or wezterm.hostname()
+        else
+            -- an older version of wezterm, 20230712-072601-f4abf8fd or earlier,
+            -- which doesn't have the Url object
+            cwd_uri = cwd_uri:sub(8)
+            local slash = cwd_uri:find("/")
+            if slash then
+                hostname = cwd_uri:sub(1, slash - 1)
+                -- and extract the cwd from the uri, decoding %-encoding
+                cwd = cwd_uri:sub(slash):gsub("%%(%x%x)", function(hex)
+                    return string.char(tonumber(hex, 16))
+                end)
+            end
+        end
+
+        -- Remove the domain name portion of the hostname
+        local dot = hostname:find("[.]")
+        if dot then
+            hostname = hostname:sub(1, dot - 1)
+        end
+        if hostname == "" then
+            hostname = wezterm.hostname()
+        end
+
+        table.insert(cells, cwd)
+        table.insert(cells, hostname)
+    end
+
+    -- I like my date/time in this style: "Wed Mar 3 08:14"
+    local date = wezterm.strftime("%a %b %-d %H:%M")
+    table.insert(cells, date)
+
+    -- An entry for each battery (typically 0 or 1 battery)
+    for _, b in ipairs(wezterm.battery_info()) do
+        table.insert(cells, string.format("%.0f%%", b.state_of_charge * 100))
+    end
+
+    -- Color palette for the backgrounds of each cell
+    local colors = {
+        mocha.flamingo,
+        mocha.blue,
+        mocha.sky,
+        mocha.pink,
+        "#b491c8",
+    }
+
+    -- Foreground color for the text across the fade
+    local text_fg = mocha.crust
+
+    -- The elements to be formatted
+    local elements = {}
+    -- How many cells have been formatted
+    local num_cells = 0
+
+    -- Translate a cell into elements
+    local function push(text, is_last, is_first)
+        local cell_no = num_cells + 1
+        if is_first then
+            table.insert(elements, { Foreground = { Color = colors[cell_no] } })
+            table.insert(elements, { Text = SOLID_LEFT_SLANT })
+        end
+        table.insert(elements, { Foreground = { Color = text_fg } })
+        table.insert(elements, { Background = { Color = colors[cell_no] } })
+        table.insert(elements, { Text = " " .. text .. " " })
+        if not is_last then
+            table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
+            table.insert(elements, { Text = SOLID_LEFT_SLANT })
+        end
+        num_cells = num_cells + 1
+    end
+
+    local is_first = true
+    while #cells > 0 do
+        local cell = table.remove(cells, 1)
+        push(cell, #cells == 0, is_first)
+        is_first = false
+    end
+
+    window:set_right_status(wezterm.format(elements))
+end)
+
+wezterm.on("update-status", function(window, pane)
+    local workspace = " " .. TMUX_ICON .. " " .. window:active_workspace() .. " "
+    window:set_left_status(wezterm.format({
+        { Attribute = { Intensity = "Bold" } },
+        { Background = { Color = mocha.blue } },
+        { Foreground = { Color = mocha.crust } },
         { Text = workspace },
-        { Text = date },
-        { Text = SOLID_RIGHT_ARROW },
-        { Text = SOLID_LEFT_ARROW },
+        { Background = { Color = mocha.crust } },
+        { Foreground = { Color = mocha.blue } },
+        { Text = SOLID_RIGHT_SLANT .. "  " },
+        { Attribute = { Intensity = "Normal" } },
     }))
 end)
 
@@ -143,26 +255,26 @@ M.setup = function(config)
             { Attribute = { Intensity = "Bold" } },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = NORMAL_TAB_BG } },
-            { Text = SOLID_LEFT_ARROW },
+            { Text = SOLID_LEFT_SLANT },
             { Background = { Color = NORMAL_TAB_BG } },
             { Foreground = { Color = NORMAL_TAB_FG } },
             { Text = " " .. PLUS_ICON .. " " },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = NORMAL_TAB_BG } },
-            { Text = SOLID_RIGHT_ARROW },
+            { Text = SOLID_RIGHT_SLANT },
             { Attribute = { Intensity = "Normal" } },
         }),
         new_tab_hover = wezterm.format({
             { Attribute = { Intensity = "Bold" } },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = HOVER_TAB_BG } },
-            { Text = SOLID_LEFT_ARROW },
+            { Text = SOLID_LEFT_SLANT },
             { Background = { Color = HOVER_TAB_BG } },
             { Foreground = { Color = HOVER_TAB_FG } },
             { Text = " " .. PLUS_ICON .. " " },
             { Background = { Color = TAB_BAR_BG } },
             { Foreground = { Color = HOVER_TAB_BG } },
-            { Text = SOLID_RIGHT_ARROW },
+            { Text = SOLID_RIGHT_SLANT },
             { Attribute = { Intensity = "Normal" } },
         }),
     }
