@@ -39,6 +39,9 @@ require("lazy").setup({
             },
         },
         {
+            "norcalli/nvim-colorizer.lua",
+        },
+        {
             "catppuccin/nvim",
             name = "Catppuccin",
             lazy = false, -- make sure we load this during startup if it is your main colorscheme
