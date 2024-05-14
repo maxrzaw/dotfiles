@@ -2,7 +2,6 @@ local wezterm = require("wezterm")
 local M = {}
 local catppuccin = require("mzawisa.colorscheme")
 local utils = require("mzawisa.utils")
-local tab_bar_colors = catppuccin.select(catppuccin.colors, "mocha", "mauve").tab_bar
 local mocha = catppuccin.colors.mocha
 
 local utf8 = require("utf8")
@@ -17,29 +16,22 @@ local RIGHT_ARROW = utf8.char(0xe0b0)
 local LEFT_CIRCLE = utf8.char(0xe0b6)
 local WSL_ICON = utf8.char(0xebc6)
 local VIM_ICON = utf8.char(0xe6ae)
-local SERVER_ICON = utf8.char(0xf01c5)
 local TEST_ICON = utf8.char(0xea79)
 local PLUS_ICON = utf8.char(0xf44d)
 local WINDOWS_ICON = utf8.char(0xe62a)
 local CMD_ICON = utf8.char(0xebc4)
 local GIT_ICON = utf8.char(0xf02a2)
+local USER_ICON = utf8.char(0xf007)
+local FOLDER_ICON = utf8.char(0xf4d3)
+local SERVER_ICON = utf8.char(0xf048b)
 
-local TAB_BAR_BG = tab_bar_colors.background
-local ACTIVE_TAB_BG = tab_bar_colors.active_tab.bg_color
-local ACTIVE_TAB_FG = tab_bar_colors.active_tab.fg_color
-local HOVER_TAB_BG = tab_bar_colors.new_tab.bg_color
-local HOVER_TAB_FG = tab_bar_colors.new_tab.fg_color
-local NORMAL_TAB_BG = tab_bar_colors.inactive_tab_hover.bg_color
-local NORMAL_TAB_FG = tab_bar_colors.inactive_tab_hover.fg_color
-
-local COLOR_WHEEL = {
-    mocha.mauve,
-    mocha.green,
-    mocha.yellow,
-    mocha.blue,
-    mocha.teal,
-    mocha.peach,
-}
+local TAB_BAR_BG = mocha.crust
+local ACTIVE_TAB_ACCENT = mocha.peach
+local HOVER_TAB_BG = mocha.surface0
+local HOVER_TAB_FG = mocha.text
+local NORMAL_TAB_BG = mocha.surface0
+local NORMAL_TAB_FG = mocha.text
+local NORMAL_TAB_ACCENT = mocha.blue
 
 -- This function returns the suggested title for a tab.
 -- It prefers the title that was set via `tab:set_title()`
@@ -63,10 +55,12 @@ end
 
 local icon_title = function(title)
     local lower = string.lower(title)
-    if lower:match("vim") then
+    if lower:match("vim") and not lower:match("dotfiles") then
         return VIM_ICON .. " " .. "Vim"
     elseif lower:match("serve") then
         return SERVER_ICON .. " " .. "Server"
+    elseif lower:match("lg") or lower:match("lazygit") then
+        return GIT_ICON .. " " .. "Lazygit"
     elseif lower:match("test") then
         return TEST_ICON .. " " .. "Tests"
     end
@@ -87,42 +81,41 @@ local domain_icon_prefix = function(tab_id)
 end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-    wezterm.log_info("max_width: " .. max_width)
     local domain_icon = domain_icon_prefix(tab.tab_id)
-    local process_name = tab.active_pane.foreground_process_name
-    -- wezterm.log_info("Process Name: " .. process_name)
 
-    local edge_background = TAB_BAR_BG
     local background = NORMAL_TAB_BG
     local foreground = NORMAL_TAB_FG
+    local accent = NORMAL_TAB_ACCENT
 
     if tab.is_active then
-        background = ACTIVE_TAB_BG
-        foreground = ACTIVE_TAB_FG
+        accent = ACTIVE_TAB_ACCENT
     elseif hover then
         background = HOVER_TAB_BG
         foreground = HOVER_TAB_FG
     end
-
-    local edge_foreground = background
 
     local t_title = tab_title(tab)
     local title = domain_icon .. (icon_title(t_title) or t_title)
 
     -- ensure that the titles fit in the available space,
     -- and that we have room for the right edge.
-    title = wezterm.truncate_right(title, max_width - 1) .. " "
+    title = wezterm.truncate_right(title, max_width - 7) .. " "
 
     return {
         { Attribute = { Intensity = "Bold" } },
-        { Background = { Color = edge_background } },
-        { Foreground = { Color = edge_foreground } },
+        { Foreground = { Color = background } },
+        { Background = { Color = TAB_BAR_BG } },
         { Text = LOWER_RIGHT_TRIANGLE },
-        { Background = { Color = background } },
         { Foreground = { Color = foreground } },
+        { Background = { Color = background } },
         { Text = title },
-        { Background = { Color = edge_background } },
-        { Foreground = { Color = edge_foreground } },
+        { Foreground = { Color = background } },
+        { Background = { Color = accent } },
+        { Text = UPPER_LEFT_TRIANGLE },
+        { Foreground = { Color = TAB_BAR_BG } },
+        { Text = " " .. tab.tab_index + 1 .. " " },
+        { Foreground = { Color = accent } },
+        { Background = { Color = TAB_BAR_BG } },
         { Text = UPPER_LEFT_TRIANGLE },
         { Attribute = { Intensity = "Normal" } },
     }
@@ -139,6 +132,10 @@ wezterm.on("update-right-status", function(window, pane)
     if cwd_uri then
         local cwd = ""
         local hostname = ""
+        local user = os.getenv("USER") or ""
+        if user ~= "" then
+            user = USER_ICON .. " " .. user
+        end
 
         if type(cwd_uri) == "userdata" then
             -- Running on a newer version of wezterm and we have
@@ -169,7 +166,11 @@ wezterm.on("update-right-status", function(window, pane)
             hostname = wezterm.hostname()
         end
 
+        cwd = FOLDER_ICON .. " " .. cwd
+        hostname = SERVER_ICON .. " " .. hostname
+
         table.insert(cells, cwd)
+        table.insert(cells, user)
         table.insert(cells, hostname)
     end
 
@@ -184,11 +185,11 @@ wezterm.on("update-right-status", function(window, pane)
 
     -- Color palette for the backgrounds of each cell
     local colors = {
-        mocha.flamingo,
+        mocha.lavender,
+        mocha.green,
         mocha.blue,
+        mocha.flamingo,
         mocha.sky,
-        mocha.pink,
-        "#b491c8",
     }
 
     -- Foreground color for the text across the fade
@@ -205,17 +206,15 @@ wezterm.on("update-right-status", function(window, pane)
         if is_first then
             table.insert(elements, { Foreground = { Color = colors[cell_no] } })
             table.insert(elements, { Background = { Color = mocha.crust } })
-            table.insert(elements, { Text = UPPER_RIGHT_TRIANGLE })
+            table.insert(elements, { Text = LEFT_CIRCLE })
         end
         table.insert(elements, { Foreground = { Color = text_fg } })
         table.insert(elements, { Background = { Color = colors[cell_no] } })
-        table.insert(elements, { Text = " " .. text .. " " })
+        table.insert(elements, { Text = "" .. text .. " " })
         if not is_last then
-            table.insert(elements, { Foreground = { Color = colors[cell_no] } })
-            table.insert(elements, { Background = { Color = mocha.crust } })
-            table.insert(elements, { Text = LOWER_LEFT_TRIANGLE })
+            table.insert(elements, { Background = { Color = colors[cell_no] } })
             table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
-            table.insert(elements, { Text = UPPER_RIGHT_TRIANGLE })
+            table.insert(elements, { Text = LEFT_CIRCLE })
         end
         num_cells = num_cells + 1
     end
@@ -234,11 +233,11 @@ wezterm.on("update-status", function(window, pane)
     local workspace = " " .. TMUX_ICON .. " " .. window:active_workspace() .. " "
     window:set_left_status(wezterm.format({
         { Attribute = { Intensity = "Bold" } },
-        { Background = { Color = mocha.blue } },
+        { Background = { Color = mocha.mauve } },
         { Foreground = { Color = mocha.crust } },
         { Text = workspace },
         { Background = { Color = mocha.crust } },
-        { Foreground = { Color = mocha.blue } },
+        { Foreground = { Color = mocha.mauve } },
         { Text = UPPER_LEFT_TRIANGLE .. "  " },
         { Attribute = { Intensity = "Normal" } },
     }))
@@ -256,7 +255,7 @@ M.setup = function(config)
         bottom = 0,
     }
     config.window_decorations = "RESIZE"
-    config.tab_max_width = 80
+    config.tab_max_width = 27
     config.tab_bar_style = {
         new_tab = wezterm.format({
             { Attribute = { Intensity = "Bold" } },
