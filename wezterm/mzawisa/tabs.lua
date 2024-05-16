@@ -133,9 +133,6 @@ wezterm.on("update-right-status", function(window, pane)
         local cwd = ""
         local hostname = ""
         local user = os.getenv("USER") or ""
-        if user ~= "" then
-            user = USER_ICON .. " " .. user
-        end
 
         if type(cwd_uri) == "userdata" then
             -- Running on a newer version of wezterm and we have
@@ -168,9 +165,14 @@ wezterm.on("update-right-status", function(window, pane)
 
         cwd = FOLDER_ICON .. " " .. cwd
         hostname = SERVER_ICON .. " " .. hostname
+        if user ~= "" then
+            user = USER_ICON .. " " .. user
+        end
 
         table.insert(cells, cwd)
-        table.insert(cells, user)
+        if user ~= "" then
+            table.insert(cells, user)
+        end
         table.insert(cells, hostname)
     end
 
