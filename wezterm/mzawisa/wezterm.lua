@@ -15,28 +15,7 @@ workspaces.setup(private_workspaces)
 tabs.setup(config)
 
 config.default_prog = { "zsh" }
-if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-    config.default_prog = { "C:/Users/MZawisa/AppData/Local/Programs/Git/bin/bash.exe", "--login", "-i" }
-    config.launch_menu = {
-        {
-            label = "Git Bash",
-            domain = { DomainName = "local" },
-        },
-        {
-            label = "PowerShell",
-            domain = { DomainName = "local" },
-            args = { "powershell.exe" },
-        },
-        {
-            label = "Command Prompt",
-            domain = { DomainName = "local" },
-            args = { "cmd.exe" },
-        },
-    }
-end
-
 config.audible_bell = "Disabled"
-
 config.color_scheme = "Catppuccin Mocha"
 config.window_background_opacity = 0.85
 
@@ -56,11 +35,30 @@ config.harfbuzz_features = {
     "ss09",
 }
 config.font_size = 14.0
-local TIME_limit = false
-if TIME_limit then
-    config.font_size = 12.0
-end
 config.adjust_window_size_when_changing_font_size = false
+
+-- Windows Overrides
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+    config.default_prog = { "C:/Users/MZawisa/AppData/Local/Programs/Git/bin/bash.exe", "--login", "-i" }
+    config.launch_menu = {
+        {
+            label = "Git Bash",
+            domain = { DomainName = "local" },
+        },
+        {
+            label = "PowerShell",
+            domain = { DomainName = "local" },
+            args = { "powershell.exe" },
+        },
+        {
+            label = "Command Prompt",
+            domain = { DomainName = "local" },
+            args = { "cmd.exe" },
+        },
+    }
+
+    config.font = wezterm.font("FiraCode Nerd Font Mono")
+end
 
 keys.setup(config)
 
