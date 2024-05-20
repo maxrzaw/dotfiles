@@ -19,21 +19,22 @@ config.audible_bell = "Disabled"
 config.color_scheme = "Catppuccin Mocha"
 config.window_background_opacity = 0.85
 
-config.font = wezterm.font_with_fallback({ "Monaspace Neon", "FiraCode Nerd Font Mono" })
-config.harfbuzz_features = {
-    "calt", -- Contextual Alternates (texture healing)
-    "clig", -- Contextual Ligatures
-    "liga",
-    "ss01",
-    "ss02",
-    "ss03",
-    "ss04",
-    "ss05", -- Functional Programming Ligatures (F#)
-    "ss06",
-    "ss07",
-    "ss08",
-    "ss09",
-}
+-- config.font = wezterm.font_with_fallback({ "Monaspace Neon", "FiraCode Nerd Font Mono" })
+-- config.harfbuzz_features = {
+--     "calt", -- Contextual Alternates (texture healing)
+--     "clig", -- Contextual Ligatures
+--     "liga",
+--     "ss01",
+--     "ss02",
+--     "ss03",
+--     "ss04",
+--     "ss05", -- Functional Programming Ligatures (F#)
+--     "ss06",
+--     "ss07",
+--     "ss08",
+--     "ss09",
+-- }
+config.font = wezterm.font("FiraCode Nerd Font Mono")
 config.font_size = 14.0
 config.adjust_window_size_when_changing_font_size = false
 
@@ -56,8 +57,6 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
             args = { "cmd.exe" },
         },
     }
-
-    config.font = wezterm.font("FiraCode Nerd Font Mono")
 end
 
 keys.setup(config)
