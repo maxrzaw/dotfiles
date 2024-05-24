@@ -42,7 +42,9 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=
 # autoload -Uz compinit && compinit
 
 # Kubernetes
-if [ -x "$(command -v kubectl)" ]; then
-    source <(kubectl completion zsh)
-    alias k=kubectl
+if [[ ! -v NEOVIM_WORK ]] then
+    if [ -x "$(command -v kubectl)" ]; then
+        source <(kubectl completion zsh)
+        alias k=kubectl
+    fi
 fi
