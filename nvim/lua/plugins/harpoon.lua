@@ -52,14 +52,11 @@ return {
             Harpoon:list():add()
         end)
         vim.keymap.set("n", "<leader>h", function()
-            local path =
-                vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
             Harpoon.ui:toggle_quick_menu(Harpoon:list(), {
                 border = "rounded",
                 title_pos = "center",
                 title = " >-> Harpoon <-< ",
                 ui_max_width = 80,
-                context = path,
             })
         end)
     end,
