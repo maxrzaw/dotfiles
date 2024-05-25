@@ -18,6 +18,13 @@ return {
             local trouble = require("trouble.providers.telescope")
 
             local telescope = require("telescope")
+            local harpoon_add_mark = function(prompt_bufnr)
+                local entry = require("telescope.actions.state").get_selected_entry()
+                local list = require("harpoon"):list()
+                local harpoon_config = list.config
+                local item = harpoon_config.create_list_item(harpoon_config, entry[1])
+                list:add(item)
+            end
             telescope.setup({
                 defaults = {
                     layout_config = { width = 0.95 },
@@ -31,6 +38,7 @@ return {
                                 require("trouble").open("quickfix")
                             end,
                             ["<C-h>"] = "which_key",
+                            ["<C-r>"] = harpoon_add_mark,
                         },
                         n = {
                             ["<C-t>"] = trouble.open_with_trouble,
@@ -39,6 +47,7 @@ return {
                                 require("trouble").open("quickfix")
                             end,
                             ["<C-h>"] = "which_key",
+                            ["<C-r>"] = harpoon_add_mark,
                         },
                     },
                 },

@@ -11,6 +11,7 @@ return {
         "nvim-lua/plenary.nvim",
         {
             "maxrzaw/harpoon-relative-marks",
+            dev = true,
             dependencies = { "pysan3/pathlib.nvim" },
         },
     },
