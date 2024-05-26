@@ -130,6 +130,12 @@ return {
                 vim.lsp.buf.rename,
                 vim.tbl_extend("error", opts, { desc = "LSP: [R]ename Symbol" })
             )
+            vim.keymap.set("i", "<C-h>", function()
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+            end, vim.tbl_extend("error", opts, { desc = "LSP: Toggle Inlay [H]ints" }))
+            vim.keymap.set("n", "<C-h>", function()
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+            end, vim.tbl_extend("error", opts, { desc = "LSP: Toggle Inlay [H]ints" }))
             vim.keymap.set(
                 "i",
                 "<C-k>",
@@ -151,11 +157,29 @@ return {
             callback = function(args)
                 local bufnr = args.buf
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
+                if client ~= nil and client.server_capabilities.inlayHintProvider then
+                    vim.lsp.inlay_hint.enable(true, {})
+                    -- local group = vim.api.nvim_create_augroup("inlay_hints", { clear = true })
+                    -- vim.api.nvim_create_autocmd("InsertEnter", {
+                    --     group = group,
+                    --     buffer = bufnr,
+                    --     callback = function()
+                    --         vim.lsp.inlay_hint.enable(true, {})
+                    --     end,
+                    -- })
+                    -- vim.api.nvim_create_autocmd("InsertLeave", {
+                    --     group = group,
+                    --     buffer = bufnr,
+                    --     callback = function()
+                    --         vim.lsp.inlay_hint.enable(false, {})
+                    --     end,
+                    -- })
+                end
                 set_default_keybindings(client, bufnr)
                 set_format_on_save(client, bufnr)
-                -- if client ~= nil and client.name == "tsserver" and angular.enabled then
-                --     client.server_capabilities.renameProvider = false
-                -- end
+                if client ~= nil and client.name == "tsserver" and angular.enabled then
+                    client.server_capabilities.renameProvider = false
+                end
             end,
         })
 
@@ -178,11 +202,6 @@ return {
                         },
                         workspace = {
                             checkThirdParty = false,
-                            -- --The below was replaced by neodev.nvim
-                            -- library = {
-                            --     vim.fn.expand("$VIMRUNTIME/lua"),
-                            --     vim.fn.stdpath("config") .. "/lua",
-                            -- },
                         },
                     },
                 },
@@ -221,6 +240,62 @@ return {
             "--ngProbeLocations",
             default_node_modules,
         }
+        lspconfig.angularls.setup({
+            autostart = false,
+            filetypes = { "typescript", "angular.html", "html", "typescriptreact", "typescript.tsx" },
+            cmd = ngls_cmd,
+            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
+            on_new_config = function(new_config)
+                new_config.cmd = ngls_cmd
+            end,
+        })
+
+        local inlayHints = {
+            includeInlayParameterNameHints = "all",
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = false,
+            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+            includeInlayPropertyDeclarationTypeHints = false,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+        }
+        lspconfig.tsserver.setup({
+            settings = {
+                typescript = {
+                    inlayHints = inlayHints,
+                },
+                javascript = {
+                    inlayHints = inlayHints,
+                },
+            },
+            init_options = {
+                hostInfo = "neovim",
+                init_options = {
+                    -- Disable telemetry
+                    telemetry = { enable = false },
+                },
+            },
+            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
+            on_init = disable_formatting_on_init,
+        })
+
+        lspconfig.eslint.setup({
+            on_init = disable_formatting_on_init,
+            filetypes = {
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+                "vue",
+                "svelte",
+                "astro",
+                "html",
+                "angular.html",
+            },
+        })
 
         lspconfig.terraformls.setup({})
 
@@ -272,38 +347,6 @@ return {
             })
         end
 
-        lspconfig.angularls.setup({
-            autostart = false,
-            filetypes = { "typescript", "angular.html", "html", "typescriptreact", "typescript.tsx" },
-            cmd = ngls_cmd,
-            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
-            on_new_config = function(new_config)
-                new_config.cmd = ngls_cmd
-            end,
-        })
-
-        lspconfig.tsserver.setup({
-            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
-            on_init = disable_formatting_on_init,
-        })
-
-        lspconfig.eslint.setup({
-            on_init = disable_formatting_on_init,
-            filetypes = {
-                "javascript",
-                "javascriptreact",
-                "javascript.jsx",
-                "typescript",
-                "typescriptreact",
-                "typescript.tsx",
-                "vue",
-                "svelte",
-                "astro",
-                "html",
-                "angular.html",
-            },
-        })
-
         lspconfig.dockerls.setup({})
 
         lspconfig.docker_compose_language_service.setup({
@@ -325,11 +368,9 @@ return {
 
         vim.diagnostic.config({
             severity_sort = true,
-            virtual_text = {
-                source = "always",
-            },
+            virtual_text = { "if_many" },
             float = {
-                source = "always",
+                source = "if_many",
                 border = "rounded",
             },
         })
