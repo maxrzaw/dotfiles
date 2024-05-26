@@ -159,21 +159,6 @@ return {
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
                 if client ~= nil and client.server_capabilities.inlayHintProvider then
                     vim.lsp.inlay_hint.enable(true, {})
-                    -- local group = vim.api.nvim_create_augroup("inlay_hints", { clear = true })
-                    -- vim.api.nvim_create_autocmd("InsertEnter", {
-                    --     group = group,
-                    --     buffer = bufnr,
-                    --     callback = function()
-                    --         vim.lsp.inlay_hint.enable(true, {})
-                    --     end,
-                    -- })
-                    -- vim.api.nvim_create_autocmd("InsertLeave", {
-                    --     group = group,
-                    --     buffer = bufnr,
-                    --     callback = function()
-                    --         vim.lsp.inlay_hint.enable(false, {})
-                    --     end,
-                    -- })
                 end
                 set_default_keybindings(client, bufnr)
                 set_format_on_save(client, bufnr)
