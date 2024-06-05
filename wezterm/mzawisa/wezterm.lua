@@ -11,13 +11,14 @@ end
 
 local config = wezterm.config_builder()
 
+pcall(require, "private.startup")
 workspaces.setup(private_workspaces)
 tabs.setup(config)
 
 config.default_prog = { "zsh" }
 config.audible_bell = "Disabled"
 config.color_scheme = "Catppuccin Mocha"
-config.window_background_opacity = 0.85
+config.window_background_opacity = 0.95
 
 -- config.font = wezterm.font_with_fallback({ "Monaspace Neon", "FiraCode Nerd Font Mono" })
 -- config.harfbuzz_features = {
