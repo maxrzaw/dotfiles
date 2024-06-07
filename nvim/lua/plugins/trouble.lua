@@ -1,6 +1,7 @@
 local get_opts = require("mzawisa.keymap").get_opts
 return {
     "folke/trouble.nvim",
+    tag = "v2.10.0",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
         local ok, trouble = pcall(require, "trouble")
