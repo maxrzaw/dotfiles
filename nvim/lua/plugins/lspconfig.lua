@@ -1,3 +1,5 @@
+local M = {}
+M.inlay_hints_enabled = false
 return {
     "neovim/nvim-lspconfig",
     cond = not vim.g.vscode,
@@ -131,10 +133,12 @@ return {
                 vim.tbl_extend("error", opts, { desc = "LSP: [R]ename Symbol" })
             )
             vim.keymap.set("i", "<C-h>", function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+                M.inlay_hints_enabled = not M.inlay_hints_enabled
+                vim.lsp.inlay_hint.enable(M.inlay_hints_enabled)
             end, vim.tbl_extend("error", opts, { desc = "LSP: Toggle Inlay [H]ints" }))
             vim.keymap.set("n", "<C-h>", function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+                M.inlay_hints_enabled = not M.inlay_hints_enabled
+                vim.lsp.inlay_hint.enable(M.inlay_hints_enabled)
             end, vim.tbl_extend("error", opts, { desc = "LSP: Toggle Inlay [H]ints" }))
             vim.keymap.set(
                 "i",
@@ -158,7 +162,7 @@ return {
                 local bufnr = args.buf
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
                 if client ~= nil and client.server_capabilities.inlayHintProvider then
-                    vim.lsp.inlay_hint.enable(true, {})
+                    vim.lsp.inlay_hint.enable(M.inlay_hints_enabled, {})
                 end
                 set_default_keybindings(client, bufnr)
                 set_format_on_save(client, bufnr)
