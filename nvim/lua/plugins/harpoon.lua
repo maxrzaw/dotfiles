@@ -24,21 +24,20 @@ return {
                 save_on_toggle = true,
                 sync_on_ui_close = true,
                 key = function()
-                    -- return vim.uv.cwd() -- This is the default
                     return utils.find_project_root()
                 end,
             },
             default = {
-                display = relative_marks.display,
+                -- display = relative_marks.display,
                 create_list_item = relative_marks.create_list_item,
             },
         })
 
-        relative_marks.setup({
-            key = function()
-                return utils.find_project_root()
-            end,
-        })
+        -- relative_marks.setup({
+        --     key = function()
+        --         return utils.find_project_root()
+        --     end,
+        -- })
 
         vim.api.nvim_create_autocmd({ "QuitPre" }, {
             pattern = "*",
