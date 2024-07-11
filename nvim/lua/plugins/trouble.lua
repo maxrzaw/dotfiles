@@ -1,7 +1,6 @@
 local get_opts = require("mzawisa.keymap").get_opts
 return {
     "folke/trouble.nvim",
-    tag = "v2.10.0",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
         local ok, trouble = pcall(require, "trouble")
@@ -14,7 +13,21 @@ return {
                 toggle_fold = { "<leader>z", "<leader>Z" },
             },
             height = 15,
+            focus = true,
+            modes = {
+                lsp_references = {
+                    params = {
+                        include_declaration = false,
+                    },
+                },
+                lsp_base = {
+                    params = {
+                        include_current = false,
+                    },
+                },
+            },
             auto_jump = {
+                "lsp",
                 "lsp_definitions",
                 "lsp_type_definitions",
                 -- "lsp_references", -- This appears to be broken
