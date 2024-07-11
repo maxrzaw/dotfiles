@@ -69,19 +69,19 @@ return {
             vim.keymap.set(
                 "n",
                 "gt",
-                "<cmd>TroubleToggle lsp_type_definitions<cr>",
+                "<cmd>Trouble lsp_type_definitions toggle<cr>",
                 vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [T]ype Definitions" })
             )
             vim.keymap.set(
                 "n",
                 "gr",
-                "<cmd>TroubleToggle lsp_references<cr>",
+                "<cmd>Trouble lsp_references toggle<cr>",
                 vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [R]eferences" })
             )
             vim.keymap.set(
                 "n",
                 "gd",
-                "<cmd>TroubleToggle lsp_definitions<cr>",
+                "<cmd>Trouble lsp_definitions toggle<cr>",
                 vim.tbl_extend("error", opts, { desc = "LSP: [G]o to [D]efinitions" })
             )
             vim.keymap.set(
@@ -249,7 +249,9 @@ return {
             includeInlayFunctionLikeReturnTypeHints = true,
             includeInlayEnumMemberValueHints = true,
         }
+
         lspconfig.tsserver.setup({
+            autostart = false,
             settings = {
                 typescript = {
                     inlayHints = inlayHints,

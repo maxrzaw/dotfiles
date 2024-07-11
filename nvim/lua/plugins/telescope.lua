@@ -16,6 +16,9 @@ return {
             local builtin = require("telescope.builtin")
             local actions = require("telescope.actions")
             local trouble = require("trouble.providers.telescope")
+            local open_with_trouble = function(...)
+                return require("trouble.sources.telescope").open(...)
+            end
 
             local telescope = require("telescope")
             local harpoon_add_mark = function(cwd, filename)
@@ -81,7 +84,7 @@ return {
                     file_ignore_patterns = { "node_modules/", ".git/", "bin/", "obj/" },
                     mappings = {
                         i = {
-                            ["<C-t>"] = trouble.open_with_trouble,
+                            ["<C-t>"] = open_with_trouble,
                             ["<C-q>"] = function(prompt_bufnr)
                                 actions.send_to_qflist(prompt_bufnr)
                                 trouble.open("quickfix")
@@ -89,7 +92,7 @@ return {
                             ["<C-h>"] = "which_key",
                         },
                         n = {
-                            ["<C-t>"] = trouble.open_with_trouble,
+                            ["<C-t>"] = open_with_trouble,
                             ["<C-q>"] = function(prompt_bufnr)
                                 actions.send_to_qflist(prompt_bufnr)
                                 trouble.open("quickfix")
