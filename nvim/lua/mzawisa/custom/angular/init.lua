@@ -3,10 +3,6 @@ local path = require("plenary.path")
 local M = {}
 M.enabled = false
 
-function M.start_angularls()
-    vim.cmd("LspStart angularls")
-end
-
 local function load_file_into_buffer(file)
     local uri = vim.uri_from_fname(file)
     local bufnrs = vim.api.nvim_list_bufs()
@@ -101,7 +97,12 @@ end
 
 function M.setup()
     M.enabled = true
-    vim.api.nvim_create_autocmd({ "BufWinEnter" }, { pattern = { "*.ts", "*.html" }, callback = M.start_angularls })
+    vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+        pattern = { "*.ts", "*.html" },
+        callback = function()
+            vim.cmd("LspStart angularls")
+        end,
+    })
     vim.api.nvim_create_autocmd(
         { "BufWinEnter" },
         { pattern = { "*.ts", "*.html", "*.scss" }, callback = M.set_quickswitch_keybindings }
