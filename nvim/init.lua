@@ -44,7 +44,7 @@ require("lazy").setup({
         {
             "catppuccin/nvim",
             name = "Catppuccin",
-            lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+            lazy = false, -- make sure we load this during startup if it is your main colorscheme
             priority = 1000, -- make sure to load this before all the other start plugins
             config = function()
                 require("catppuccin").setup({
@@ -151,6 +151,19 @@ require("lazy").setup({
                 "stevearc/dressing.nvim",
             },
             cmd = "Nerdy",
+        },
+        {
+            "m4xshen/hardtime.nvim",
+            dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+            opts = {
+                disable_mouse = false,
+                restriction_mode = "hint",
+                max_count = 10,
+                restricted_keys = {
+                    ["j"] = {},
+                    ["k"] = {},
+                },
+            },
         },
     },
 })
