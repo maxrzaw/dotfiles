@@ -20,7 +20,7 @@
     sa = stash apply
     sd = stash drop
     sl = stash list
-    ss = stash push -m
+    ss = stash push -um
     st = status
     sw = switch
     swc = switch -c
