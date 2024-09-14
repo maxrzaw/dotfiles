@@ -251,7 +251,7 @@ return {
         }
 
         lspconfig.tsserver.setup({
-            autostart = false,
+            autostart = true,
             settings = {
                 typescript = {
                     inlayHints = inlayHints,
