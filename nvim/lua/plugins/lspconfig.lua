@@ -166,7 +166,7 @@ return {
                 end
                 set_default_keybindings(client, bufnr)
                 set_format_on_save(client, bufnr)
-                if client ~= nil and client.name == "tsserver" and angular.enabled then
+                if client ~= nil and client.name == "ts_ls" and angular.enabled then
                     client.server_capabilities.renameProvider = false
                 end
             end,
@@ -250,7 +250,7 @@ return {
             includeInlayEnumMemberValueHints = true,
         }
 
-        lspconfig.tsserver.setup({
+        lspconfig.ts_ls.setup({
             autostart = true,
             settings = {
                 typescript = {
