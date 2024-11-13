@@ -20,6 +20,8 @@ config.audible_bell = "Disabled"
 config.color_scheme = "Catppuccin Mocha"
 config.window_background_opacity = 0.95
 
+config.max_fps = 120
+
 -- config.font = wezterm.font_with_fallback({ "Monaspace Neon", "FiraCode Nerd Font Mono" })
 -- config.harfbuzz_features = {
 --     "calt", -- Contextual Alternates (texture healing)
