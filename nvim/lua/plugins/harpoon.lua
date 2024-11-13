@@ -56,7 +56,7 @@ return {
                 border = "rounded",
                 title_pos = "center",
                 title = " >-> Harpoon <-< ",
-                ui_max_width = 80,
+                ui_max_width = 200,
             })
         end)
     end,
