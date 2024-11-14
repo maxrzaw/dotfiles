@@ -1,5 +1,5 @@
 return {
-    { "github/copilot.vim", enabled = false },
+    { "github/copilot.vim", enabled = false, cond = not vim.g.vscode },
     {
         "zbirenbaum/copilot.lua",
         opts = {
@@ -12,6 +12,7 @@ return {
                 enabled = true,
             },
         },
+        cond = not vim.g.vscode,
     },
     {
         "zbirenbaum/copilot-cmp",
@@ -19,5 +20,6 @@ return {
         config = function()
             require("copilot_cmp").setup({})
         end,
+        cond = not vim.g.vscode,
     },
 }
