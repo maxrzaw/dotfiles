@@ -1,13 +1,9 @@
 {
   "editor.fontFamily": "FiraCode NF Retina",
   "editor.fontLigatures": true,
-  "workbench.colorTheme": "One Dark Pro Darker",
-  "editor.rulers": [
-    80,
-    120
-  ],
+  "workbench.colorTheme": "Tokyo Night",
+  "editor.rulers": [80, 120],
   "workbench.startupEditor": "none",
-  "csharp.referencesCodeLens.enabled": false,
   // Scroll only along the predominant axis when scrolling both vertically and horizontally at the same time.
   // Prevents horizontal drift when scrolling vertically on a trackpad.
   "editor.scrollPredominantAxis": true,
@@ -23,10 +19,7 @@
       "icon": "terminal-powershell"
     },
     "Command Prompt": {
-      "path": [
-        "${env:windir}\\Sysnative\\cmd.exe",
-        "${env:windir}\\System32\\cmd.exe"
-      ],
+      "path": ["${env:windir}\\Sysnative\\cmd.exe", "${env:windir}\\System32\\cmd.exe"],
       "args": [],
       "icon": "terminal-cmd"
     },
@@ -35,10 +28,7 @@
     },
     "Ubuntu (WSL)": {
       "path": "C:\\WINDOWS\\System32\\wsl.exe",
-      "args": [
-        "-d",
-        "Ubuntu"
-      ]
+      "args": ["-d", "Ubuntu"]
     }
   },
   "terminal.integrated.cursorBlinking": true,
@@ -57,32 +47,42 @@
     "Angular.ng-template": 4,
     "eamodio.gitlens": 5,
     "waderyan.gitblame": 5,
-    "vscode.git": 5
+    "vscode.git": 5,
+    "dbaeumer.vscode-eslint": 6
   },
   "vscode-neovim.useWSL": true,
-  "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+  "vscode-neovim.neovimExecutablePaths.linux": "/usr/local/bin/nvim",
   "vscode-neovim.logOutputToConsole": true,
   "editor.lineNumbers": "relative",
   "editor.stickyScroll.enabled": true,
   "editor.scrollbar.vertical": "hidden",
   "editor.scrollbar.horizontal": "hidden",
   "gitlens.currentLine.pullRequests.enabled": false,
-  "gitlens.codeLens.scopes": [
-    "document",
-    "containers"
-  ],
+  "gitlens.codeLens.scopes": ["document", "containers"],
   "gitlens.statusBar.enabled": false,
   "cSpell.userWords": [
     "amrock",
     "chiplist",
     "DOCUMENTTYPE",
+    "dtsx",
     "Ebinder",
+    "esbenp",
     "FIPS",
+    "mzawisa",
     "neovim",
+    "netcoreapp",
+    "netstandard",
+    "NOSONAR",
+    "nrwl",
     "nvim",
+    "oidc",
     "overflowable",
     "snyk",
-    "trackpad"
+    "sonarlint",
+    "sonarqube",
+    "Sysnative",
+    "trackpad",
+    "windir"
   ],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -105,7 +105,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "html.format.wrapLineLength": 120,
-  "diffEditor.renderSideBySide": false,
   "editor.wordWrapColumn": 120,
   "git.openRepositoryInParentFolders": "never",
   "eslint.format.enable": true,
@@ -116,4 +115,19 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "window.zoomLevel": 1,
+  "json.schemaDownload.enable": true,
+  "errorLens.enabledDiagnosticLevels": ["warning", "info", "hint"],
+  "security.allowedUNCHosts": ["mi"],
+  "dotnet.codeLens.enableReferencesCodeLens": false,
+  "editor.formatOnPaste": true,
+  "vscode-neovim.compositeKeys": {
+    "jk": {
+      "command": "vscode-neovim.escape"
+    }
+  }
 }
