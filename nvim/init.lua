@@ -37,6 +37,7 @@ require("lazy").setup({
             opts = {
                 library = { plugins = { "neotest" }, types = true },
             },
+            cond = not vim.g.vscode,
         },
         {
             "norcalli/nvim-colorizer.lua",
