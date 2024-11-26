@@ -87,10 +87,10 @@ else
 
     -- Folding
     nnoremap("<leader>z", "za", {})
-end
 
---- Set up Keymap to toggle formatting
-vim.keymap.set("n", "<leader>ft", function()
-    require("mzawisa.custom.formatting-toggle").toggle()
-    require("lualine").refresh()
-end, { silent = true, desc = "[F]ormatting: [T]oggle" })
+    --- Set up Keymap to toggle formatting
+    vim.keymap.set("n", "<leader>ft", function()
+        require("mzawisa.custom.formatting-toggle").toggle()
+        require("lualine").refresh()
+    end, { silent = true, desc = "[F]ormatting: [T]oggle" })
+end
