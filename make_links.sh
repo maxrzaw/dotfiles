@@ -23,7 +23,7 @@ fi
 #    echo -e "if [ -f ~/dotfiles/bashrc ]; then\n    . ~/dotfiles/bashrc\nfi" >> ~/.bashrc
 #fi
 
-# This doesn't work if there is no file at ~/.gitconfig
+touch ~/.gitconfig
 if test $(grep -c "~/dotfiles/gitconfig" ~/.gitconfig) = 0; then
     echo "Adding gitconfig to ~/.gitconfig"
     git config --global include.path ~/dotfiles/gitconfig
