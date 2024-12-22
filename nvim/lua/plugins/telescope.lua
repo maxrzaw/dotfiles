@@ -104,16 +104,25 @@ return {
                 pickers = {
                     diagnostics = {
                         theme = "ivy",
+                        initial_mode = "normal",
                         path_display = "hidden",
                     },
                     lsp_definitions = {
                         theme = "ivy",
+                        initial_mode = "normal",
                     },
                     lsp_type_definitions = {
                         theme = "ivy",
+                        initial_mode = "normal",
+                    },
+                    lsp_implementations = {
+                        theme = "ivy",
+                        initial_mode = "normal",
                     },
                     lsp_references = {
                         theme = "ivy",
+                        initial_mode = "normal",
+                        include_declaration = false,
                         -- shorten_path = false,
                     },
                     find_files = cwd_plus_entry1,
