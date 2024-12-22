@@ -98,6 +98,8 @@ return {
                                 trouble.open("quickfix")
                             end,
                             ["<C-h>"] = "which_key",
+                            ["<esc>"] = actions.close,
+                            ["q"] = actions.close,
                         },
                     },
                 },
@@ -109,20 +111,24 @@ return {
                     },
                     lsp_definitions = {
                         theme = "ivy",
+                        show_line = false,
                         initial_mode = "normal",
                     },
                     lsp_type_definitions = {
                         theme = "ivy",
+                        show_line = false,
                         initial_mode = "normal",
                     },
                     lsp_implementations = {
                         theme = "ivy",
+                        show_line = false,
                         initial_mode = "normal",
                     },
                     lsp_references = {
                         theme = "ivy",
                         initial_mode = "normal",
                         include_declaration = false,
+                        show_line = false,
                         -- shorten_path = false,
                     },
                     find_files = cwd_plus_entry1,
