@@ -323,6 +323,7 @@ return {
         lspconfig.gopls.setup({})
         lspconfig.tailwindcss.setup({})
         lspconfig.cssls.setup({})
+        lspconfig.basedpyright.setup({})
 
         cmp.setup.filetype("gitcommit", {
             sources = cmp.config.sources({
