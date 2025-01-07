@@ -1,5 +1,26 @@
 return {
     {
+        "MeanderingProgrammer/render-markdown.nvim",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons",
+        },
+        ---@module 'render-markdown'
+        ---@type render.md.UserConfig
+        opts = {
+            enabled = false,
+            file_types = { "markdown" },
+            sign = {
+                enabled = false,
+            },
+            heading = {
+                icons = {},
+                backgrounds = {},
+            },
+            code = {},
+        },
+    },
+    {
         "iamcco/markdown-preview.nvim",
         name = "Markdown Preview",
         build = "cd app && npm install && git restore .",
