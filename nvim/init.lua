@@ -167,6 +167,7 @@ require("lazy").setup({
                 },
             },
         },
+        { "tjdevries/present.nvim" },
     },
 })
 
