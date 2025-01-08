@@ -1,0 +1,22 @@
+# Font settings
+font-family = "FiraCode Nerd Font Mono"
+font-size = 16
+
+# Theme settings
+background-opacity = "0.9"
+theme = "catppuccin-mocha"
+
+# Mouse settings
+mouse-hide-while-typing = true
+
+# hjkl for tab navigation
+keybind = ctrl+a>j=goto_tab:1
+keybind = ctrl+a>k=goto_tab:2
+keybind = ctrl+a>l=goto_tab:3
+keybind = ctrl+a>;=goto_tab:4
+# Create a new tab
+keybind = ctrl+a>n=new_tab
+
+# Needed so I can use alt in terminal applications
+macos-option-as-alt = true
+macos-titlebar-style = tabs
