@@ -20,3 +20,10 @@ keybind = ctrl+a>n=new_tab
 # Needed so I can use alt in terminal applications
 macos-option-as-alt = true
 macos-titlebar-style = tabs
+
+# Custom Icon
+macos-icon = custom-style
+# aluminum, beige, plastic, chrome
+macos-icon-frame = chrome
+macos-icon-ghost-color = "#96BEFB"
+macos-icon-screen-color = "#0F1F90"
