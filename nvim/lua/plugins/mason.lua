@@ -9,6 +9,7 @@ return {
             "tree-sitter-cli",
             "eslint-lsp",
             "lua-language-server",
+            "stylua",
             "typescript-language-server",
             "angular-language-server",
             "markdownlint",
