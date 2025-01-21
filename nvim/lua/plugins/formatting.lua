@@ -1,27 +1,28 @@
 return {
     {
-        "ckipp01/stylua-nvim",
-        ft = { "lua" },
-        lazy = true,
-        cond = not vim.g.vscode and vim.g.windows ~= 1,
-        build = { "npm install -g @johnnymorganz/stylua-bin" },
-        config = function()
-            require("stylua-nvim").setup({})
-
-            -- create an autogroup for prettier and then create an autocmd that will run prettier on save
-            local group = vim.api.nvim_create_augroup("Formatting", {
-                clear = false,
-            })
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                group = group,
-                pattern = "*.lua",
-                desc = "Run StyLua on save",
-                callback = function()
-                    if require("mzawisa.custom.formatting-toggle").formatting_enabled() then
-                        require("stylua-nvim").format_file({ error_display_strategy = "none" })
-                    end
-                end,
-            })
-        end,
+        "stevearc/conform.nvim",
+        opts = {
+            format_on_save = function(bufnr)
+                local path = vim.api.nvim_buf_get_name(bufnr)
+                if not require("mzawisa.custom.formatting-toggle").formatting_enabled(path) then
+                    return
+                end
+                return { timeout_ms = 500 }
+            end,
+            default_format_opts = {
+                lsp_format = "fallback",
+            },
+            formatters = {
+                csharpier = {
+                    command = "dotnet",
+                    -- prepend_args = { "csharpier", "format" }, -- This is for version 1.0.0
+                    prepend_args = { "csharpier" },
+                },
+            },
+            formatters_by_ft = {
+                lua = { "stylua" },
+                cs = { "csharpier", lsp_format = "first" },
+            },
+        },
     },
 }
