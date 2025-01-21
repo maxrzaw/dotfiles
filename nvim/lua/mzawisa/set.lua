@@ -82,8 +82,6 @@ end
 -- Enable workspace config files
 vim.opt.exrc = true
 
-vim.g.OmniSharp_server_use_net6 = 1
-
 -- needed for windows maybe?
 if vim.g.windows == 1 then
     vim.opt.shell = "bash.exe"

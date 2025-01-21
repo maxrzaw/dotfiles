@@ -172,16 +172,19 @@ return {
             })
         end
 
-        if not os.getenv("NEOVIM_WORK") then
-            lspconfig.omnisharp.setup({
-                handlers = {
-                    ["textDocument/definition"] = require("omnisharp_extended").handler,
+        lspconfig.omnisharp.setup({
+            cmd = { vim.fn.expand("$MASON/bin/omnisharp") },
+
+            settings = {
+                FormattingOptions = {
+                    EnableEditorConfigSupport = true,
                 },
-                cmd = { "/Users/max/.local/share/nvim/mason/bin/omnisharp" },
-                organize_imports_on_format = true,
-                enable_roslyn_analyzers = true,
-            })
-        end
+            },
+            handlers = {
+                ["textDocument/definition"] = require("omnisharp_extended").handler,
+            },
+            on_init = disable_formatting_on_init,
+        })
 
         -- Set up Angular Language Server
         -- wierd things required for angular monorepo

@@ -14,6 +14,7 @@ return {
             "markdownlint",
             "marksman",
             "prettierd",
+            "omnisharp",
             "tailwindcss-language-server",
             "bash-language-server",
             "css-lsp",
