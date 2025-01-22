@@ -7,7 +7,7 @@ return {
                 if not require("mzawisa.custom.formatting-toggle").formatting_enabled(path) then
                     return
                 end
-                return { timeout_ms = 500 }
+                return { timeout_ms = 5000 }
             end,
             default_format_opts = {
                 lsp_format = "fallback",
