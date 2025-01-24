@@ -45,8 +45,8 @@ return {
         local lspconfig = require("lspconfig")
         local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
-        local telescope_builtin = require("telescope.builtin")
         local get_opts = require("mzawisa.keymap").get_opts
+        local omnisharp_custom = require("mzawisa.custom.omnisharp")
 
         -- Add nvim_cmp default capabilities to lspconfig default capabilities
         lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
@@ -86,16 +86,20 @@ return {
 
         -- LSP Keybindings
         local set_default_keybindings = function(client, bufnr)
-            vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, get_opts("LSP: [G]o to [D]efinitions"))
+            if client.name == "copilot" or client.name == "null-ls" then
+                return
+            end
             vim.keymap.set(
                 "n",
                 "gt",
-                telescope_builtin.lsp_type_definitions,
+                omnisharp_custom.lsp_type_definitions,
                 get_opts("LSP: [G]o to [T]ype Definitions")
             )
-            vim.keymap.set("n", "gr", telescope_builtin.lsp_references, get_opts("LSP: [G]o to [R]eferences"))
-            vim.keymap.set("n", "gi", telescope_builtin.lsp_implementations, get_opts("LSP: [G]o to [I]mplementations"))
+            vim.keymap.set("n", "gd", omnisharp_custom.lsp_definitions, get_opts("LSP: [G]o to [D]efinitions"))
+            vim.keymap.set("n", "gr", omnisharp_custom.lsp_references, get_opts("LSP: [G]o to [R]eferences"))
+            vim.keymap.set("n", "gi", omnisharp_custom.lsp_implementations, get_opts("LSP: [G]o to [I]mplementations"))
             vim.keymap.set("n", "gD", vim.lsp.buf.declaration, get_opts("LSP: [G]o to [D]eclaration"))
+
             vim.keymap.set(
                 "n",
                 "<leader>vd",
@@ -179,9 +183,6 @@ return {
                 FormattingOptions = {
                     EnableEditorConfigSupport = true,
                 },
-            },
-            handlers = {
-                ["textDocument/definition"] = require("omnisharp_extended").handler,
             },
             on_init = disable_formatting_on_init,
         })
