@@ -61,29 +61,6 @@ return {
             client.server_capabilities.documentFormattingRangeProvider = false
         end
 
-        -- LSP Formatting
-        local lsp_formatting = function(bufnr)
-            local path = vim.api.nvim_buf_get_name(bufnr)
-            if not require("mzawisa.custom.formatting-toggle").formatting_enabled(path) then
-                return
-            end
-
-            vim.lsp.buf.format({ bufnr = bufnr })
-        end
-
-        local lspFormattingAugroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-        local set_format_on_save = function(client, bufnr)
-            if client.server_capabilities.documentFormattingProvider then
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                    group = lspFormattingAugroup,
-                    buffer = bufnr,
-                    callback = function()
-                        lsp_formatting(bufnr)
-                    end,
-                })
-            end
-        end
-
         -- LSP Keybindings
         local set_default_keybindings = function(client, bufnr)
             if client.name == "copilot" or client.name == "null-ls" then
@@ -140,11 +117,15 @@ return {
             callback = function(args)
                 local bufnr = args.buf
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+                set_default_keybindings(client, bufnr)
+
+                -- Enable Inlay Hints
                 if client ~= nil and client.server_capabilities.inlayHintProvider then
                     vim.lsp.inlay_hint.enable(M.inlay_hints_enabled, {})
                 end
-                set_default_keybindings(client, bufnr)
-                set_format_on_save(client, bufnr)
+
+                -- Disable tsserver from being a rename provider when working on Angular
                 if client ~= nil and client.name == "ts_ls" and angular.enabled then
                     client.server_capabilities.renameProvider = false
                 end
@@ -156,7 +137,6 @@ return {
             table.insert(runtime_path, "lua/?.lua")
             table.insert(runtime_path, "lua/?/init.lua")
             lspconfig.lua_ls.setup({
-                on_init = disable_formatting_on_init,
                 settings = {
                     Lua = {
                         -- Disable Telemetry
@@ -184,7 +164,6 @@ return {
                     EnableEditorConfigSupport = true,
                 },
             },
-            on_init = disable_formatting_on_init,
         })
 
         -- Set up Angular Language Server
@@ -247,7 +226,9 @@ return {
                 },
             },
             root_dir = lspconfig.util.root_pattern(".git", "package.json"),
-            on_init = disable_formatting_on_init,
+            on_init = function(client)
+                disable_formatting_on_init(client)
+            end,
         })
 
         lspconfig.eslint.setup({
