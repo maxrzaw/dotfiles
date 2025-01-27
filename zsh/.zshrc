@@ -13,6 +13,8 @@ export EDITOR=$VIM
 export GIT_EDITOR=$VIM
 
 alias got='git'
+alias pip=pip3
+alias python=python3
 
 # This works with wezterm/mzawisa/workspaces.lua
 wez() {
