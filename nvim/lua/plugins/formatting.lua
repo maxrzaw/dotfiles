@@ -1,3 +1,4 @@
+local prettier = { "prettierd", "prettier", stop_after_first = true }
 return {
     {
         "stevearc/conform.nvim",
@@ -11,6 +12,7 @@ return {
             end,
             default_format_opts = {
                 lsp_format = "fallback",
+                stop_after_first = true,
             },
             formatters = {
                 csharpier = {
@@ -21,7 +23,15 @@ return {
             },
             formatters_by_ft = {
                 lua = { "stylua" },
-                cs = { "csharpier", lsp_format = "first" },
+                cs = { "csharpier", lsp_format = "first", stop_after_first = false },
+                typescript = prettier,
+                javascript = prettier,
+                html = prettier,
+                scss = prettier,
+                json = prettier,
+                markdown = prettier,
+                yaml = prettier,
+                yml = prettier,
             },
         },
     },
