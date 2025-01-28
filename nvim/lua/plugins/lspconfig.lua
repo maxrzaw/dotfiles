@@ -17,8 +17,6 @@ return {
         "nvim-cmp",
         -- OmniSharp Extended
         "Hoffs/omnisharp-extended-lsp.nvim",
-        -- Special LSP config for neovim development
-        "folke/neodev.nvim",
     },
     config = function()
         -- Monkey Patch to remove duplicate locations
@@ -226,9 +224,6 @@ return {
                 },
             },
             root_dir = lspconfig.util.root_pattern(".git", "package.json"),
-            on_init = function(client)
-                disable_formatting_on_init(client)
-            end,
         })
 
         lspconfig.eslint.setup({

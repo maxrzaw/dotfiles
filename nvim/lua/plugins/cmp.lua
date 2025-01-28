@@ -47,6 +47,7 @@ return {
                         end,
                     },
                 },
+                { name = "lazydev" },
                 { name = "luasnip", max_item_count = 5 },
                 { name = "buffer", keyword_length = 5, max_item_count = 5 },
                 { name = "luasnip_choice" },

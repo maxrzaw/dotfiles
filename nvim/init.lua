@@ -6,20 +6,25 @@ vim.g.is_work = os.getenv("NEOVIM_WORK")
 vim.g.is_pi = os.getenv("NEOVIM_PI")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
+---@diagnostic disable-next-line: undefined-field
+if not vim.uv.fs_stat(lazypath) then
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+    if vim.v.shell_error ~= 0 then
+        vim.api.nvim_echo({
+            { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+            { out, "WarningMsg" },
+            { "\nPress any key to exit..." },
+        }, true, {})
+        vim.fn.getchar()
+        os.exit(1)
+    end
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Set Up Plugins
 require("lazy").setup({
+    ---@diagnostic disable-next-line: assign-type-mismatch
     dev = {
         path = "~/dev",
         patterns = { "maxzawisa", "mzawisa", "maxrzaw", "https://gitlab.com/schrieveslaach" },
@@ -29,13 +34,19 @@ require("lazy").setup({
         border = "rounded",
         title = " Lazy ",
     },
+    install = {
+        missing = true,
+        colorscheme = { "catppuccin", "default" },
+    },
     spec = {
         { "lazy.nvim" },
         { import = "plugins" },
         {
-            "folke/neodev.nvim",
+            -- Special LSP config for neovim development
+            "folke/lazydev.nvim",
+            ft = "lua",
             opts = {
-                library = { plugins = { "neotest" }, types = true },
+                library = { "conform.nvim", "harpoon" },
             },
             cond = not vim.g.vscode,
         },
@@ -44,7 +55,6 @@ require("lazy").setup({
         },
         {
             "catppuccin/nvim",
-            name = "Catppuccin",
             lazy = false, -- make sure we load this during startup if it is your main colorscheme
             priority = 1000, -- make sure to load this before all the other start plugins
             config = function()
@@ -55,10 +65,8 @@ require("lazy").setup({
                     integrations = {
                         alpha = true,
                         cmp = true,
-                        dap = {
-                            enabled = true,
-                            enable_ui = true,
-                        },
+                        dap = true,
+                        dap_ui = true,
                         fidget = true,
                         gitsigns = true,
                         harpoon = true,
@@ -117,7 +125,6 @@ require("lazy").setup({
         -- Useful status updates for LSP
         {
             "j-hui/fidget.nvim",
-            name = "Fidget",
             tag = "legacy",
             opts = {
                 window = {
