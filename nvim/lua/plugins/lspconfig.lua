@@ -82,8 +82,12 @@ return {
                 get_opts("LSP: [V]iew [D]iagnostics for current line")
             )
             vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, get_opts("LSP: [C]ode [A]ction"))
-            vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, get_opts("LSP: Go To [N]ext [D]iagnostic"))
-            vim.keymap.set("n", "<leader>dN", vim.diagnostic.goto_prev, get_opts("LSP: Go To Prev [D]iagnostic"))
+            vim.keymap.set("n", "<leader>dn", function()
+                vim.diagnostic.jump({ count = 1, float = true })
+            end, get_opts("LSP: Go To [N]ext [D]iagnostic"))
+            vim.keymap.set("n", "<leader>dN", function()
+                vim.diagnostic.jump({ count = -1, float = true })
+            end, get_opts("LSP: Go To Prev [D]iagnostic"))
             vim.keymap.set(
                 "n",
                 "<leader>dl",
