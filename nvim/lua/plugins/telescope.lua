@@ -81,7 +81,15 @@ return {
                 defaults = {
                     layout_config = { width = 0.95 },
                     path_display = { "smart" },
-                    file_ignore_patterns = { "node_modules/", ".git/", "bin/", "obj/" },
+                    file_ignore_patterns = {
+                        "node_modules/",
+                        ".git/",
+                        "bin/",
+                        "obj/",
+                        "dist",
+                        "coverage",
+                        "test_results",
+                    },
                     mappings = {
                         i = {
                             ["<C-t>"] = open_with_trouble,
