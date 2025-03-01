@@ -1,5 +1,6 @@
 local M = {}
 M.inlay_hints_enabled = false
+
 return {
     "neovim/nvim-lspconfig",
     cond = not vim.g.vscode,
@@ -43,8 +44,7 @@ return {
         local lspconfig = require("lspconfig")
         local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
-        local get_opts = require("mzawisa.keymap").get_opts
-        local omnisharp_custom = require("mzawisa.custom.omnisharp")
+        local lsp_keymaps = require("mzawisa.lsp_keymaps")
 
         -- Add nvim_cmp default capabilities to lspconfig default capabilities
         lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
@@ -64,48 +64,7 @@ return {
             if client.name == "copilot" or client.name == "null-ls" then
                 return
             end
-            vim.keymap.set(
-                "n",
-                "gt",
-                omnisharp_custom.lsp_type_definitions,
-                get_opts("LSP: [G]o to [T]ype Definitions")
-            )
-            vim.keymap.set("n", "gd", omnisharp_custom.lsp_definitions, get_opts("LSP: [G]o to [D]efinitions"))
-            vim.keymap.set("n", "gr", omnisharp_custom.lsp_references, get_opts("LSP: [G]o to [R]eferences"))
-            vim.keymap.set("n", "gi", omnisharp_custom.lsp_implementations, get_opts("LSP: [G]o to [I]mplementations"))
-            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, get_opts("LSP: [G]o to [D]eclaration"))
-
-            vim.keymap.set(
-                "n",
-                "<leader>vd",
-                vim.diagnostic.open_float,
-                get_opts("LSP: [V]iew [D]iagnostics for current line")
-            )
-            vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, get_opts("LSP: [C]ode [A]ction"))
-            vim.keymap.set("n", "<leader>dn", function()
-                vim.diagnostic.jump({ count = 1, float = true })
-            end, get_opts("LSP: Go To [N]ext [D]iagnostic"))
-            vim.keymap.set("n", "<leader>dN", function()
-                vim.diagnostic.jump({ count = -1, float = true })
-            end, get_opts("LSP: Go To Prev [D]iagnostic"))
-            vim.keymap.set(
-                "n",
-                "<leader>dl",
-                "<cmd>Telescope diagnostics<CR>",
-                get_opts("LSP: [L]ist All [D]iagnostics")
-            )
-            vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, get_opts("LSP: [R]ename Symbol"))
-            vim.keymap.set("i", "<C-h>", function()
-                M.inlay_hints_enabled = not M.inlay_hints_enabled
-                vim.lsp.inlay_hint.enable(M.inlay_hints_enabled)
-            end, get_opts("LSP: Toggle Inlay [H]ints"))
-            vim.keymap.set("n", "<C-h>", function()
-                M.inlay_hints_enabled = not M.inlay_hints_enabled
-                vim.lsp.inlay_hint.enable(M.inlay_hints_enabled)
-            end, get_opts("LSP: Toggle Inlay [H]ints"))
-            vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, get_opts("LSP: Signature Help"))
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, get_opts("LSP: Hover"))
-
+            lsp_keymaps.set_default_lsp_keybindings()
             if client.name == "angularls" then
                 angular.set_quickswitch_keybindings()
             end
@@ -326,10 +285,6 @@ return {
             },
         })
         -- Set some basic UI stuff
-        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-        vim.lsp.handlers["textDocument/signatureHelp"] =
-            vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
         vim.diagnostic.config({ float = { border = "rounded" } })
-        require("lspconfig.ui.windows").default_options.border = "rounded"
     end,
 }
