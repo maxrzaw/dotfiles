@@ -54,6 +54,7 @@ vim.opt.wildmenu = true
 vim.opt.autoread = true
 vim.opt.signcolumn = "yes"
 vim.opt.shortmess:append({ W = true, I = true, c = true, C = true })
+vim.opt.winborder = "rounded"
 
 -- Backup, history, and undo
 vim.opt.backup = false
