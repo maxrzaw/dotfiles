@@ -19,6 +19,7 @@ return {
             },
             code = {},
         },
+        cond = false,
     },
     {
         "iamcco/markdown-preview.nvim",
