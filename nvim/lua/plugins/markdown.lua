@@ -8,7 +8,6 @@ return {
         ---@module 'render-markdown'
         ---@type render.md.UserConfig
         opts = {
-            enabled = false,
             file_types = { "markdown" },
             sign = {
                 enabled = false,
@@ -17,9 +16,12 @@ return {
                 icons = {},
                 backgrounds = {},
             },
-            code = {},
+            overrides = {
+                buftype = {
+                    nofile = { enabled = false },
+                },
+            },
         },
-        cond = false,
     },
     {
         "iamcco/markdown-preview.nvim",
