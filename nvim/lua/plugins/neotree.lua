@@ -15,7 +15,6 @@ return {
                 {
                     event = "file_opened",
                     handler = function(_)
-                        vim.notify("File opened: " .. vim.inspect(neotree_helper.pinned()))
                         if not neotree_helper.pinned() then
                             require("neo-tree.command").execute({ action = "close" })
                         end
