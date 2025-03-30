@@ -278,13 +278,14 @@ return {
 
         vim.diagnostic.config({
             severity_sort = true,
-            virtual_text = { "if_many" },
+            virtual_text = { source = "if_many" },
+            virtual_lines = {
+                current_line = true,
+            },
             float = {
                 source = "if_many",
                 border = "rounded",
             },
         })
-        -- Set some basic UI stuff
-        vim.diagnostic.config({ float = { border = "rounded" } })
     end,
 }
