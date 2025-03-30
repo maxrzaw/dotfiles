@@ -97,7 +97,6 @@ require("lazy").setup({
                 null_ls.setup({
                     sources = {
                         null_ls.builtins.code_actions.refactoring,
-                        null_ls.builtins.diagnostics.commitlint,
                         null_ls.builtins.diagnostics.todo_comments,
                         null_ls.builtins.hover.printenv,
                         null_ls.builtins.hover.dictionary,
