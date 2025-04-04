@@ -22,6 +22,7 @@ return {
                 },
             },
         },
+        cond = false,
     },
     {
         "iamcco/markdown-preview.nvim",
