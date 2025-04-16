@@ -48,9 +48,56 @@ return {
         local dapui = require("dapui")
 
         local pb = require("persistent-breakpoints.api")
+        local launch_docker_dotnet_debugger = function()
+            vim.system({ "docker", "ps", "--format", "'{{.Names}}'" }, { text = true }, function(obj)
+                local container = ""
+                vim.schedule(function()
+                    if obj.code ~= 0 then
+                        vim.notify("Error: " .. obj.stderr, vim.log.levels.ERROR)
+                        return
+                    end
+                    local result = vim.split(obj.stdout, "\n")
+                    local containers = {}
+                    for _, line in ipairs(result) do
+                        if line ~= "" then
+                            local trimmedLine = line:gsub("'", "")
+                            table.insert(containers, trimmedLine)
+                        end
+                    end
+                    vim.ui.select(containers, {
+                        prompt = "Select a container to Debug",
+                    }, function(choice)
+                        if choice then
+                            container = choice
+                            vim.notify("Selected container: " .. container, vim.log.levels.INFO)
+                            local adapter = {
+                                type = "docker",
+                                command = "docker",
+                                args = { "exec", "-i", container, "/remote_debugger/vsdbg", "--interpreter=vscode" },
+                            }
+                            local config = {
+                                type = "docker",
+                                name = "Docker - .NET Attach",
+                                request = "attach",
+                                sourceFileMap = {
+                                    ["/src"] = "${workspaceFolder}",
+                                },
+                                netCore = {
+                                    ["debuggerPath"] = "/remote_debugger/vsdbg",
+                                },
+                            }
+                            dap.launch(adapter, config, {})
+                        else
+                            vim.notify("No container selected", vim.log.levels.WARN)
+                        end
+                    end)
+                end)
+            end)
+        end
 
         -- Basic debugging keymaps, feel free to change to your liking!
-        vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
+        vim.keymap.set("n", "<F5>", launch_docker_dotnet_debugger, { desc = "Debug: Start/Continue DotNet Docker" })
+        -- vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
         vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
         vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
         vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
@@ -102,8 +149,23 @@ return {
                     position = "left", -- Can be "left" or "right"
                 },
             },
-            icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
+            element_mappings = {},
+            expand_lines = true,
+            floating = {
+                border = "single",
+                mappings = {
+                    close = { "q", "<Esc>" },
+                },
+            },
+            force_buffers = true,
+            icons = {
+                collapsed = "",
+                current_frame = "",
+                expanded = "",
+            },
             controls = {
+                enabled = true,
+                element = "",
                 icons = {
                     pause = "",
                     play = "",
@@ -116,11 +178,46 @@ return {
                     disconnect = "⏏",
                 },
             },
+            mappings = {
+                edit = "e",
+                expand = { "<CR>", "<2-LeftMouse>" },
+                open = "o",
+                remove = "d",
+                repl = "r",
+                toggle = "t",
+            },
+            render = {
+                indent = 1,
+                max_value_lines = 100,
+            },
         })
 
         -- Showing the UI with keymap and when debugging starts
         vim.keymap.set("n", "<F6>", dapui.toggle, { desc = "Debug: Toggle UI" })
         dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+
+        dap.adapters.coreslr = {
+            type = "executable",
+            command = "netcoredbg",
+            args = { "--interpreter=vscode" },
+        }
+
+        dap.adapters.docker = function(callback, config)
+            callback({
+                type = "docker",
+                command = "docker",
+                args = { "exec", "-i", config.container, "/remote_debugger/vsdbg", "--interpreter=vscode" },
+            })
+        end
+
+        dap.configurations.cs = {
+            {
+                type = "docker",
+                name = "Docker - .NET Attach",
+                request = "attach",
+                container = "workspace-workspace.service-1",
+            },
+        }
 
         -- Install language specific config
         dap.configurations.typescript = {
