@@ -46,7 +46,7 @@ require("lazy").setup({
             "folke/lazydev.nvim",
             ft = "lua",
             opts = {
-                library = { "conform.nvim", "harpoon" },
+                library = { "conform.nvim", "harpoon", "nvim-dap", "nvim-dap-ui" },
             },
             cond = not vim.g.vscode,
         },
