@@ -41,6 +41,9 @@ if vim.g.vscode then
     nnoremap("gt", "<cmd>call VSCodeNotify('editor.action.goToTypeDefinition')<CR>")
     nnoremap("gi", "<cmd>call VSCodeNotify('editor.action.goToImplementation')<CR>")
 
+    -- Debugging
+    nnoremap("<leader>b", "<cmd>call VSCodeNotify('editor.debug.action.toggleBreakpoint')<CR>")
+
     -- Refactoring
     nnoremap("<leader>r", "<cmd>call VSCodeNotify('editor.action.rename')<CR>", {})
 
