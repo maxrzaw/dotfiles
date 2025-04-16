@@ -31,12 +31,6 @@ return {
                     lsp_format = "fallback",
                     stop_after_first = true,
                 },
-                formatters = {
-                    csharpier = {
-                        command = "dotnet",
-                        -- prepend_args = { "csharpier", "format" }, -- This is for version 1.0.0
-                    },
-                },
                 formatters_by_ft = {
                     cs = { "csharpier", lsp_format = "first", stop_after_first = false },
                     lua = { "stylua" },
