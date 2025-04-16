@@ -35,7 +35,6 @@ return {
                     csharpier = {
                         command = "dotnet",
                         -- prepend_args = { "csharpier", "format" }, -- This is for version 1.0.0
-                        prepend_args = { "csharpier" },
                     },
                 },
                 formatters_by_ft = {
