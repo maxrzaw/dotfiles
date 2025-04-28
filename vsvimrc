@@ -62,8 +62,16 @@ xnoremap <leader>CC :vsc Edit.UncommentSelection<cr>
 
 nnoremap <leader>ff : vsc Window.SolutionExplorerSearch<cr>
 nnoremap gi :vsc Edit.GoToImplementation<cr>
+" This is here because Edit.GoToTypeDefinition is not working and it
+" takes me somewhere random
+nnoremap gt :vsc Edit.GoToDefinition<cr>
 nnoremap gr :vsc Edit.FindAllReferences<CR>
 nnoremap gp :vsc Edit.PeekDefinition<CR>
 nnoremap <C-o> :vsc View.NavigateBackward<cr>
 nnoremap <C-i> :vsc View.NavigateForward<cr>
 nnoremap <leader>b :vsc Debug.ToggleBreakpoint<cr>
+
+nnoremap <leader>t :vsc View.Terminal<cr>
+nnoremap <leader>dn :vsc View.NextError<cr>
+nnoremap <leader>dp :vsc View.PreviousError<cr>
+nnoremap <leader>dl :vsc View.ErrorList<cr>
