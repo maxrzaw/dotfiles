@@ -16,6 +16,8 @@ M.setup = function(config)
         { key = "@", mods = "CTRL", action = act.DisableDefaultAssignment },
         { key = "^", mods = "CTRL", action = act.DisableDefaultAssignment },
 
+        { key = "Enter", mods = "ALT", action = act.DisableDefaultAssignment },
+
         -- Tab Navigation
         { key = "!", mods = "LEADER", action = act.ActivateTab(0) },
         { key = "1", mods = "LEADER|SHIFT", action = act.ActivateTab(0) },
