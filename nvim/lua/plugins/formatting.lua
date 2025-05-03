@@ -41,6 +41,8 @@ return {
                     ["terraform-vars"] = { "terraform_fmt" },
                     typescript = prettier,
                     javascript = prettier,
+                    angular = prettier,
+                    htmlangular = prettier,
                     html = prettier,
                     scss = prettier,
                     json = prettier,
