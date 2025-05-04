@@ -98,14 +98,14 @@ end
 function M.setup()
     M.enabled = true
     vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-        pattern = { "*.ts", "*.html" },
+        pattern = { "*.ts", "*.html", "*.htmlangular" },
         callback = function()
             vim.cmd("LspStart angularls")
         end,
     })
     vim.api.nvim_create_autocmd(
         { "BufWinEnter" },
-        { pattern = { "*.ts", "*.html", "*.scss" }, callback = M.set_quickswitch_keybindings }
+        { pattern = { "*.ts", "*.html", "*.scss", "*.htmlangular" }, callback = M.set_quickswitch_keybindings }
     )
 end
 
