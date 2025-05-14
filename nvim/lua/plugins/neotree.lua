@@ -11,6 +11,8 @@ return {
         require("neo-tree").setup({
             close_if_last_window = true,
             popup_border_style = "rounded",
+            -- when opening files, do not use windows containing these filetypes or buftypes
+            open_files_do_not_replace_types = { "terminal", "trouble", "qf", "harpoon" },
             event_handlers = {
                 {
                     event = "file_opened",
@@ -39,6 +41,10 @@ return {
                 position = "left",
             },
             filesystem = {
+                follow_current_file = {
+                    enabled = true,
+                    leave_dirs_open = false,
+                },
                 bind_to_cwd = false,
                 filtered_items = {
                     visible = true,
@@ -66,6 +72,7 @@ return {
                     file = {
                         { "icon" },
                         { "name", use_git_status_colors = true },
+                        ---@diagnostic disable-next-line: assign-type-mismatch
                         { "harpoon_index" },
                         { "diagnostics" },
                         { "git_status", highlight = "NeoTreeDimText" },
