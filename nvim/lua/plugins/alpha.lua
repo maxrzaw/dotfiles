@@ -75,7 +75,7 @@ return {
                 dashboard.button("h", "󰧮 " .. " Help tags", help_tags),
                 dashboard.button("l", "󰒲 " .. " Lazy", ":Lazy<CR>"),
                 dashboard.button("m", "󰢷 " .. " Mason", ":Mason<CR>"),
-                dashboard.button("c", "" .. " Copilot", ":CopilotChatOpen<CR>"),
+                dashboard.button("c", " " .. " Copilot", ":CopilotChatOpen<CR>"),
                 dashboard.button("q", " " .. " Quit", ":qa<CR>"),
             }
 
