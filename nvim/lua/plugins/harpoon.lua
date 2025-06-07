@@ -55,7 +55,7 @@ return {
             Harpoon.ui:toggle_quick_menu(Harpoon:list(), {
                 border = "rounded",
                 title_pos = "center",
-                title = " >-> Harpoon <-< ",
+                title = " Harpoon ",
                 ui_max_width = 200,
             })
         end)
