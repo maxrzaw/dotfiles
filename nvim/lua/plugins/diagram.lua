@@ -1,14 +1,15 @@
-return {
-    "3rd/diagram.nvim",
-    dependencies = {
-        {
-            "3rd/image.nvim",
-            build = false,
-            opts = {
-                processor = "magick_cli",
-            },
-        },
-    },
-    opts = {},
-    build = { "npm i -g @mermaid-js/mermaid-cli" },
-}
+return {}
+-- return {
+--     "3rd/diagram.nvim",
+--     dependencies = {
+--         {
+--             "3rd/image.nvim",
+--             build = false,
+--             opts = {
+--                 processor = "magick_cli",
+--             },
+--         },
+--     },
+--     opts = {},
+--     build = { "npm i -g @mermaid-js/mermaid-cli" },
+-- }
