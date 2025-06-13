@@ -118,7 +118,7 @@ return {
         end
 
         lspconfig.omnisharp.setup({
-            cmd = { vim.fn.expand("$MASON/bin/omnisharp") },
+            cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
 
             settings = {
                 FormattingOptions = {
