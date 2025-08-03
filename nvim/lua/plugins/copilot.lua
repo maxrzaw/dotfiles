@@ -37,7 +37,7 @@ return {
                 question_header = "#  User",
                 answer_header = "#  AI",
                 error_header = "#  ERROR",
-                separator = "",
+                separator = "-----",
                 highlight_headers = false,
 
                 context = {
