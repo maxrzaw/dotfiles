@@ -26,6 +26,8 @@
     swc = switch -c
     swl = switch -
     pushf = push --force-with-lease
+    swd = switch develop
+    rbd = rebase develop
 [push]
     default = simple
 [pull]
