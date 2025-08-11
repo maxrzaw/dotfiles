@@ -34,6 +34,7 @@ return {
                 formatters = {
                     csharpier = {
                         command = "dotnet",
+                        args = { "csharpier", "format", "--write-stdout" },
                         -- prepend_args = { "csharpier", "format" }, -- This is for version 1.0.0
                     },
                 },
