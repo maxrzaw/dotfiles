@@ -62,9 +62,15 @@ require("lazy").setup({
                     flavour = "mocha",
                     transparent_background = true,
                     term_colors = true,
+                    float = {
+                        transparent = true,
+                        solid = false,
+                    },
+                    auto_integrations = true,
                     integrations = {
                         alpha = true,
                         cmp = true,
+                        copilot_vim = true,
                         dap = true,
                         dap_ui = true,
                         fidget = true,
