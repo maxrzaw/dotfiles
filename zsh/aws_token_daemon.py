@@ -63,13 +63,8 @@ try:
                 if check_valid():
                     status = "valid"
                 else:
-                    logging.info("Token invalid, attempting login")
-                    try:
-                        subprocess.run(["aws", "sso", "login"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                        status = "valid" if check_valid() else "expired"
-                    except Exception as e:
-                        logging.error(f"AWS SSO login failed: {str(e)}")
-                        status = "expired"
+                    logging.info("Token invalid, setting status to expired")
+                    status = "expired"
             else:
                 logging.warning(f"SSO cache too old: {age:.1f}s > {THRESHOLD}s threshold")
         else:
