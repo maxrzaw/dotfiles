@@ -2,7 +2,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         name = "nvim-treesitter",
-        cond = vim.g.windows ~= 1,
+        cond = not vim.g.vscode,
         dependencies = {
             { "windwp/nvim-ts-autotag" },
         },
@@ -10,6 +10,11 @@ return {
             require("nvim-treesitter.install").update({ with_sync = true })
         end,
         config = function()
+            -- Configure zig as compiler on Windows
+            if vim.g.windows == 1 then
+                require("nvim-treesitter.install").compilers = { "zig" }
+            end
+
             require("nvim-treesitter.configs").setup({
                 -- A list of parser names, or "all"
                 ensure_installed = {
