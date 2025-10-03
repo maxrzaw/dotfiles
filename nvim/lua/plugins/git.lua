@@ -8,6 +8,7 @@ return {
     },
     {
         "lewis6991/gitsigns.nvim",
+        cond = not vim.g.vscode and vim.g.windows ~= 1,
         opts = {
             signcolumn = true,
             numhl = false,
@@ -36,13 +37,6 @@ return {
         dependencies = {
             { "nvim-lua/plenary.nvim" },
         },
-        config = function()
-            vim.api.nvim_create_autocmd({ "BufEnter" }, {
-                callback = function()
-                    require("lazygit.utils").project_root_dir()
-                end,
-            })
-        end,
-        cond = not vim.g.vscode,
+        cond = not vim.g.vscode and vim.g.windows ~= 1,
     },
 }
