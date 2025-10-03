@@ -3,3 +3,4 @@ nvim/spell
 nvim/swp
 nvim/undo
 nvim/lazy-lock.json
+.claude/settings.local.json
