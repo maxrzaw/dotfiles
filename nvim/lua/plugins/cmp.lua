@@ -3,31 +3,23 @@ return {
     name = "nvim-cmp",
     cond = not vim.g.vscode,
     dependencies = {
-        "doxnit/cmp-luasnip-choice",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-nvim-lsp-signature-help",
         "hrsh7th/cmp-nvim-lua",
         { "hrsh7th/cmp-path", dependencies = { "mzawisa/harpoon-relative-marks" } },
         "onsails/lspkind.nvim",
-        "saadparwaiz1/cmp_luasnip",
         { "petertriho/cmp-git", dependencies = { "nvim-lua/plenary.nvim" } },
     },
     config = function()
         local cmp = require("cmp")
         local lspkind = require("lspkind")
-        local luasnip = require("luasnip")
         local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 
         vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
         cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
         cmp.setup({
-            snippet = {
-                expand = function(args)
-                    luasnip.lsp_expand(args.body)
-                end,
-            },
             window = {
                 completion = cmp.config.window.bordered(),
                 documentation = cmp.config.window.bordered(),
@@ -48,9 +40,7 @@ return {
                     },
                 },
                 { name = "lazydev" },
-                { name = "luasnip", max_item_count = 5 },
                 { name = "buffer", keyword_length = 5, max_item_count = 5 },
-                { name = "luasnip_choice" },
             }),
             formatting = {
                 format = lspkind.cmp_format({
@@ -59,7 +49,6 @@ return {
                         nvim_lsp = "[LSP]",
                         nvim_lua = "[api]",
                         path = "[path]",
-                        luasnip = "[snip]",
                         gh_issues = "[issues]",
                         Copilot = "[]",
                     },

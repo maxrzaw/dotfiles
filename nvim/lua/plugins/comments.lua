@@ -9,7 +9,7 @@ return {
     {
         "danymat/neogen",
         name = "Neogen",
-        dependencies = { "nvim-treesitter", "LuaSnip" },
+        dependencies = { "nvim-treesitter" },
         ft = {
             "sh",
             "c",
@@ -30,7 +30,6 @@ return {
             "vue",
         },
         opts = {
-            snippet_engine = "luasnip",
             enabled = true,
         },
         init = function()
