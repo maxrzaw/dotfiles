@@ -4,7 +4,7 @@ return {
     dependencies = {
         "rafamadriz/friendly-snippets",
     },
-    cond = not vim.g.vscode,
+    cond = false,
     config = function()
         local ls = require("luasnip")
         local ls_choice = require("cmp_luasnip_choice")

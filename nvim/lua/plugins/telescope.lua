@@ -5,7 +5,6 @@ return {
         version = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "benfowler/telescope-luasnip.nvim",
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
             { "nvim-telescope/telescope-ui-select.nvim" },
@@ -151,7 +150,6 @@ return {
                 },
             })
 
-            telescope.load_extension("luasnip")
             telescope.load_extension("ui-select")
 
             vim.keymap.set("n", "<leader>ff", function()
