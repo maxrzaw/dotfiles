@@ -6,7 +6,7 @@ local act = wezterm.action
 
 local status, private_workspaces = pcall(require, "private.workspaces")
 if not status then
-	private_workspaces = {}
+    private_workspaces = {}
 end
 
 local config = wezterm.config_builder()
@@ -45,27 +45,27 @@ config.adjust_window_size_when_changing_font_size = false
 
 -- Windows Overrides
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-	config.initial_cols = 230
-	config.initial_rows = 60
-	config.font_size = 10.0
+    config.initial_cols = 230
+    config.initial_rows = 60
+    config.font_size = 10.0
 
-	config.default_prog = { "C:/Users/MZawisa/AppData/Local/Programs/Git/bin/bash.exe", "--login", "-i" }
-	config.launch_menu = {
-		{
-			label = "Git Bash",
-			domain = { DomainName = "local" },
-		},
-		{
-			label = "PowerShell",
-			domain = { DomainName = "local" },
-			args = { "powershell.exe" },
-		},
-		{
-			label = "Command Prompt",
-			domain = { DomainName = "local" },
-			args = { "cmd.exe" },
-		},
-	}
+    config.default_prog = { "C:/Users/MZawisa/AppData/Local/Programs/Git/bin/bash.exe", "--login", "-i" }
+    config.launch_menu = {
+        {
+            label = "Git Bash",
+            domain = { DomainName = "local" },
+        },
+        {
+            label = "PowerShell",
+            domain = { DomainName = "local" },
+            args = { "pwsh.exe" },
+        },
+        {
+            label = "Command Prompt",
+            domain = { DomainName = "local" },
+            args = { "cmd.exe" },
+        },
+    }
 end
 
 keys.setup(config)
