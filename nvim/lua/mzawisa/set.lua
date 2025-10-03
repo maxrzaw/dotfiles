@@ -85,8 +85,10 @@ end
 -- Enable workspace config files
 vim.opt.exrc = true
 
--- needed for windows maybe?
+-- Windows shell configuration
 if vim.g.windows == 1 then
-    vim.opt.shell = "bash.exe"
-    vim.opt.shellcmdflag = "-c"
+    vim.opt.shell = "pwsh.exe"
+    vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+    vim.opt.shellquote = ""
+    vim.opt.shellxquote = ""
 end
