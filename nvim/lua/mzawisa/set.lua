@@ -62,8 +62,10 @@ vim.opt.writebackup = false
 vim.opt.backupdir = vim.fn.stdpath("data") .. "/backup"
 vim.opt.directory = vim.fn.stdpath("data") .. "/swp"
 vim.opt.history = 1000
-vim.opt.undofile = true
-vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
+if vim.g.windows ~= 1 then
+    vim.opt.undofile = true
+    vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
+end
 
 vim.opt.updatetime = 300
 vim.opt.timeout = true

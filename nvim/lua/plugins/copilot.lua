@@ -32,6 +32,9 @@ return {
         },
         event = "VeryLazy",
         build = "make tiktoken",
+        keys = {
+            { "<M-CR>", "<cmd>CopilotChatToggle<cr>", mode = { "n", "i" }, desc = "Copilot Chat Open" },
+        },
         opts = function()
             require("CopilotChat").setup({
                 question_header = "#  User",
@@ -74,7 +77,6 @@ return {
                     write = "Implement a new part of code I'll ask for. Make code complete, correct and clean like I would write myself. Write: ",
                 },
             })
-            vim.keymap.set({ "n", "i" }, "<M-CR>", "<cmd>CopilotChatToggle<cr>", get_opts("Copilot Chat Open"))
         end,
     },
 }

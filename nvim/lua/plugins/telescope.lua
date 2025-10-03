@@ -88,6 +88,10 @@ return {
                         "dist",
                         "coverage",
                         "test_results",
+                        -- Windows specific:
+                        "%.cache/",
+                        "AppData/",
+                        "%.nuget/",
                     },
                     mappings = {
                         i = {
