@@ -60,5 +60,6 @@ return {
             })
         end)
     end,
+    enabled = false,
     cond = not vim.g.vscode,
 }

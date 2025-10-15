@@ -41,17 +41,12 @@ return {
         end
 
         local cmp = require("cmp")
-        local lspconfig = require("lspconfig")
         local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
         local lsp_keymaps = require("mzawisa.lsp_keymaps")
 
-        -- Add nvim_cmp default capabilities to lspconfig default capabilities
-        lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
-            "force",
-            lspconfig.util.default_config.capabilities,
-            require("cmp_nvim_lsp").default_capabilities()
-        )
+        -- Get default capabilities from nvim_cmp
+        local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
         -- Helper function to disable formatting capabilities
         local disable_formatting_on_init = function(client)
@@ -97,7 +92,12 @@ return {
             local runtime_path = vim.split(package.path, ";")
             table.insert(runtime_path, "lua/?.lua")
             table.insert(runtime_path, "lua/?/init.lua")
-            lspconfig.lua_ls.setup({
+
+            vim.lsp.config("lua_ls", {
+                cmd = { "lua-language-server" },
+                root_markers = { ".git", ".luarc.json", ".luarc.jsonc", ".luacheckrc", "stylua.toml", "selene.toml" },
+                filetypes = { "lua" },
+                capabilities = capabilities,
                 settings = {
                     Lua = {
                         -- Disable Telemetry
@@ -117,9 +117,11 @@ return {
             })
         end
 
-        lspconfig.omnisharp.setup({
+        vim.lsp.config("omnisharp", {
             cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
-
+            root_markers = { ".git", "*.sln", "*.csproj" },
+            filetypes = { "cs", "vb" },
+            capabilities = capabilities,
             settings = {
                 FormattingOptions = {
                     EnableEditorConfigSupport = true,
@@ -148,8 +150,9 @@ return {
             "--ngProbeLocations",
             default_node_modules,
         }
-        lspconfig.angularls.setup({
-            autostart = false,
+        vim.lsp.config("angularls", {
+            cmd = ngls_cmd,
+            root_markers = { ".git", "package.json" },
             filetypes = {
                 "typescript",
                 "html",
@@ -157,12 +160,11 @@ return {
                 "typescriptreact",
                 "typescript.tsx",
             },
-            cmd = ngls_cmd,
-            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
-            on_new_config = function(new_config)
-                new_config.cmd = ngls_cmd
-            end,
+            capabilities = capabilities,
         })
+
+        -- Note: autostart is false by default in vim.lsp.config
+        -- You'll need to manually start Angular LS with :LspStart angularls
 
         local inlayHints = {
             includeInlayParameterNameHints = "all",
@@ -175,8 +177,18 @@ return {
             includeInlayEnumMemberValueHints = true,
         }
 
-        lspconfig.ts_ls.setup({
-            autostart = true,
+        vim.lsp.config("ts_ls", {
+            cmd = { "typescript-language-server", "--stdio" },
+            root_markers = { ".git", "package.json" },
+            filetypes = {
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+            },
+            capabilities = capabilities,
             settings = {
                 typescript = {
                     inlayHints = inlayHints,
@@ -187,16 +199,26 @@ return {
             },
             init_options = {
                 hostInfo = "neovim",
-                init_options = {
-                    -- Disable telemetry
-                    telemetry = { enable = false },
+                -- Disable telemetry
+                preferences = {
+                    disableSuggestions = false,
                 },
             },
-            root_dir = lspconfig.util.root_pattern(".git", "package.json"),
         })
 
-        lspconfig.eslint.setup({
-            on_init = disable_formatting_on_init,
+        vim.lsp.config("eslint", {
+            cmd = { "vscode-eslint-language-server", "--stdio" },
+            root_markers = {
+                ".eslintrc",
+                ".eslintrc.js",
+                ".eslintrc.cjs",
+                ".eslintrc.yaml",
+                ".eslintrc.yml",
+                ".eslintrc.json",
+                "eslint.config.js",
+                "package.json",
+                ".git",
+            },
             filetypes = {
                 "javascript",
                 "javascriptreact",
@@ -210,9 +232,24 @@ return {
                 "html",
                 "htmlangular",
             },
+            capabilities = capabilities,
+            on_init = disable_formatting_on_init,
+            on_new_config = function(config, root_dir)
+                -- Ensure root_dir is always set
+                config.root_dir = root_dir or vim.fn.getcwd()
+            end,
+            settings = {
+                workingDirectory = { mode = "auto" },
+                format = false,
+            },
         })
 
-        lspconfig.terraformls.setup({})
+        vim.lsp.config("terraformls", {
+            cmd = { "terraform-ls", "serve" },
+            root_markers = { ".terraform", ".git" },
+            filetypes = { "terraform", "terraform-vars" },
+            capabilities = capabilities,
+        })
 
         -- Set up Sonarlint Language Server
         if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
@@ -263,17 +300,118 @@ return {
             })
         end
 
-        lspconfig.dockerls.setup({})
-
-        lspconfig.docker_compose_language_service.setup({
-            root_dir = lspconfig.util.root_pattern("*compose.y*ml"),
-            filetypes = { "yaml.docker-compose", "yml.docker-compose", "yaml.compose", "yml.compose" },
+        vim.lsp.config("dockerls", {
+            cmd = { "docker-langserver", "--stdio" },
+            root_markers = { "Dockerfile" },
+            filetypes = { "dockerfile" },
+            capabilities = capabilities,
         })
 
-        lspconfig.gopls.setup({})
-        lspconfig.tailwindcss.setup({})
-        lspconfig.cssls.setup({})
-        lspconfig.basedpyright.setup({})
+        vim.lsp.config("docker_compose_language_service", {
+            cmd = { "docker-compose-langserver", "--stdio" },
+            root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" },
+            filetypes = { "yaml.docker-compose", "yml.docker-compose", "yaml.compose", "yml.compose" },
+            capabilities = capabilities,
+        })
+
+        vim.lsp.config("gopls", {
+            cmd = { "gopls" },
+            root_markers = { "go.mod", ".git", "go.work" },
+            filetypes = { "go", "gomod", "gowork", "gotmpl" },
+            capabilities = capabilities,
+        })
+
+        vim.lsp.config("tailwindcss", {
+            cmd = { "tailwindcss-language-server", "--stdio" },
+            root_markers = {
+                "tailwind.config.js",
+                "tailwind.config.cjs",
+                "tailwind.config.mjs",
+                "tailwind.config.ts",
+                "postcss.config.js",
+                "postcss.config.cjs",
+                "postcss.config.mjs",
+                "postcss.config.ts",
+                "package.json",
+            },
+            filetypes = {
+                "aspnetcorerazor",
+                "astro",
+                "astro-markdown",
+                "blade",
+                "clojure",
+                "django-html",
+                "htmldjango",
+                "edge",
+                "eelixir",
+                "elixir",
+                "ejs",
+                "erb",
+                "eruby",
+                "gohtml",
+                "gohtmltmpl",
+                "haml",
+                "handlebars",
+                "hbs",
+                "html",
+                "htmlangular",
+                "html-eex",
+                "heex",
+                "jade",
+                "leaf",
+                "liquid",
+                "markdown",
+                "mdx",
+                "mustache",
+                "njk",
+                "nunjucks",
+                "php",
+                "razor",
+                "slim",
+                "twig",
+                "css",
+                "less",
+                "postcss",
+                "sass",
+                "scss",
+                "stylus",
+                "sugarss",
+                "javascript",
+                "javascriptreact",
+                "reason",
+                "rescript",
+                "typescript",
+                "typescriptreact",
+                "vue",
+                "svelte",
+            },
+            capabilities = capabilities,
+        })
+
+        vim.lsp.config("cssls", {
+            cmd = { "vscode-css-language-server", "--stdio" },
+            root_markers = { "package.json", ".git" },
+            filetypes = { "css", "scss", "less" },
+            capabilities = capabilities,
+        })
+
+        vim.lsp.config("basedpyright", {
+            cmd = { "basedpyright-langserver", "--stdio" },
+            root_markers = {
+                "pyproject.toml",
+                "setup.py",
+                "setup.cfg",
+                "requirements.txt",
+                "Pipfile",
+                "pyrightconfig.json",
+                ".git",
+            },
+            filetypes = { "python" },
+            capabilities = capabilities,
+        })
+
+        -- Enable all configured LSP servers (except angularls which is manually controlled)
+        vim.lsp.enable({ "lua_ls", "omnisharp", "ts_ls", "eslint", "terraformls", "dockerls", "docker_compose_language_service", "gopls", "tailwindcss", "cssls", "basedpyright" })
 
         cmp.setup.filetype("gitcommit", {
             sources = cmp.config.sources({

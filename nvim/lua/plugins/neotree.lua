@@ -12,7 +12,7 @@ return {
             close_if_last_window = true,
             popup_border_style = "rounded",
             -- when opening files, do not use windows containing these filetypes or buftypes
-            open_files_do_not_replace_types = { "terminal", "trouble", "qf", "harpoon" },
+            open_files_do_not_replace_types = { "terminal", "trouble", "qf", "grapple" },
             event_handlers = {
                 {
                     event = "file_opened",
@@ -51,14 +51,17 @@ return {
                 },
                 hijack_netrw_behavior = "open_current",
                 components = {
-                    harpoon_index = function(config, node, _)
-                        local harpoon_list = require("harpoon"):list()
+                    grapple_index = function(config, node, _)
+                        local ok, grapple = pcall(require, "grapple")
+                        if not ok then
+                            return {}
+                        end
+
                         local path = node:get_id()
+                        local tags = grapple.tags()
 
-                        for i, item in ipairs(harpoon_list.items) do
-                            local value = item.value
-
-                            if value == path then
+                        for i, tag in ipairs(tags) do
+                            if tag.path == path then
                                 return {
                                     text = string.format("->%d", i),
                                     highlight = config.highlight or "NeoTreeDirectoryIcon",
@@ -73,7 +76,7 @@ return {
                         { "icon" },
                         { "name", use_git_status_colors = true },
                         ---@diagnostic disable-next-line: assign-type-mismatch
-                        { "harpoon_index" },
+                        { "grapple_index" },
                         { "diagnostics" },
                         { "git_status", highlight = "NeoTreeDimText" },
                     },
