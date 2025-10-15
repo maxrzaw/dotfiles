@@ -20,45 +20,51 @@ return {
             end
 
             local telescope = require("telescope")
-            local harpoon_add_mark = function(cwd, filename)
-                local Path = require("pathlib")
-                local absolute_path = tostring(Path(cwd) / filename)
-                local list = require("harpoon"):list()
-                local harpoon_config = list.config
-                local item = harpoon_config.create_list_item(harpoon_config, absolute_path)
-                list:add(item)
+            local grapple_tag = function(cwd, filename)
+                local ok, grapple = pcall(require, "grapple")
+                if not ok then
+                    return
+                end
+
+                local path
+                if cwd then
+                    path = vim.fn.fnamemodify(cwd .. "/" .. filename, ":p")
+                else
+                    path = vim.fn.fnamemodify(filename, ":p")
+                end
+                grapple.tag({ path = path })
             end
             local get_entry = function(prompt_bufnr)
                 local action_state = require("telescope.actions.state")
                 return action_state.get_selected_entry()
             end
-            local harpoon_add_mark__entry1 = function(prompt_bufnr)
+            local grapple_tag__entry1 = function(prompt_bufnr)
                 local entry = get_entry(prompt_bufnr)
                 if entry == nil then
                     return
                 end
-                harpoon_add_mark(nil, entry[1])
+                grapple_tag(nil, entry[1])
             end
-            local harpoon_add_mark__cwd_entry1 = function(prompt_bufnr)
+            local grapple_tag__cwd_entry1 = function(prompt_bufnr)
                 local entry = get_entry(prompt_bufnr)
                 if entry == nil then
                     return
                 end
-                harpoon_add_mark(entry.cwd, entry[1])
+                grapple_tag(entry.cwd, entry[1])
             end
-            local harpoon_add_mark__filename = function(prompt_bufnr)
+            local grapple_tag__filename = function(prompt_bufnr)
                 local entry = get_entry(prompt_bufnr)
                 if entry == nil then
                     return
                 end
-                harpoon_add_mark(nil, entry.filename)
+                grapple_tag(nil, entry.filename)
             end
-            local harpoon_add_mark__cwd_filename = function(prompt_bufnr)
+            local grapple_tag__cwd_filename = function(prompt_bufnr)
                 local entry = get_entry(prompt_bufnr)
                 if entry == nil then
                     return
                 end
-                harpoon_add_mark(entry.cwd, entry.filename)
+                grapple_tag(entry.cwd, entry.filename)
             end
             local create_picker_config = function(func)
                 return {
@@ -72,10 +78,10 @@ return {
                     },
                 }
             end
-            local cwd_plus_filename = create_picker_config(harpoon_add_mark__cwd_filename)
-            local just_entry1 = create_picker_config(harpoon_add_mark__entry1)
-            local just_filename = create_picker_config(harpoon_add_mark__filename)
-            local cwd_plus_entry1 = create_picker_config(harpoon_add_mark__cwd_entry1)
+            local cwd_plus_filename = create_picker_config(grapple_tag__cwd_filename)
+            local just_entry1 = create_picker_config(grapple_tag__entry1)
+            local just_filename = create_picker_config(grapple_tag__filename)
+            local cwd_plus_entry1 = create_picker_config(grapple_tag__cwd_entry1)
             telescope.setup({
                 defaults = {
                     layout_config = { width = 0.95 },

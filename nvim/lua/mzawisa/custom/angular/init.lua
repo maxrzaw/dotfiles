@@ -100,7 +100,7 @@ function M.setup()
     vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
         pattern = { "*.ts", "*.html", "*.htmlangular" },
         callback = function()
-            vim.cmd("LspStart angularls")
+            vim.lsp.enable("angularls")
         end,
     })
     vim.api.nvim_create_autocmd(

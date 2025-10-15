@@ -7,7 +7,7 @@ return {
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-nvim-lsp-signature-help",
         "hrsh7th/cmp-nvim-lua",
-        { "hrsh7th/cmp-path", dependencies = { "mzawisa/harpoon-relative-marks" } },
+        "hrsh7th/cmp-path",
         "onsails/lspkind.nvim",
         { "petertriho/cmp-git", dependencies = { "nvim-lua/plenary.nvim" } },
     },
@@ -28,17 +28,7 @@ return {
                 { name = "copilot" },
                 { name = "nvim_lsp", max_item_count = 5 },
                 { name = "nvim_lsp_signature_help", max_item_count = 5 },
-                {
-                    name = "path",
-                    option = {
-                        get_cwd = function(params)
-                            if params.context.filetype == "harpoon" then
-                                return require("harpoon-relative-marks")._current_dir
-                            end
-                            return vim.fn.expand("#%d:p:h"):format(params.context.bufnr)
-                        end,
-                    },
-                },
+                { name = "path" },
                 { name = "lazydev" },
                 { name = "buffer", keyword_length = 5, max_item_count = 5 },
             }),
