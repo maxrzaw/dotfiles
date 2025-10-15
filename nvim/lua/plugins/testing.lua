@@ -24,6 +24,7 @@ return {
         cond = vim.g.windows ~= 1,
         dependencies = {
             "nvim-lua/plenary.nvim",
+            "nvim-neotest/nvim-nio",
             "nvim-treesitter",
             "antoinemadec/FixCursorHold.nvim",
             { "maxrzaw/neotest-jest", branch = "fakeAsync", dev = false },
