@@ -20,6 +20,11 @@ return {
                 ensure_installed = {
                     "vimdoc",
                     "bash",
+                    "git_config",
+                    "git_rebase",
+                    "gitattributes",
+                    "gitcommit",
+                    "gitignore",
                     "javascript",
                     "typescript",
                     "lua",
