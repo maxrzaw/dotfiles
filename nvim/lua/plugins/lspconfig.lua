@@ -46,7 +46,9 @@ return {
         local lsp_keymaps = require("mzawisa.lsp_keymaps")
 
         -- Get default capabilities from nvim_cmp
-        local capabilities = require("cmp_nvim_lsp").default_capabilities()
+        vim.lsp.config("*", {
+            capabilities = require("cmp_nvim_lsp").default_capabilities(),
+        })
 
         -- Helper function to disable formatting capabilities
         local disable_formatting_on_init = function(client)
@@ -97,7 +99,6 @@ return {
                 cmd = { "lua-language-server" },
                 root_markers = { ".git", ".luarc.json", ".luarc.jsonc", ".luacheckrc", "stylua.toml", "selene.toml" },
                 filetypes = { "lua" },
-                capabilities = capabilities,
                 settings = {
                     Lua = {
                         -- Disable Telemetry
@@ -121,7 +122,6 @@ return {
             cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
             root_markers = { ".git", "*.sln", "*.csproj" },
             filetypes = { "cs", "vb" },
-            capabilities = capabilities,
             settings = {
                 FormattingOptions = {
                     EnableEditorConfigSupport = true,
@@ -160,7 +160,6 @@ return {
                 "typescriptreact",
                 "typescript.tsx",
             },
-            capabilities = capabilities,
         })
 
         -- Note: autostart is false by default in vim.lsp.config
@@ -188,7 +187,6 @@ return {
                 "typescriptreact",
                 "typescript.tsx",
             },
-            capabilities = capabilities,
             settings = {
                 typescript = {
                     inlayHints = inlayHints,
@@ -232,7 +230,6 @@ return {
                 "html",
                 "htmlangular",
             },
-            capabilities = capabilities,
             on_init = disable_formatting_on_init,
             on_new_config = function(config, root_dir)
                 -- Ensure root_dir is always set
@@ -248,7 +245,6 @@ return {
             cmd = { "terraform-ls", "serve" },
             root_markers = { ".terraform", ".git" },
             filetypes = { "terraform", "terraform-vars" },
-            capabilities = capabilities,
         })
 
         -- Set up Sonarlint Language Server
@@ -304,21 +300,18 @@ return {
             cmd = { "docker-langserver", "--stdio" },
             root_markers = { "Dockerfile" },
             filetypes = { "dockerfile" },
-            capabilities = capabilities,
         })
 
         vim.lsp.config("docker_compose_language_service", {
             cmd = { "docker-compose-langserver", "--stdio" },
             root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" },
             filetypes = { "yaml.docker-compose", "yml.docker-compose", "yaml.compose", "yml.compose" },
-            capabilities = capabilities,
         })
 
         vim.lsp.config("gopls", {
             cmd = { "gopls" },
             root_markers = { "go.mod", ".git", "go.work" },
             filetypes = { "go", "gomod", "gowork", "gotmpl" },
-            capabilities = capabilities,
         })
 
         vim.lsp.config("tailwindcss", {
@@ -385,14 +378,12 @@ return {
                 "vue",
                 "svelte",
             },
-            capabilities = capabilities,
         })
 
         vim.lsp.config("cssls", {
             cmd = { "vscode-css-language-server", "--stdio" },
             root_markers = { "package.json", ".git" },
             filetypes = { "css", "scss", "less" },
-            capabilities = capabilities,
         })
 
         vim.lsp.config("basedpyright", {
@@ -407,11 +398,22 @@ return {
                 ".git",
             },
             filetypes = { "python" },
-            capabilities = capabilities,
         })
 
         -- Enable all configured LSP servers (except angularls which is manually controlled)
-        vim.lsp.enable({ "lua_ls", "omnisharp", "ts_ls", "eslint", "terraformls", "dockerls", "docker_compose_language_service", "gopls", "tailwindcss", "cssls", "basedpyright" })
+        vim.lsp.enable({
+            "lua_ls",
+            "omnisharp",
+            "ts_ls",
+            "eslint",
+            "terraformls",
+            "dockerls",
+            "docker_compose_language_service",
+            "gopls",
+            "tailwindcss",
+            "cssls",
+            "basedpyright",
+        })
 
         cmp.setup.filetype("gitcommit", {
             sources = cmp.config.sources({
