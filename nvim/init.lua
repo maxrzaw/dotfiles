@@ -152,7 +152,7 @@ require("lazy").setup({
             config = function()
                 require("azdo").setup({})
             end,
-            cond = not vim.g.is_pi and vim.g.windows ~= 1,
+            cond = false and not vim.g.is_pi and vim.g.windows ~= 1,
         },
         {
             "2kabhishek/nerdy.nvim",
