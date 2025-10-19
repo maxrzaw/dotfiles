@@ -176,6 +176,23 @@ require("lazy").setup({
             },
         },
         { "tjdevries/present.nvim" },
+        {
+            "codethread/qmk.nvim",
+            config = function()
+                local conf = {
+                    name = "LAYOUT_kinesis_adv_360",
+                    layout = {
+                        "x x x x x x x _ _ _ _ _ _ x x x x x x x",
+                        "x x x x x x x _ _ _ _ _ _ x x x x x x x",
+                        "x x x x x x x x x _ _ x x x x x x x x x",
+                        "x x x x x x _ _ x _ _ x _ _ x x x x x x",
+                        "x x x x x _ x x x _ _ x x x _ x x x x x",
+                    },
+                    variant = "zmk",
+                }
+                require("qmk").setup(conf)
+            end,
+        },
     },
 })
 
