@@ -45,6 +45,9 @@ return {
         local angular = require("mzawisa.custom.angular")
         local lsp_keymaps = require("mzawisa.lsp_keymaps")
 
+        -- Enable LSP debug logging
+        -- vim.lsp.set_log_level("debug")
+
         -- Get default capabilities from nvim_cmp
         vim.lsp.config("*", {
             capabilities = require("cmp_nvim_lsp").default_capabilities(),
@@ -118,16 +121,23 @@ return {
             })
         end
 
-        vim.lsp.config("omnisharp", {
-            cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
-            root_markers = { ".git", "*.sln", "*.csproj" },
-            filetypes = { "cs", "vb" },
-            settings = {
-                FormattingOptions = {
-                    EnableEditorConfigSupport = true,
-                },
-            },
-        })
+        -- OmniSharp: Build config using lspconfig's logic, then use with vim.lsp.config
+        local omnisharp_lspconfig = require("lspconfig.configs.omnisharp").default_config
+        local omnisharp_config = vim.deepcopy(omnisharp_lspconfig)
+        omnisharp_config.cmd = { vim.fn.expand("$MASON/bin/OmniSharp") }
+
+        -- Setup capabilities with workspace field for on_new_config
+        local base_capabilities = require("cmp_nvim_lsp").default_capabilities()
+        base_capabilities.workspace = base_capabilities.workspace or {}
+        omnisharp_config.capabilities =
+            vim.tbl_deep_extend("force", base_capabilities, omnisharp_config.capabilities or {})
+
+        -- Manually call lspconfig's on_new_config to build the full command
+        if omnisharp_lspconfig.on_new_config then
+            omnisharp_lspconfig.on_new_config(omnisharp_config, vim.fn.getcwd())
+        end
+
+        vim.lsp.config("omnisharp", omnisharp_config)
 
         -- Set up Angular Language Server
         -- wierd things required for angular monorepo
