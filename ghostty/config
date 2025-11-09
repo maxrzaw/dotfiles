@@ -1,3 +1,6 @@
+# Reload configuration
+keybind = ctrl+a>r=reload_config
+
 # Font settings
 font-family = "FiraCode Nerd Font Mono"
 font-size = 16
@@ -9,13 +12,48 @@ theme = "Catppuccin Mocha"
 # Mouse settings
 mouse-hide-while-typing = true
 
-# hjkl for tab navigation
-keybind = ctrl+a>j=goto_tab:1
-keybind = ctrl+a>k=goto_tab:2
-keybind = ctrl+a>l=goto_tab:3
-keybind = ctrl+a>;=goto_tab:4
 # Create a new tab
 keybind = ctrl+a>n=new_tab
+
+# Tab Navigation
+keybind = ctrl+a>shift+1=goto_tab:1
+keybind = ctrl+a>shift+2=goto_tab:2
+keybind = ctrl+a>shift+3=goto_tab:3
+keybind = ctrl+a>shift+4=goto_tab:4
+keybind = ctrl+a>shift+5=goto_tab:5
+keybind = ctrl+a>shift+6=goto_tab:6
+keybind = ctrl+a>shift+7=goto_tab:7
+keybind = ctrl+a>shift+8=goto_tab:8
+keybind = ctrl+a>shift+9=goto_tab:9
+keybind = ctrl+a>shift+0=goto_tab:10
+
+# Tab Navigation without inverted number keys
+keybind = ctrl+a>1=goto_tab:1
+keybind = ctrl+a>2=goto_tab:2
+keybind = ctrl+a>3=goto_tab:3
+keybind = ctrl+a>4=goto_tab:4
+keybind = ctrl+a>5=goto_tab:5
+keybind = ctrl+a>6=goto_tab:6
+keybind = ctrl+a>7=goto_tab:7
+keybind = ctrl+a>8=goto_tab:8
+keybind = ctrl+a>9=goto_tab:9
+keybind = ctrl+a>0=goto_tab:10
+
+# Homerow Tab Navigation
+keybind = ctrl+a>a=goto_tab:1
+keybind = ctrl+a>s=goto_tab:2
+keybind = ctrl+a>d=goto_tab:3
+keybind = ctrl+a>f=goto_tab:4
+
+# Create a new split
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+
+# hjkl for split navigation
+keybind = ctrl+a>j=goto_split:down
+keybind = ctrl+a>k=goto_split:up
+keybind = ctrl+a>l=goto_split:right
+keybind = ctrl+a>h=goto_split:left
 
 # Needed so I can use alt in terminal applications
 macos-option-as-alt = true
