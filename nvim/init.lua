@@ -165,6 +165,7 @@ require("lazy").setup({
         {
             "m4xshen/hardtime.nvim",
             dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+            cond = false,
             opts = {
                 disable_mouse = false,
                 restriction_mode = "hint",
