@@ -2,7 +2,7 @@ local get_opts = require("mzawisa.keymap").get_opts
 return {
     {
         "nvim-telescope/telescope.nvim",
-        version = "0.1.x",
+        tag = "0.1.8",
         dependencies = {
             "nvim-lua/plenary.nvim",
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
