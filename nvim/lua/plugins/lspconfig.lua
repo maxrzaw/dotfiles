@@ -137,7 +137,22 @@ return {
             omnisharp_lspconfig.on_new_config(omnisharp_config, vim.fn.getcwd())
         end
 
-        vim.lsp.config("omnisharp", omnisharp_config)
+        vim.lsp.config("omnisharp", {
+            cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
+            root_markers = { ".git", "*.sln", "*.csproj" },
+            filetypes = { "cs", "vb" },
+            settings = {
+                FormattingOptions = {
+                    EnableEditorConfigSupport = true,
+                },
+                RoslynExtensionsOptions = {
+                    EnableAnalyzersSupport = true,
+                },
+                Sdk = {
+                    IncludePrereleases = true,
+                },
+            },
+        })
 
         -- Set up Angular Language Server
         -- wierd things required for angular monorepo
