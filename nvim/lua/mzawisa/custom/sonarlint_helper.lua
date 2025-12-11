@@ -22,7 +22,7 @@ M.rules = {
     ["typescript:S125"] = { level = "on" },
     ["typescript:S1264"] = { level = "on" },
     ["typescript:S1301"] = { level = "on" },
-    ["typescript:S138"] = { level = "on", parameters = { max = 200 } },
+    ["typescript:S138"] = { level = "off", parameters = { max = 200 } },
     ["typescript:S1439"] = { level = "on" },
     ["typescript:S1440"] = { level = "on" },
     ["typescript:S1479"] = { level = "on", parameters = { maximum = 30 } },
