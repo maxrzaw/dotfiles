@@ -425,7 +425,9 @@ return {
             filetypes = { "python" },
         })
 
-        -- Enable all configured LSP servers (except angularls which is manually controlled)
+        -- Enable all configured LSP servers
+        -- angularls: manually controlled via angular.setup()
+        -- tailwindcss: disabled, causes multi-second freeze on first file open. Use :LspStart tailwindcss if needed.
         vim.lsp.enable({
             "lua_ls",
             "omnisharp",
@@ -435,7 +437,6 @@ return {
             "dockerls",
             "docker_compose_language_service",
             "gopls",
-            "tailwindcss",
             "cssls",
             "basedpyright",
         })
