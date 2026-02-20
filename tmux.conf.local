@@ -207,7 +207,7 @@ tmux_conf_theme_window_status_current_format="#I #W#{?#{||:#{window_bell_flag},#
 # window activity status style
 tmux_conf_theme_window_status_activity_fg="default"
 tmux_conf_theme_window_status_activity_bg="default"
-tmux_conf_theme_window_status_activity_attr="underscore"
+tmux_conf_theme_window_status_activity_attr="none"
 
 # window bell status style
 tmux_conf_theme_window_status_bell_fg="$tmux_conf_theme_colour_5"
@@ -215,8 +215,8 @@ tmux_conf_theme_window_status_bell_bg="default"
 tmux_conf_theme_window_status_bell_attr="blink,bold"
 
 # window last status style
-tmux_conf_theme_window_status_last_fg="colour3"
-tmux_conf_theme_window_status_last_bg="$tmux_conf_theme_colour_2"
+tmux_conf_theme_window_status_last_fg="colour11"
+tmux_conf_theme_window_status_last_bg="colour8"
 tmux_conf_theme_window_status_last_attr="none"
 
 # status left/right sections separators
@@ -401,7 +401,28 @@ bind-key -T prefix j select-window -t 1
 bind-key -T prefix k select-window -t 2
 bind-key -T prefix l select-window -t 3
 
-bind-key -T prefix \; command-prompt
+# window selection for swapped number/symbol layout
+bind-key -T prefix ')' select-window -t 0
+bind-key -T prefix '!' select-window -t 1
+bind-key -T prefix '@' select-window -t 2
+bind-key -T prefix '#' select-window -t 3
+bind-key -T prefix '$' select-window -t 4
+bind-key -T prefix '%' select-window -t 5
+bind-key -T prefix '^' select-window -t 6
+bind-key -T prefix '&' select-window -t 7
+bind-key -T prefix '*' select-window -t 8
+bind-key -T prefix '(' select-window -t 9
+
+# rebind default symbol commands to number keys for swapped layout
+bind-key -T prefix 1 break-pane
+bind-key -T prefix 3 list-buffers
+bind-key -T prefix 4 command-prompt -I "#S" "rename-session -- '%%'"
+bind-key -T prefix 5 split-window -h
+bind-key -T prefix 7 confirm-before -p "kill-window #W? (y/n)" kill-window
+bind-key -T prefix 9 switch-client -p
+bind-key -T prefix 0 switch-client -n
+
+bind-key -T prefix \; select-window -t 4
 
 # plugins
 set -g @plugin 'nick-f/tmux-itunes'
