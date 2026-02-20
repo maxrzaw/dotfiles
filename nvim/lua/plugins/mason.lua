@@ -5,6 +5,9 @@ return {
         ui = {
             border = "rounded",
         },
+        -- registries = {
+        --     "file:~/dev/mason-registry",
+        -- },
         ensure_installed = {
             "tree-sitter-cli",
             "eslint-lsp",
