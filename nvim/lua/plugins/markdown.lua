@@ -30,6 +30,14 @@ return {
         build = "cd app && npm install && git restore .",
         init = function()
             vim.g.mkdp_filetypes = { "markdown" }
+            if vim.fn.has("wsl") == 1 then
+                vim.g.mkdp_browserfunc = "OpenBrowserWSL"
+                vim.cmd([[
+                    function! OpenBrowserWSL(url)
+                        silent execute '!/mnt/c/Windows/System32/cmd.exe /c start "" ' .. shellescape(a:url)
+                    endfunction
+                ]])
+            end
         end,
         ft = { "markdown" },
         config = function()
