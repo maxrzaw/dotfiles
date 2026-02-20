@@ -1,0 +1,11 @@
+name: <%= @args[0] || "task" %>
+root: <%= @args[1] || ENV["PWD"] %>
+
+windows:
+  - claude:
+      - claude
+  - editor:
+      - nvim
+  - lazygit:
+      - lazygit
+  - shell:
