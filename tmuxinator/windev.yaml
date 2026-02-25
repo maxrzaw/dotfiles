@@ -1,0 +1,22 @@
+<%
+  raw      = @args[1] || ENV["PWD"]
+  wsl_path = if raw =~ /^\/mnt\//
+    raw
+  else
+    raw.gsub("\\", "/").sub(/^([A-Za-z]):/) { "/mnt/#{$1.downcase}" }
+  end
+  m = wsl_path.match(/^\/mnt\/([a-z])\/(.*)$/)
+  win_path = m ? "#{m[1].upcase}:\\#{m[2].gsub('/', '\\')}" : wsl_path
+%>
+name: <%= @args[0] || "windev" %>
+root: <%= wsl_path %>
+
+windows:
+  - claude:
+      - '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe -NoExit -Command "Set-Location ''<%= win_path %>''; claude"'
+  - editor:
+      - '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe -NoExit -Command "Set-Location ''<%= win_path %>''; nvim ."'
+  - lazygit:
+      - '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe -NoExit -Command "Set-Location ''<%= win_path %>''; lazygit"'
+  - shell:
+      - '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe -NoExit -Command "Set-Location ''<%= win_path %>''"'
