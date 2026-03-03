@@ -1,8 +1,8 @@
 # Creates symbolic links to the dotfiles repo from ~
 mkdir -p ~/.config/
-if [ ! -d ~/.config/nvim ]; then
-    ln -s ~/dotfiles/nvim/config/nvim ~/.config/nvim
-    echo "Created symbolic link from ~/.config/nvim to ~/dotfiles/nvim/config/nvim"
+if [ ! -L ~/.config/nvim ]; then
+    ln -s ~/dotfiles/nvim ~/.config/nvim
+    echo "Created symbolic link from ~/.config/nvim to ~/dotfiles/nvim"
 fi
 
 # if [ ! -d ~/.config/powerline ]; then
@@ -29,6 +29,16 @@ mkdir -p ~/.config
 if [ ! -d ~/.config/tmuxinator ]; then
     ln -s ~/dotfiles/tmuxinator ~/.config/tmuxinator
     echo "Created symbolic link from ~/.config/tmuxinator to ~/dotfiles/tmuxinator"
+fi
+
+# Set up zsh
+if [ ! -L ~/.zshrc ]; then
+    ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc
+    echo "Created symbolic link from ~/.zshrc to ~/dotfiles/zsh/.zshrc"
+fi
+if [ ! -L ~/.p10k.zsh ]; then
+    ln -s ~/dotfiles/zsh/.p10k.zsh ~/.p10k.zsh
+    echo "Created symbolic link from ~/.p10k.zsh to ~/dotfiles/zsh/.p10k.zsh"
 fi
 
 # Set up some includes
