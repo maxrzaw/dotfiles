@@ -10,6 +10,27 @@ fi
 #     echo "Created symbolic link from ~/.config/powerline to ~/dotfiles/powerline"
 # fi
 
+# Set up oh-my-tmux
+if [ ! -d ~/.tmux ]; then
+    git clone https://github.com/gpakosz/.tmux ~/.tmux
+    echo "Cloned oh-my-tmux to ~/.tmux"
+fi
+if [ ! -L ~/.tmux.conf ]; then
+    ln -s ~/.tmux/.tmux.conf ~/.tmux.conf
+    echo "Created symbolic link from ~/.tmux.conf to ~/.tmux/.tmux.conf"
+fi
+if [ ! -L ~/.tmux.conf.local ]; then
+    ln -s ~/dotfiles/tmux.conf.local ~/.tmux.conf.local
+    echo "Created symbolic link from ~/.tmux.conf.local to ~/dotfiles/tmux.conf.local"
+fi
+
+# Set up tmuxinator
+mkdir -p ~/.config
+if [ ! -d ~/.config/tmuxinator ]; then
+    ln -s ~/dotfiles/tmuxinator ~/.config/tmuxinator
+    echo "Created symbolic link from ~/.config/tmuxinator to ~/dotfiles/tmuxinator"
+fi
+
 # Set up some includes
 #touch ~/.vimrc
 #if test $(grep -c "~/dotfiles/vimrc" ~/.vimrc) = 0; then
