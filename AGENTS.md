@@ -8,7 +8,7 @@ This repository contains a highly customized development environment for macOS (
 - **Editor:** Neovim (`nvim/`) configured with `lazy.nvim` and `catppuccin`. Supports VS Code integration via `vscode-neovim`.
 - **Terminal Emulators:** Wezterm (`wezterm/`), Ghostty (`ghostty/`) and Windows Terminal.
 - **Multiplexer:** Tmux (`tmux.conf.local`) with `oh-my-tmux` and `tmuxinator` for session management.
-- **Keyboard:** Karabiner-Elements (`karabiner/`) for macOS modifications and QMK/ZMK hints in Neovim.
+- **Keyboard:** QMK/ZMK hints in Neovim.
 - **Git:** Extensive aliases and global configuration (`gitconfig`).
 
 ## Key Files & Directory Structure
@@ -18,7 +18,7 @@ This repository contains a highly customized development environment for macOS (
 - `nvim/init.lua`: Entry point for Neovim configuration.
 - `tmux.conf.local`: Customizations for the `oh-my-tmux` framework.
 - `tmuxinator/`: YAML templates for project-specific tmux sessions (e.g., `task.yaml`, `windev.yaml`).
-- `karabiner/`: JSON rules for complex modifications (e.g., Command+HJKL to Arrow Keys). No longer used.
+
 
 ## Setup and Installation
 
@@ -59,4 +59,4 @@ The environment is optimized for running multiple AI agents (like Claude Code) u
 
 - **AWS Token Monitoring:** A background daemon (`aws_token_daemon.py`) monitors AWS credentials and updates the Zsh prompt via a cache file in `/tmp/`.
 - **Windows Support:** Some configurations (like `wezterm.lua` and `tmuxinator/windev.yaml`) include specific logic for Windows filesystem paths and PowerShell.
-- **Karabiner:** The `LeftCommandVimArrows.json` rule allows using `Cmd + H/J/K/L` as arrow keys system-wide.
+
