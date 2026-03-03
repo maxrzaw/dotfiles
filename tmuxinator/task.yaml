@@ -2,8 +2,8 @@ name: <%= @args[0] || "task" %>
 root: <%= @args[1] || ENV["PWD"] %>
 
 windows:
-  - claude:
-      - claude
+  - agent:
+      - <%= @settings["agent"] || ENV["MUX_DEFAULT_AGENT"] || "claude" %>
   - editor:
       - nvim
   - lazygit:
