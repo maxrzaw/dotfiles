@@ -7,6 +7,32 @@ fi
 git config --global core.editor $VIM
 alias vim=$VIM
 alias mux=tmuxinator
+
+# Custom tmuxinator/mux completion that adds directory completion for extra args
+_mux() {
+  local commands projects
+  commands=(${(f)"$(tmuxinator commands zsh 2>/dev/null)"})
+  projects=(${(f)"$(tmuxinator completions start 2>/dev/null)"})
+
+  if (( CURRENT == 2 )); then
+    _alternative \
+      'commands:: _describe -t commands "tmuxinator subcommands" commands' \
+      'projects:: _describe -t projects "tmuxinator projects" projects'
+  elif (( CURRENT == 3 )); then
+    case $words[2] in
+      copy|cp|c|debug|delete|rm|open|o|start|s|edit|e)
+        _arguments '*:projects:($projects)'
+      ;;
+    esac
+  elif (( CURRENT >= 4 )); then
+    case $words[CURRENT] in
+      /*|~*|.*)
+        _directories
+      ;;
+    esac
+  fi
+}
+compdef _mux tmuxinator mux
 alias wtitle="wezterm cli set-tab-title"
 
 export EDITOR=$VIM
