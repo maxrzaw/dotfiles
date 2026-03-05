@@ -138,7 +138,7 @@ return {
         end
 
         vim.lsp.config("omnisharp", {
-            cmd = { vim.fn.expand("$MASON/bin/OmniSharp") },
+            cmd = { vim.fn.expand("$MASON/bin/OmniSharp"), "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
             root_markers = { ".git", "*.sln", "*.csproj" },
             filetypes = { "cs", "vb" },
             settings = {
