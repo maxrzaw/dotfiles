@@ -9,17 +9,22 @@ return {
         end
         -- Override Trouble's warn to use a single-line notification
         local trouble_util = require("trouble.util")
+        ---@diagnostic disable-next-line: duplicate-set-field, unused-local
         trouble_util.warn = function(msg, opts)
             if type(msg) == "table" then
                 msg = msg[1]
             end
-            vim.notify(vim.trim(msg), vim.log.levels.WARN, { title = "Trouble" })
+            require("fidget").notify(vim.trim(msg), vim.log.levels.WARN, { annote = "Trouble" })
         end
 
         trouble.setup({
             auto_close = true,
             action_keys = {
                 toggle_fold = { "<leader>z", "<leader>Z" },
+            },
+            keys = {
+                ["<cr>"] = "jump_close",
+                o = "jump",
             },
             height = 15,
             focus = true,

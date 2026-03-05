@@ -130,11 +130,13 @@ require("lazy").setup({
         -- Useful status updates for LSP
         {
             "j-hui/fidget.nvim",
-            tag = "legacy",
             opts = {
-                window = {
-                    border = "rounded",
-                    blend = 0,
+                notification = {
+                    window = {
+                        border = "rounded",
+                        border_hl = "FloatBorder",
+                        winblend = 0,
+                    },
                 },
             },
             cond = not vim.g.vscode,
