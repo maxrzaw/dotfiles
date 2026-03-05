@@ -121,26 +121,35 @@ return {
             })
         end
 
-        -- OmniSharp: Build config using lspconfig's logic, then use with vim.lsp.config
-        local omnisharp_lspconfig = require("lspconfig.configs.omnisharp").default_config
-        local omnisharp_config = vim.deepcopy(omnisharp_lspconfig)
-        omnisharp_config.cmd = { vim.fn.expand("$MASON/bin/OmniSharp") }
-
-        -- Setup capabilities with workspace field for on_new_config
-        local base_capabilities = require("cmp_nvim_lsp").default_capabilities()
-        base_capabilities.workspace = base_capabilities.workspace or {}
-        omnisharp_config.capabilities =
-            vim.tbl_deep_extend("force", base_capabilities, omnisharp_config.capabilities or {})
-
-        -- Manually call lspconfig's on_new_config to build the full command
-        if omnisharp_lspconfig.on_new_config then
-            omnisharp_lspconfig.on_new_config(omnisharp_config, vim.fn.getcwd())
-        end
+        local omnisharp_capabilities = vim.tbl_deep_extend(
+            "force",
+            require("cmp_nvim_lsp").default_capabilities(),
+            { workspace = { configuration = true } }
+        )
 
         vim.lsp.config("omnisharp", {
             cmd = { vim.fn.expand("$MASON/bin/OmniSharp"), "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
-            root_markers = { ".git", "*.sln", "*.csproj" },
+            root_dir = function(bufnr, on_dir)
+                local fname = vim.api.nvim_buf_get_name(bufnr)
+                local sln_root = vim.fs.root(fname, function(name, _)
+                    return name:match("%.sln$")
+                end)
+                if sln_root then
+                    return on_dir(sln_root)
+                end
+                local csproj_root = vim.fs.root(fname, function(name, _)
+                    return name:match("%.csproj$")
+                end)
+                if csproj_root then
+                    return on_dir(csproj_root)
+                end
+                local git_root = vim.fs.root(fname, ".git")
+                if git_root then
+                    return on_dir(git_root)
+                end
+            end,
             filetypes = { "cs", "vb" },
+            capabilities = omnisharp_capabilities,
             settings = {
                 FormattingOptions = {
                     EnableEditorConfigSupport = true,
