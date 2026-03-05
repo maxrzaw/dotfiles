@@ -16,8 +16,6 @@ return {
         "nvimtools/none-ls.nvim",
         -- Completion
         "nvim-cmp",
-        -- OmniSharp Extended
-        "Hoffs/omnisharp-extended-lsp.nvim",
     },
     config = function()
         -- Monkey Patch to remove duplicate locations
@@ -120,48 +118,6 @@ return {
                 },
             })
         end
-
-        local omnisharp_capabilities = vim.tbl_deep_extend(
-            "force",
-            require("cmp_nvim_lsp").default_capabilities(),
-            { workspace = { configuration = true } }
-        )
-
-        vim.lsp.config("omnisharp", {
-            cmd = { vim.fn.expand("$MASON/bin/OmniSharp"), "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
-            root_dir = function(bufnr, on_dir)
-                local fname = vim.api.nvim_buf_get_name(bufnr)
-                local sln_root = vim.fs.root(fname, function(name, _)
-                    return name:match("%.sln$")
-                end)
-                if sln_root then
-                    return on_dir(sln_root)
-                end
-                local csproj_root = vim.fs.root(fname, function(name, _)
-                    return name:match("%.csproj$")
-                end)
-                if csproj_root then
-                    return on_dir(csproj_root)
-                end
-                local git_root = vim.fs.root(fname, ".git")
-                if git_root then
-                    return on_dir(git_root)
-                end
-            end,
-            filetypes = { "cs", "vb" },
-            capabilities = omnisharp_capabilities,
-            settings = {
-                FormattingOptions = {
-                    EnableEditorConfigSupport = true,
-                },
-                RoslynExtensionsOptions = {
-                    EnableAnalyzersSupport = true,
-                },
-                Sdk = {
-                    IncludePrereleases = true,
-                },
-            },
-        })
 
         -- Set up Angular Language Server
         -- wierd things required for angular monorepo
@@ -439,7 +395,6 @@ return {
         -- tailwindcss: disabled, causes multi-second freeze on first file open. Use :LspStart tailwindcss if needed.
         vim.lsp.enable({
             "lua_ls",
-            "omnisharp",
             "ts_ls",
             "eslint",
             "terraformls",

@@ -19,7 +19,7 @@ return {
             "markdownlint",
             "marksman",
             "prettierd",
-            "omnisharp",
+            "roslyn",
             "tailwindcss-language-server",
             "bash-language-server",
             "css-lsp",

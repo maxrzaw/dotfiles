@@ -7,6 +7,15 @@ return {
         if not ok then
             return
         end
+        -- Override Trouble's warn to use a single-line notification
+        local trouble_util = require("trouble.util")
+        trouble_util.warn = function(msg, opts)
+            if type(msg) == "table" then
+                msg = msg[1]
+            end
+            vim.notify(vim.trim(msg), vim.log.levels.WARN, { title = "Trouble" })
+        end
+
         trouble.setup({
             auto_close = true,
             action_keys = {
