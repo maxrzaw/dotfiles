@@ -19,14 +19,15 @@ return {
 
         trouble.setup({
             auto_close = true,
-            action_keys = {
-                toggle_fold = { "<leader>z", "<leader>Z" },
-            },
             keys = {
+                ["<leader>z"] = "fold_toggle",
+                ["<leader>Z"] = "fold_toggle_recursive",
                 ["<cr>"] = "jump_close",
                 o = "jump",
             },
-            height = 15,
+            win = {
+                size = 15,
+            },
             focus = true,
             modes = {
                 lsp_references = {
@@ -38,27 +39,26 @@ return {
                     params = {
                         include_current = false,
                     },
+                    auto_jump = true,
+                },
+                diagnostics_buffer = {
+                    mode = "diagnostics",
+                    filter = { buf = 0 },
                 },
             },
-            auto_jump = {
-                "lsp",
-                "lsp_definitions",
-                "lsp_type_definitions",
-                -- "lsp_references", -- This appears to be broken
-            },
         })
-        -- Lua
+
         vim.keymap.set("n", "<leader>qx", function()
-            trouble.toggle()
+            trouble.toggle("diagnostics")
         end, get_opts("Trouble Toggle"))
         vim.keymap.set("n", "<leader>qq", function()
-            trouble.open()
+            trouble.open("diagnostics")
         end, get_opts("Trouble Open"))
         vim.keymap.set("n", "<leader>qw", function()
-            trouble.open("workspace_diagnostics")
+            trouble.open("diagnostics")
         end, get_opts("Trouble Open Workspace Diagnostics"))
         vim.keymap.set("n", "<leader>qd", function()
-            trouble.open("document_diagnostics")
+            trouble.open("diagnostics_buffer")
         end, get_opts("Trouble Open Document Diagnostics"))
         vim.keymap.set("n", "<leader>qf", function()
             trouble.open("quickfix")
@@ -66,19 +66,6 @@ return {
         vim.keymap.set("n", "<leader>ql", function()
             trouble.open("loclist")
         end, get_opts("Trouble Open Location List"))
-
-        function ToggleTroubleAuto()
-            vim.defer_fn(function()
-                vim.cmd("cclose")
-                trouble.open("quickfix")
-            end, 0)
-        end
-        -- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-        --     pattern = "quickfix",
-        --     callback = function()
-        --         ToggleTroubleAuto()
-        --     end,
-        -- })
     end,
     cond = not vim.g.vscode,
 }
