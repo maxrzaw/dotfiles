@@ -40,6 +40,18 @@ return {
                         include_current = false,
                     },
                     auto_jump = true,
+                    filter = function(items)
+                        local seen = {}
+                        local ret = {}
+                        for _, item in ipairs(items) do
+                            local key = item.filename .. ":" .. item.pos[1] .. ":" .. item.pos[2]
+                            if not seen[key] then
+                                seen[key] = true
+                                ret[#ret + 1] = item
+                            end
+                        end
+                        return ret
+                    end,
                 },
                 diagnostics_buffer = {
                     mode = "diagnostics",
