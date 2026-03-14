@@ -40,6 +40,11 @@ return {
                 },
                 formatters_by_ft = {
                     cs = { "csharpier", lsp_format = "first", stop_after_first = false },
+                    c = { "clang_format" },
+                    cpp = { "clang_format" },
+                    h = { "clang_format" },
+                    hpp = { "clang_format" },
+                    arduino = { "clang_format" },
                     lua = { "stylua" },
                     python = { "black" },
                     rust = { "rustfmt" },

@@ -42,6 +42,7 @@ return {
         local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
         local lsp_keymaps = require("mzawisa.lsp_keymaps")
+        local is_work = vim.g.is_work
 
         -- Enable LSP debug logging
         -- vim.lsp.set_log_level("debug")
@@ -118,6 +119,60 @@ return {
                 },
             })
         end
+
+        vim.lsp.config("arduino_language_server", {
+            cmd = (function()
+                local function resolve_executable(name, fallback)
+                    local path = vim.fn.exepath(name)
+                    if path ~= "" then
+                        return path
+                    end
+
+                    return vim.fn.expand(fallback)
+                end
+
+                local function resolve_clangd()
+                    local brew_clangd = "/opt/homebrew/opt/llvm/bin/clangd"
+                    if vim.fn.executable(brew_clangd) == 1 then
+                        return brew_clangd
+                    end
+
+                    local path_clangd = vim.fn.exepath("clangd")
+                    if path_clangd ~= "" then
+                        return path_clangd
+                    end
+
+                    return "/usr/bin/clangd"
+                end
+
+                return {
+                    resolve_executable("arduino-language-server", "$MASON/bin/arduino-language-server"),
+                    "-cli",
+                    resolve_executable("arduino-cli", "/opt/homebrew/bin/arduino-cli"),
+                    "-cli-config",
+                    "/Users/max/Library/Arduino15/arduino-cli.yaml",
+                    "-fqbn",
+                    "esp8266:esp8266:nodemcuv2",
+                    "-clangd",
+                    resolve_clangd(),
+                }
+            end)(),
+            filetypes = { "arduino", "cpp" },
+            root_dir = function(bufnr, on_dir)
+                local fname = vim.api.nvim_buf_get_name(bufnr)
+                local sketch_root = vim.fs.dirname(fname)
+
+                on_dir(vim.fs.root(fname, { "sketch.yaml", ".git" }) or sketch_root)
+            end,
+            capabilities = {
+                textDocument = {
+                    semanticTokens = vim.NIL,
+                },
+                workspace = {
+                    semanticTokens = vim.NIL,
+                },
+            },
+        })
 
         -- Set up Angular Language Server
         -- wierd things required for angular monorepo
@@ -238,7 +293,7 @@ return {
         })
 
         -- Set up Sonarlint Language Server
-        if vim.env.NEOVIM_WORK == "true" or vim.env.NEOVIM_WORK == "1" then
+        if is_work then
             require("sonarlint").setup({
                 filetypes = {
                     -- Tested
@@ -304,71 +359,73 @@ return {
             filetypes = { "go", "gomod", "gowork", "gotmpl" },
         })
 
-        vim.lsp.config("tailwindcss", {
-            cmd = { "tailwindcss-language-server", "--stdio" },
-            root_markers = {
-                "tailwind.config.js",
-                "tailwind.config.cjs",
-                "tailwind.config.mjs",
-                "tailwind.config.ts",
-                "postcss.config.js",
-                "postcss.config.cjs",
-                "postcss.config.mjs",
-                "postcss.config.ts",
-                "package.json",
-            },
-            filetypes = {
-                "aspnetcorerazor",
-                "astro",
-                "astro-markdown",
-                "blade",
-                "clojure",
-                "django-html",
-                "htmldjango",
-                "edge",
-                "eelixir",
-                "elixir",
-                "ejs",
-                "erb",
-                "eruby",
-                "gohtml",
-                "gohtmltmpl",
-                "haml",
-                "handlebars",
-                "hbs",
-                "html",
-                "htmlangular",
-                "html-eex",
-                "heex",
-                "jade",
-                "leaf",
-                "liquid",
-                "markdown",
-                "mdx",
-                "mustache",
-                "njk",
-                "nunjucks",
-                "php",
-                "razor",
-                "slim",
-                "twig",
-                "css",
-                "less",
-                "postcss",
-                "sass",
-                "scss",
-                "stylus",
-                "sugarss",
-                "javascript",
-                "javascriptreact",
-                "reason",
-                "rescript",
-                "typescript",
-                "typescriptreact",
-                "vue",
-                "svelte",
-            },
-        })
+        if not is_work then
+            vim.lsp.config("tailwindcss", {
+                cmd = { "tailwindcss-language-server", "--stdio" },
+                root_markers = {
+                    "tailwind.config.js",
+                    "tailwind.config.cjs",
+                    "tailwind.config.mjs",
+                    "tailwind.config.ts",
+                    "postcss.config.js",
+                    "postcss.config.cjs",
+                    "postcss.config.mjs",
+                    "postcss.config.ts",
+                    "package.json",
+                },
+                filetypes = {
+                    "aspnetcorerazor",
+                    "astro",
+                    "astro-markdown",
+                    "blade",
+                    "clojure",
+                    "django-html",
+                    "htmldjango",
+                    "edge",
+                    "eelixir",
+                    "elixir",
+                    "ejs",
+                    "erb",
+                    "eruby",
+                    "gohtml",
+                    "gohtmltmpl",
+                    "haml",
+                    "handlebars",
+                    "hbs",
+                    "html",
+                    "htmlangular",
+                    "html-eex",
+                    "heex",
+                    "jade",
+                    "leaf",
+                    "liquid",
+                    "markdown",
+                    "mdx",
+                    "mustache",
+                    "njk",
+                    "nunjucks",
+                    "php",
+                    "razor",
+                    "slim",
+                    "twig",
+                    "css",
+                    "less",
+                    "postcss",
+                    "sass",
+                    "scss",
+                    "stylus",
+                    "sugarss",
+                    "javascript",
+                    "javascriptreact",
+                    "reason",
+                    "rescript",
+                    "typescript",
+                    "typescriptreact",
+                    "vue",
+                    "svelte",
+                },
+            })
+        end
 
         vim.lsp.config("cssls", {
             cmd = { "vscode-css-language-server", "--stdio" },
@@ -393,7 +450,7 @@ return {
         -- Enable all configured LSP servers
         -- angularls: manually controlled via angular.setup()
         -- tailwindcss: disabled, causes multi-second freeze on first file open. Use :LspStart tailwindcss if needed.
-        vim.lsp.enable({
+        local servers_to_enable = {
             "lua_ls",
             "ts_ls",
             "eslint",
@@ -403,7 +460,13 @@ return {
             "gopls",
             "cssls",
             "basedpyright",
-        })
+        }
+
+        if not is_work then
+            table.insert(servers_to_enable, 1, "arduino_language_server")
+        end
+
+        vim.lsp.enable(servers_to_enable)
 
         cmp.setup.filetype("gitcommit", {
             sources = cmp.config.sources({

@@ -2,7 +2,8 @@
 require("mzawisa.set")
 
 -- Bootstrap Lazy
-vim.g.is_work = os.getenv("NEOVIM_WORK")
+local neovim_work = os.getenv("NEOVIM_WORK")
+vim.g.is_work = neovim_work == "true" or neovim_work == "1"
 vim.g.is_pi = os.getenv("NEOVIM_PI")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

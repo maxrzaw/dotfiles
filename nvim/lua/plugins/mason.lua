@@ -10,6 +10,7 @@ return {
             "github:crashdummyy/mason-registry",
         },
         ensure_installed = {
+            "arduino-language-server",
             "tree-sitter-cli",
             "eslint-lsp",
             "lua-language-server",
