@@ -11,6 +11,7 @@ return {
         },
         ensure_installed = {
             "arduino-language-server",
+            "clangd",
             "tree-sitter-cli",
             "eslint-lsp",
             "lua-language-server",

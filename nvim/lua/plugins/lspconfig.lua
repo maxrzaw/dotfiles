@@ -126,42 +126,19 @@ return {
 
         vim.lsp.config("arduino_language_server", {
             cmd = (function()
-                local function resolve_executable(name, fallback)
-                    local path = vim.fn.exepath(name)
-                    if path ~= "" then
-                        return path
-                    end
-
-                    return vim.fn.expand(fallback)
-                end
-
-                local function resolve_clangd()
-                    local brew_clangd = "/opt/homebrew/opt/llvm/bin/clangd"
-                    if vim.fn.executable(brew_clangd) == 1 then
-                        return brew_clangd
-                    end
-
-                    local path_clangd = vim.fn.exepath("clangd")
-                    if path_clangd ~= "" then
-                        return path_clangd
-                    end
-
-                    return "/usr/bin/clangd"
-                end
-
                 return {
-                    resolve_executable("arduino-language-server", "$MASON/bin/arduino-language-server"),
-                    "-cli",
-                    resolve_executable("arduino-cli", "/opt/homebrew/bin/arduino-cli"),
+                    vim.fn.expand("$MASON/bin/arduino-language-server"),
                     "-cli-config",
                     "/Users/max/Library/Arduino15/arduino-cli.yaml",
                     "-fqbn",
                     "esp8266:esp8266:nodemcuv2",
+                    "-cli",
+                    "arduino-cli",
                     "-clangd",
-                    resolve_clangd(),
+                    "clangd",
                 }
             end)(),
-            filetypes = { "arduino", "cpp" },
+            filetypes = { "arduino", "c", "cpp", "h", "hpp" },
             root_dir = function(bufnr, on_dir)
                 local fname = vim.api.nvim_buf_get_name(bufnr)
                 local sketch_root = vim.fs.dirname(fname)
@@ -182,7 +159,7 @@ return {
         -- wierd things required for angular monorepo
         local function get_node_modules(root_dir)
             local root_node = root_dir .. "/node_modules"
-            local stats = vim.loop.fs_stat(root_node)
+            local stats = vim.uv.fs_stat(root_node)
             if stats == nil then
                 return ""
             else
