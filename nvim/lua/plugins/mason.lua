@@ -16,6 +16,7 @@ return {
             "lua-language-server",
             "stylua",
             "typescript-language-server",
+            "vtsls",
             "angular-language-server",
             "markdownlint",
             "marksman",

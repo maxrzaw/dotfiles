@@ -85,8 +85,8 @@ return {
                     vim.lsp.inlay_hint.enable(M.inlay_hints_enabled, {})
                 end
 
-                -- Disable tsserver from being a rename provider when working on Angular
-                if client ~= nil and client.name == "ts_ls" and angular.enabled then
+                -- Disable vtsls from being a rename provider when working on Angular
+                if client ~= nil and client.name == "vtsls" and angular.enabled then
                     client.server_capabilities.renameProvider = false
                 end
             end,
@@ -221,6 +221,55 @@ return {
             includeInlayEnumMemberValueHints = true,
         }
 
+        vim.lsp.config("vtsls", {
+            cmd = { "vtsls", "--stdio" },
+            root_markers = { "package.json", ".git" },
+            filetypes = {
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+            },
+            settings = {
+                vtsls = {
+                    enableMoveToFileCodeAction = true,
+                    autoUseWorkspaceTsdk = true,
+                    experimental = {
+                        maxInlayHintLength = 30,
+                        completion = {
+                            enableServerSideFuzzyMatch = true,
+                        },
+                    },
+                    tsserver = {
+                        globalPlugins = {
+                            {
+                                name = "@angular/language-server",
+                                location = vim.fn.expand(
+                                    "$MASON/packages/angular-language-server/node_modules/@angular/language-server"
+                                ),
+                                enableForWorkspaceTypeScriptVersions = false,
+                            },
+                        },
+                    },
+                },
+                -- Temporary: enable tsserver logging for debugging
+                ["typescript.tsserver.log"] = "verbose",
+                typescript = {
+                    updateImportsOnFileMove = { enabled = "always" },
+                    suggest = {
+                        completeFunctionCalls = true,
+                    },
+                    inlayHints = inlayHints,
+                },
+                javascript = {
+                    inlayHints = inlayHints,
+                },
+            },
+        })
+
+        -- Disabled: using vtsls instead for better monorepo/multi-project support
         vim.lsp.config("ts_ls", {
             cmd = { "typescript-language-server", "--stdio" },
             root_markers = { ".git", "package.json" },
@@ -242,9 +291,12 @@ return {
             },
             init_options = {
                 hostInfo = "neovim",
-                -- Disable telemetry
                 preferences = {
                     disableSuggestions = false,
+                },
+                tsserver = {
+                    logDirectory = "/tmp/tsserver-logs",
+                    logVerbosity = "verbose",
                 },
             },
         })
@@ -452,7 +504,8 @@ return {
         -- tailwindcss: disabled, causes multi-second freeze on first file open. Use :LspStart tailwindcss if needed.
         local servers_to_enable = {
             "lua_ls",
-            "ts_ls",
+            "vtsls",
+            -- "ts_ls",
             "eslint",
             "terraformls",
             "dockerls",
