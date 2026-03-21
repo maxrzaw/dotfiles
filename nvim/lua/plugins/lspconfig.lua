@@ -127,7 +127,7 @@ return {
         vim.lsp.config("arduino_language_server", {
             cmd = (function()
                 return {
-                    vim.fn.expand("$MASON/bin/arduino-language-server"),
+                    "arduino-language-server",
                     "-cli-config",
                     "/Users/max/Library/Arduino15/arduino-cli.yaml",
                     "-fqbn",
@@ -141,9 +141,19 @@ return {
             filetypes = { "arduino", "c", "cpp", "h", "hpp" },
             root_dir = function(bufnr, on_dir)
                 local fname = vim.api.nvim_buf_get_name(bufnr)
-                local sketch_root = vim.fs.dirname(fname)
+                local sketch_root = vim.fs.root(fname, { "sketch.yaml", ".git" })
+                if not sketch_root then
+                    return
+                end
 
-                on_dir(vim.fs.root(fname, { "sketch.yaml", ".git" }) or sketch_root)
+                local ino_files = vim.fs.find(function(name)
+                    return name:match("%.ino$") ~= nil
+                end, { path = sketch_root, type = "file", limit = 1 })
+                if #ino_files == 0 then
+                    return
+                end
+
+                on_dir(sketch_root)
             end,
             capabilities = {
                 textDocument = {

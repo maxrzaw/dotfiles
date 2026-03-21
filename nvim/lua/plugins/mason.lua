@@ -10,7 +10,7 @@ return {
             "github:crashdummyy/mason-registry",
         },
         ensure_installed = {
-            "arduino-language-server",
+            -- "arduino-language-server", -- Using my locally built executable
             "clangd",
             "tree-sitter-cli",
             "eslint-lsp",
