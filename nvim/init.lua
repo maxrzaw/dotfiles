@@ -37,7 +37,7 @@ require("lazy").setup({
     },
     install = {
         missing = true,
-        colorscheme = { "catppuccin", "default" },
+        colorscheme = { "catppuccin-mocha", "default" },
     },
     spec = {
         { "lazy.nvim" },
