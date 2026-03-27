@@ -49,10 +49,10 @@ fi
 #fi
 
 #touch ~/.bashrc
-#if test $(grep -c "~/dotfiles/bashrc" ~/.bashrc) = 0; then
-#    echo "Adding bashrc to ~/.bashrc"
-#    echo -e "if [ -f ~/dotfiles/bashrc ]; then\n    . ~/dotfiles/bashrc\nfi" >> ~/.bashrc
-#fi
+if test $(grep -c "~/dotfiles/bashrc" ~/.bashrc) = 0; then
+    echo "Adding bashrc to ~/.bashrc"
+    echo -e "if [ -f ~/dotfiles/bashrc ]; then\n    . ~/dotfiles/bashrc\nfi" >> ~/.bashrc
+fi
 
 touch ~/.gitconfig
 if test $(grep -c "~/dotfiles/gitconfig" ~/.gitconfig) = 0; then
