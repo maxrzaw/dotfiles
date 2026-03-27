@@ -1,25 +1,6 @@
 -- Not super happy with either of these, I was able to copy the dap config from jester though
 return {
     {
-        "David-Kunz/jester",
-        cond = vim.g.windows ~= 1,
-        opts = {
-            cmd = "npx jest -t '$result' -- $file",
-            dap = {
-                sourceMaps = true,
-            },
-        },
-        config = function(opts)
-            require("jester").setup(opts)
-            vim.api.nvim_create_user_command("JesterDebugFile", "lua require('jester').debug_file()", {})
-            vim.api.nvim_create_user_command("JesterDebugLast", "lua require('jester').debug_last()", {})
-            vim.api.nvim_create_user_command("JesterDebugNearest", "lua require('jester').debug()", {})
-            vim.api.nvim_create_user_command("JesterRunFile", "lua require('jester').run_file()", {})
-            vim.api.nvim_create_user_command("JesterRunNearest", "lua require('jester').run()", {})
-            vim.api.nvim_create_user_command("JesterRunLast", "lua require('jester').run_last()", {})
-        end,
-    },
-    {
         "nvim-neotest/neotest",
         cond = vim.g.windows ~= 1,
         dependencies = {
