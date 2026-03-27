@@ -21,7 +21,7 @@ append_if_missing() {
   touch "$file"
 
   if ! grep -Fq "$marker" "$file"; then
-    printf '\n%s\n' "$content" >> "$file"
+    printf '\n%b\n' "$content" >> "$file"
   fi
 }
 
