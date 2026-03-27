@@ -2,71 +2,81 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         name = "nvim-treesitter",
+        branch = "main",
         cond = not vim.g.vscode,
         dependencies = {
             { "windwp/nvim-ts-autotag" },
         },
-        build = function()
-            require("nvim-treesitter.install").update({ with_sync = true })
-        end,
+        build = ":TSUpdate",
         config = function()
+            local treesitter = require("nvim-treesitter")
+            local parsers = {
+                "vimdoc",
+                "bash",
+                "git_config",
+                "git_rebase",
+                "gitattributes",
+                "gitcommit",
+                "gitignore",
+                "javascript",
+                "typescript",
+                "lua",
+                "c_sharp",
+                "angular",
+                "html",
+                "markdown",
+                "sql",
+            }
+
             -- Configure zig as compiler on Windows
             if vim.g.windows == 1 then
                 require("nvim-treesitter.install").compilers = { "zig" }
             end
 
-            require("nvim-treesitter.configs").setup({
-                -- A list of parser names, or "all"
-                ensure_installed = {
-                    "vimdoc",
-                    "bash",
-                    "git_config",
-                    "git_rebase",
-                    "gitattributes",
-                    "gitcommit",
-                    "gitignore",
-                    "javascript",
-                    "typescript",
-                    "lua",
-                    "c_sharp",
-                    "angular",
-                    "html",
-                    "markdown",
-                    "sql",
-                },
+            if treesitter.install then
+                treesitter.setup()
+                treesitter.install(parsers)
+                require("nvim-ts-autotag").setup()
 
-                -- Install parsers synchronously (only applied to `ensure_installed`)
-                sync_install = false,
+                local treesitter_group = vim.api.nvim_create_augroup("mzawisa-treesitter", { clear = true })
+                vim.api.nvim_create_autocmd("FileType", {
+                    group = treesitter_group,
+                    pattern = "*",
+                    callback = function(args)
+                        local bufnr = args.buf
+                        local filetype = vim.bo[bufnr].filetype
 
-                -- Automatically install missing parsers when entering buffer
-                auto_install = true,
+                        if vim.bo[bufnr].buftype ~= "" or filetype == "php" then
+                            return
+                        end
 
-                -- List of parsers to ignore installing (for "all")
-                ignore_install = {},
+                        if not pcall(vim.treesitter.start, bufnr) then
+                            return
+                        end
 
-                highlight = {
-                    -- `false` will disable the whole extension
-                    enable = true,
+                        vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    end,
+                })
+            else
+                require("nvim-treesitter.configs").setup({
+                    ensure_installed = parsers,
+                    sync_install = false,
+                    auto_install = true,
+                    ignore_install = {},
+                    highlight = {
+                        enable = true,
+                        disable = { "php" },
+                        additional_vim_regex_highlighting = false,
+                    },
+                    indent = {
+                        enable = true,
+                    },
+                    autotag = {
+                        enable = true,
+                    },
+                })
+            end
 
-                    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-                    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-                    -- the name of the parser)
-                    -- list of language that will be disabled
-                    disable = { "php" },
-
-                    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-                    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-                    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-                    -- Instead of true it can also be a list of languages
-                    additional_vim_regex_highlighting = false,
-                },
-                indent = {
-                    enable = true,
-                },
-                autotag = {
-                    enable = true,
-                },
-            })
             vim.treesitter.language.register("terraform", "terraform-vars")
         end,
     },
