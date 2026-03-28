@@ -19,6 +19,7 @@ return {
                 "gitcommit",
                 "gitignore",
                 "javascript",
+                "json",
                 "typescript",
                 "lua",
                 "c_sharp",
