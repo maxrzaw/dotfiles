@@ -1,5 +1,7 @@
 local get_opts = require("mzawisa.keymap").get_opts
 local M = {}
+local telescope_lsp = require("mzawisa.telescope_lsp")
+
 M.bordered_hover = function(_opts)
     _opts = _opts or {}
     return vim.lsp.buf.hover(vim.tbl_extend("force", { border = "rounded" }, _opts))
@@ -9,10 +11,10 @@ M.bordered_signature_help = function(_opts)
     return vim.lsp.buf.signature_help(vim.tbl_extend("force", { border = "rounded" }, _opts))
 end
 M.set_default_lsp_keybindings = function()
-    vim.keymap.set("n", "gt", "<cmd>Trouble lsp_type_definitions focus=true<cr>", get_opts("LSP: [G]o to [T]ype Definitions"))
-    vim.keymap.set("n", "gd", "<cmd>Trouble lsp_definitions focus=true<cr>", get_opts("LSP: [G]o to [D]efinitions"))
-    vim.keymap.set("n", "gr", "<cmd>Trouble lsp_references focus=true<cr>", get_opts("LSP: [G]o to [R]eferences"))
-    vim.keymap.set("n", "gi", "<cmd>Trouble lsp_implementations focus=true<cr>", get_opts("LSP: [G]o to [I]mplementations"))
+    vim.keymap.set("n", "gt", telescope_lsp.type_definitions, get_opts("LSP: [G]o to [T]ype Definitions"))
+    vim.keymap.set("n", "gd", telescope_lsp.definitions, get_opts("LSP: [G]o to [D]efinitions"))
+    vim.keymap.set("n", "gr", telescope_lsp.references, get_opts("LSP: [G]o to [R]eferences"))
+    vim.keymap.set("n", "gi", telescope_lsp.implementations, get_opts("LSP: [G]o to [I]mplementations"))
     vim.keymap.set("n", "gD", vim.lsp.buf.declaration, get_opts("LSP: [G]o to [D]eclaration"))
 
     vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, get_opts("LSP: [V]iew [D]iagnostics for current line"))
