@@ -473,6 +473,7 @@ return {
         -- Enable all configured LSP servers
         -- angularls: manually controlled via angular.setup()
         -- tailwindcss: disabled, causes multi-second freeze on first file open. Use :LspStart tailwindcss if needed.
+        -- basedpyright: manual start only. Use :LspStart basedpyright if needed.
         local servers_to_enable = {
             "lua_ls",
             "vtsls",
@@ -483,7 +484,6 @@ return {
             "docker_compose_language_service",
             "gopls",
             "cssls",
-            "basedpyright",
         }
 
         if not is_work then
