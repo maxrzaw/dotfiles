@@ -18,26 +18,6 @@ return {
         "nvim-cmp",
     },
     config = function()
-        -- Monkey Patch to remove duplicate locations
-        local locations_to_items = vim.lsp.util.locations_to_items
-        ---@diagnostic disable-next-line: duplicate-set-field
-        vim.lsp.util.locations_to_items = function(locations, offset_encoding)
-            local lines = {}
-            local loc_i = 1
-            for _, loc in ipairs(vim.deepcopy(locations)) do
-                local uri = loc.uri or loc.targetUri
-                local range = loc.range or loc.targetSelectionRange
-                if lines[uri .. range.start.line] then -- already have a location on this line
-                    table.remove(locations, loc_i) -- remove from the original list
-                else
-                    loc_i = loc_i + 1
-                end
-                lines[uri .. range.start.line] = true
-            end
-
-            return locations_to_items(locations, offset_encoding)
-        end
-
         local cmp = require("cmp")
         local sonar_rules = require("mzawisa.custom.sonarlint_helper").rules
         local angular = require("mzawisa.custom.angular")
