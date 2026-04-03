@@ -2,7 +2,7 @@
 return {
     {
         "nvim-neotest/neotest",
-        cond = vim.g.windows ~= 1,
+        cond = false,
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-neotest/nvim-nio",
