@@ -310,7 +310,37 @@ return {
 
         -- Set up Sonarlint Language Server
         if is_work then
-            require("sonarlint").setup({
+            -- Detect Java installation for SonarLint (requires Java 17+)
+            local java_home = vim.env.JAVA_HOME
+            if vim.g.windows == 1 then
+                -- On Windows, search for compatible Java version if default is too old
+                local possible_java_paths = {
+                    vim.env.JAVA_HOME, -- Try system JAVA_HOME first
+                    "C:\\Program Files\\Microsoft\\jdk-25.0.2.10-hotspot",
+                    "C:\\Program Files\\Java\\jdk-25",
+                    "C:\\Program Files\\Java\\jdk-21",
+                    "C:\\Program Files\\Java\\jdk-17",
+                }
+                for _, path in ipairs(possible_java_paths) do
+                    if path and vim.fn.isdirectory(path) == 1 then
+                        java_home = path
+                        break
+                    end
+                end
+            end
+
+            local sonarlint_cmd = { "sonarlint-language-server" }
+
+            -- On Windows with incompatible Java, call java directly
+            if vim.g.windows == 1 and java_home then
+                sonarlint_cmd = {
+                    java_home .. "\\bin\\java.exe",
+                    "-jar",
+                    vim.fn.expand("$MASON/packages/sonarlint-language-server/extension/server/sonarlint-ls.jar"),
+                }
+            end
+
+            local sonarlint_config = {
                 filetypes = {
                     -- Tested
                     "typescript",
@@ -330,8 +360,7 @@ return {
                     "java",
                 },
                 server = {
-                    cmd = {
-                        "sonarlint-language-server",
+                    cmd = vim.list_extend(sonarlint_cmd, {
                         -- Ensure that sonarlint-language-server uses stdio channel
                         "-stdio",
                         "-analyzers",
@@ -342,7 +371,7 @@ return {
                         vim.fn.expand("$MASON/share/sonarlint-analyzers/sonartext.jar"),
                         vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarxml.jar"),
                         vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjava.jar"),
-                    },
+                    }),
                     window = {
                         border = "rounded",
                         title_pos = "center",
@@ -354,7 +383,9 @@ return {
                         },
                     },
                 },
-            })
+            }
+
+            require("sonarlint").setup(sonarlint_config)
         end
 
         vim.lsp.config("dockerls", {
