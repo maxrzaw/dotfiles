@@ -29,9 +29,10 @@ return {
                 "sql",
             }
 
-            -- Configure zig as compiler on Windows
+            -- Configure gcc as compiler on Windows for tree-sitter CLI
             if vim.g.windows == 1 then
-                require("nvim-treesitter.install").compilers = { "zig" }
+                vim.env.CC = "gcc"
+                vim.env.CXX = "g++"
             end
 
             if treesitter.install then
