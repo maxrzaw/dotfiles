@@ -19,7 +19,6 @@ This repository contains a highly customized development environment for macOS (
 - `tmux.conf.local`: Customizations for the `oh-my-tmux` framework.
 - `tmuxinator/`: YAML templates for project-specific tmux sessions (e.g., `task.yaml`, `windev.yaml`).
 
-
 ## Setup and Installation
 
 1.  **Symlink Configs:** Run `./make_links.sh` to create symbolic links in `~/.config/`.
@@ -59,4 +58,3 @@ The environment is optimized for running multiple AI agents (like Claude Code) u
 
 - **AWS Token Monitoring:** A background daemon (`aws_token_daemon.py`) monitors AWS credentials and updates the Zsh prompt via a cache file in `/tmp/`.
 - **Windows Support:** Some configurations (like `wezterm.lua` and `tmuxinator/windev.yaml`) include specific logic for Windows filesystem paths and PowerShell.
-

@@ -142,14 +142,6 @@ require("lazy").setup({
             cond = not vim.g.vscode,
         },
         {
-            "mbbill/undotree", -- ability to browse file history tree
-            name = "Undo Tree",
-            config = function()
-                vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { silent = true, noremap = true })
-            end,
-            cond = not vim.g.vscode,
-        },
-        {
             dir = "~/dev/azdo.nvim",
             config = function()
                 require("azdo").setup({})

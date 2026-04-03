@@ -90,6 +90,10 @@ else
 
     -- Folding
     nnoremap("<leader>z", "za", {})
+    vim.keymap.set("n", "<leader>u", function()
+        vim.cmd.packadd("nvim.undotree")
+        vim.cmd.Undotree()
+    end, { silent = true, noremap = true, desc = "[U]ndo Tree" })
 
     --- Set up Keymap to toggle formatting
     vim.keymap.set("n", "<leader>ft", function()
