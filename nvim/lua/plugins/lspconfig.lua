@@ -118,7 +118,7 @@ return {
                     "clangd",
                 }
             end)(),
-            filetypes = { "arduino", "c", "cpp", "h", "hpp" },
+            filetypes = { "arduino", "c", "cpp" },
             root_dir = function(bufnr, on_dir)
                 local fname = vim.api.nvim_buf_get_name(bufnr)
                 local sketch_root = vim.fs.root(fname, { "sketch.yaml", ".git" })
@@ -174,7 +174,6 @@ return {
                 "html",
                 "htmlangular",
                 "typescriptreact",
-                "typescript.tsx",
             },
         })
 
@@ -198,10 +197,8 @@ return {
             filetypes = {
                 "javascript",
                 "javascriptreact",
-                "javascript.jsx",
                 "typescript",
                 "typescriptreact",
-                "typescript.tsx",
             },
             settings = {
                 vtsls = {
@@ -247,10 +244,8 @@ return {
             filetypes = {
                 "javascript",
                 "javascriptreact",
-                "javascript.jsx",
                 "typescript",
                 "typescriptreact",
-                "typescript.tsx",
             },
             settings = {
                 typescript = {
@@ -288,10 +283,8 @@ return {
             filetypes = {
                 "javascript",
                 "javascriptreact",
-                "javascript.jsx",
                 "typescript",
                 "typescriptreact",
-                "typescript.tsx",
                 "vue",
                 "svelte",
                 "astro",
