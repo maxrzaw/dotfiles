@@ -1,5 +1,6 @@
 return {
-    "cbochs/grapple.nvim",
+    "maxrzaw/grapple.nvim",
+    dev = true,
     lazy = false,
     dependencies = {
         "nvim-lua/plenary.nvim",
