@@ -37,7 +37,7 @@ require("lazy").setup({
     },
     install = {
         missing = true,
-        colorscheme = { "catppuccin-mocha", "default" },
+        colorscheme = { "catppuccin-mocha", "catppuccin" },
     },
     spec = {
         { "lazy.nvim" },
@@ -56,6 +56,7 @@ require("lazy").setup({
         },
         {
             "catppuccin/nvim",
+            name = "catppuccin",
             lazy = false, -- make sure we load this during startup if it is your main colorscheme
             priority = 1000, -- make sure to load this before all the other start plugins
             config = function()
@@ -78,10 +79,14 @@ require("lazy").setup({
                         gitsigns = true,
                         lsp_trouble = true,
                         mason = true,
-                        neotree = true,
                         neotest = true,
-                        telescope = true,
+                        neotree = true,
+                        nvim_cmp = true,
+                        telescope = {
+                            enabled = true,
+                        },
                         treesitter = true,
+                        which_key = true,
                     },
                     custom_highlights = function(mocha)
                         return {
@@ -92,7 +97,7 @@ require("lazy").setup({
                         }
                     end,
                 })
-                vim.cmd.colorscheme("catppuccin")
+                vim.cmd.colorscheme("catppuccin-mocha")
             end,
             cond = not vim.g.vscode,
         },
@@ -135,7 +140,7 @@ require("lazy").setup({
                     window = {
                         border = "rounded",
                         border_hl = "FloatBorder",
-                        winblend = 0,
+                        winblend = 0, -- This is for catppuccin
                     },
                 },
             },
