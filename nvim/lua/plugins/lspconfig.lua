@@ -305,7 +305,6 @@ return {
         vim.lsp.config("terraformls", {
             cmd = { "terraform-ls", "serve" },
             root_markers = { ".terraform", ".git" },
-            filetypes = { "terraform", "terraform-vars" },
         })
 
         -- Set up Sonarlint Language Server
@@ -397,13 +396,11 @@ return {
         vim.lsp.config("docker_compose_language_service", {
             cmd = { "docker-compose-langserver", "--stdio" },
             root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" },
-            filetypes = { "yaml.docker-compose", "yml.docker-compose", "yaml.compose", "yml.compose" },
         })
 
         vim.lsp.config("gopls", {
             cmd = { "gopls" },
             root_markers = { "go.mod", ".git", "go.work" },
-            filetypes = { "go", "gomod", "gowork", "gotmpl" },
         })
 
         if not is_work then
