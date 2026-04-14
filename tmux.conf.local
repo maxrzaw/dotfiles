@@ -258,7 +258,7 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{username_ssh}
 tmux_conf_theme_status_left="  #S "
 # tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
-tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} | #{current_track} | %R , %d %b | #{username} #{?hostname_ssh,@ #{hostname_ssh},} "
+tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},}#{?#{==:#(uname -s),Darwin}, | #{current_track},} | %R , %d %b | #{username} #{?hostname_ssh,@ #{hostname_ssh},} "
 
 # status left style
 tmux_conf_theme_status_left_fg="colour0"
@@ -424,8 +424,9 @@ bind-key -T prefix 0 switch-client -n
 
 bind-key -T prefix \; select-window -t 4
 
-# plugins
+%if "#{==:#(uname -s),Darwin}"
 set -g @plugin 'nick-f/tmux-itunes'
+%endif
 
 # Smart pane switching with awareness of Vim splits.
 # See: https://github.com/christoomey/vim-tmux-navigator
