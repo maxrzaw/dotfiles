@@ -19,6 +19,14 @@ HISTFILESIZE=2000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+if [ -x "$(command -v nvim)" ]; then
+    export EDITOR=nvim
+    export GIT_EDITOR=nvim
+else
+    export EDITOR=vim
+    export GIT_EDITOR=vim
+fi
+
 # Alias definitions are in bash_aliases.
 if [ -f ~/dotfiles/bash_aliases ]; then
     . ~/dotfiles/bash_aliases

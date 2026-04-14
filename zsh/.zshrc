@@ -4,7 +4,7 @@ if [ -x "$(command -v nvim)" ]; then
     VIM="nvim"
     alias vimdiff="nvim -d"
 fi
-git config --global core.editor $VIM
+# git config --global core.editor $VIM
 alias vim=$VIM
 alias mux=tmuxinator
 

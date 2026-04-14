@@ -25,7 +25,7 @@ tmux_conf_new_session_prompt=true
 #   - true
 #   - false (default)
 #   - disabled (do not modify new-window bindings)
-tmux_conf_new_window_retain_current_path=false
+tmux_conf_new_window_retain_current_path=true
 
 # new window tries to reconnect ssh sessions, possible values are:
 #   - true
@@ -353,7 +353,11 @@ tmux_conf_theme_clock_style="24"
 #   - disabled
 # on macOS, this requires installing reattach-to-user-namespace, see README.md
 # on Linux, this requires xsel, xclip or wl-copy
+%if "#{==:#(uname -s),Linux}"
+tmux_conf_copy_to_os_clipboard=true
+%else
 tmux_conf_copy_to_os_clipboard=false
+%endif
 
 
 # -- user customizations -------------------------------------------------------
@@ -361,6 +365,16 @@ tmux_conf_copy_to_os_clipboard=false
 
 # increase history size
 #set -g history-limit 10000
+
+# Linux/Omarchy-friendly terminal behavior.
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",*:RGB"
+set -g escape-time 0
+set -g focus-events on
+set -g allow-passthrough on
+%if "#{==:#(uname -s),Linux}"
+set -g set-clipboard on
+%endif
 
 # start with mouse mode enabled
 #set -g mouse on
