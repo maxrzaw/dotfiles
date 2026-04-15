@@ -267,9 +267,15 @@ tmux_conf_theme_status_left_bg="colour12"
 tmux_conf_theme_status_left_attr="bold"
 
 # status right style
+%if "#{==:#(uname -s),Darwin}"
 tmux_conf_theme_status_right_fg="colour15,colour1,colour15,colour0"
 tmux_conf_theme_status_right_bg="colour0,colour8,colour0,colour12"
 tmux_conf_theme_status_right_attr="none,none,none,bold"
+%else
+tmux_conf_theme_status_right_fg="colour15,colour15,colour0"
+tmux_conf_theme_status_right_bg="colour0,colour0,colour12"
+tmux_conf_theme_status_right_attr="none,none,bold"
+%endif
 
 # pairing indicator
 tmux_conf_theme_pairing="⚇"                 # U+2687
