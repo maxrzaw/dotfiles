@@ -62,7 +62,7 @@ return {
             local userName = "Max"
             local greeting = getGreeting(userName)
             dashboard.section.header.val = vim.split(logo .. "\n" .. greeting, "\n")
-            local recent_files = ":lua require('mzawisa.utils').oldfiles({hidden = true})<CR>"
+            local recent_files = ":lua require('telescope.builtin').oldfiles()<CR>"
             local find_files = ":lua require('telescope.builtin').find_files({hidden = true})<CR>"
             local live_grep = ":lua require('telescope.builtin').live_grep({hidden = true})<CR>"
             local help_tags = ":lua require('telescope.builtin').help_tags({hidden = true})<CR>"

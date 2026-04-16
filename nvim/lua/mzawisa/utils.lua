@@ -80,33 +80,4 @@ function M.tbl_contains(table, value)
     return false
 end
 
-function M.get_other_worktree_ignore_patterns()
-    local git_dir = vim.fn.system("git rev-parse --git-dir 2>/dev/null"):gsub("\n", "")
-    local common_dir = vim.fn.system("git rev-parse --git-common-dir 2>/dev/null"):gsub("\n", "")
-    if git_dir == "" or common_dir == "" or git_dir == common_dir then
-        return nil
-    end
-    local cwd = vim.fn.fnamemodify(vim.fn.getcwd(), ":p")
-    local worktree_output = vim.fn.system("git worktree list --porcelain 2>/dev/null")
-    local ignore = {}
-    for path in worktree_output:gmatch("worktree ([^\n]+)") do
-        if vim.fn.fnamemodify(path, ":p") ~= cwd then
-            table.insert(ignore, "^" .. vim.pesc(path))
-        end
-    end
-    if #ignore > 0 then
-        return ignore
-    end
-    return nil
-end
-
-function M.oldfiles(extra_opts)
-    local opts = extra_opts or {}
-    local ignore = M.get_other_worktree_ignore_patterns()
-    if ignore then
-        opts.file_ignore_patterns = ignore
-    end
-    require("telescope.builtin").oldfiles(opts)
-end
-
 return M
