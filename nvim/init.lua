@@ -1,6 +1,10 @@
 --- Set a bunch of options
 require("mzawisa.set")
 
+if not vim.g.vscode and vim.g.use_ui2 ~= false then
+    require("vim._core.ui2").enable({})
+end
+
 -- Bootstrap Lazy
 local neovim_work = os.getenv("NEOVIM_WORK")
 vim.g.is_work = neovim_work == "true" or neovim_work == "1"
