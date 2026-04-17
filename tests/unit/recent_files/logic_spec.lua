@@ -198,4 +198,76 @@ describe("recent_files.logic", function()
             end, representatives))
         end)
     end)
+
+    describe("merge_record_maps", function()
+        it("prefers newer in-memory records over disk records", function()
+            local merged = logic.merge_record_maps({
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 10, git_root = "old" },
+            }, {
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 20, git_root = "new" },
+            })
+
+            assert.are.equal("new", merged["/tmp/file.lua"].git_root)
+        end)
+
+        it("keeps newer disk records over older in-memory records", function()
+            local merged = logic.merge_record_maps({
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 20, git_root = "disk" },
+            }, {
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 10, git_root = "memory" },
+            })
+
+            assert.are.equal("disk", merged["/tmp/file.lua"].git_root)
+        end)
+
+        it("preserves unique records from both maps", function()
+            local merged = logic.merge_record_maps({
+                ["/tmp/a.lua"] = { file = "/tmp/a.lua", last_accessed = 10 },
+            }, {
+                ["/tmp/b.lua"] = { file = "/tmp/b.lua", last_accessed = 20 },
+            })
+
+            assert.is_not_nil(merged["/tmp/a.lua"])
+            assert.is_not_nil(merged["/tmp/b.lua"])
+        end)
+    end)
+
+    describe("apply_stale_records", function()
+        it("removes records when the stale marker is newer", function()
+            local filtered = logic.apply_stale_records({
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 10 },
+            }, {
+                ["/tmp/file.lua"] = 20,
+            })
+
+            assert.is_nil(filtered["/tmp/file.lua"])
+        end)
+
+        it("keeps records when the disk entry is newer than stale marker", function()
+            local filtered = logic.apply_stale_records({
+                ["/tmp/file.lua"] = { file = "/tmp/file.lua", last_accessed = 30 },
+            }, {
+                ["/tmp/file.lua"] = 20,
+            })
+
+            assert.are.equal(30, filtered["/tmp/file.lua"].last_accessed)
+        end)
+    end)
+
+    describe("record_map_values", function()
+        it("turns a record map back into a list", function()
+            local values = logic.record_map_values({
+                ["/tmp/a.lua"] = { file = "/tmp/a.lua" },
+                ["/tmp/b.lua"] = { file = "/tmp/b.lua" },
+            })
+
+            local files = {}
+            for _, record in ipairs(values) do
+                files[record.file] = true
+            end
+
+            assert.is_true(files["/tmp/a.lua"])
+            assert.is_true(files["/tmp/b.lua"])
+        end)
+    end)
 end)

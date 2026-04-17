@@ -88,4 +88,56 @@ function M.pick_representatives(records, include_record)
     return representatives
 end
 
+function M.index_records(records)
+    local indexed = {}
+
+    for _, record in ipairs(records or {}) do
+        if type(record) == "table" and type(record.file) == "string" then
+            indexed[record.file] = record
+        end
+    end
+
+    return indexed
+end
+
+function M.merge_record_maps(disk_map, memory_map)
+    local merged = {}
+
+    for file, record in pairs(disk_map or {}) do
+        merged[file] = record
+    end
+
+    for file, record in pairs(memory_map or {}) do
+        local existing = merged[file]
+        if not existing or (record.last_accessed or 0) >= (existing.last_accessed or 0) then
+            merged[file] = record
+        end
+    end
+
+    return merged
+end
+
+function M.apply_stale_records(record_map, stale_map)
+    local filtered = {}
+
+    for file, record in pairs(record_map or {}) do
+        local stale_at = stale_map and stale_map[file] or nil
+        if not stale_at or stale_at < (record.last_accessed or 0) then
+            filtered[file] = record
+        end
+    end
+
+    return filtered
+end
+
+function M.record_map_values(record_map)
+    local records = {}
+
+    for _, record in pairs(record_map or {}) do
+        table.insert(records, record)
+    end
+
+    return records
+end
+
 return M

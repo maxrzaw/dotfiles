@@ -1,6 +1,5 @@
 local M = {}
 
-local Path = require("plenary.path")
 local logic = require("mzawisa.recent_files.logic")
 
 local state = {
@@ -16,7 +15,8 @@ local state = {
     },
 }
 
-local store_path = vim.fn.stdpath("data") .. "/mzawisa/recent_files.json"
+local store_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "mzawisa")
+local store_path = vim.fs.joinpath(store_dir, "recent_files.json")
 local skip_filetypes = {
     ["alpha"] = true,
     ["lazy"] = true,
@@ -30,7 +30,7 @@ local function normalize_path(path)
         return nil
     end
 
-    local normalized = vim.fn.fnamemodify(path, ":p")
+    local normalized = vim.fs.normalize(vim.fn.fnamemodify(path, ":p"))
     if normalized:sub(-1) == "/" then
         normalized = normalized:sub(1, -2)
     end
@@ -42,7 +42,76 @@ local function path_exists(path)
 end
 
 local function ensure_store_dir()
-    Path:new(vim.fn.stdpath("data") .. "/mzawisa"):mkdir({ parents = true, exists_ok = true })
+    vim.fn.mkdir(store_dir, "p")
+end
+
+local function read_file(path)
+    if not path_exists(path) then
+        return nil
+    end
+
+    local lines = vim.fn.readfile(path)
+    return table.concat(lines, "\n")
+end
+
+local function write_file(path, contents)
+    vim.fn.writefile(vim.split(contents, "\n", { plain = true }), path)
+end
+
+local function read_store()
+    ensure_store_dir()
+
+    if not path_exists(store_path) then
+        write_file(store_path, "[]")
+    end
+
+    return read_file(store_path)
+end
+
+local function write_store(records)
+    ensure_store_dir()
+    write_file(store_path, vim.json.encode(records))
+end
+
+local function decode_records(raw)
+    local ok, decoded = pcall(vim.json.decode, raw)
+    if ok and type(decoded) == "table" then
+        return decoded
+    end
+
+    return {}
+end
+
+local function normalize_record(record)
+    if type(record) ~= "table" or type(record.file) ~= "string" then
+        return nil
+    end
+
+    local file = normalize_path(record.file)
+    if not file then
+        return nil
+    end
+
+    return {
+        file = file,
+        git_root = normalize_path(record.git_root),
+        git_common_dir = normalize_path(record.git_common_dir),
+        relative_path = record.relative_path,
+        last_accessed = record.last_accessed,
+    }
+end
+
+local function load_record_list(raw)
+    local records = {}
+
+    for _, record in ipairs(decode_records(raw)) do
+        local normalized = normalize_record(record)
+        if normalized then
+            table.insert(records, normalized)
+        end
+    end
+
+    return records
 end
 
 local function run_git(args, cwd)
@@ -153,26 +222,8 @@ local function load_records()
         return
     end
 
-    ensure_store_dir()
-
-    local path = Path:new(store_path)
-    if not path:exists() then
-        path:write("[]", "w")
-    end
-
-    local ok, decoded = pcall(vim.json.decode, path:read())
-    if ok and type(decoded) == "table" then
-        for _, record in ipairs(decoded) do
-            if type(record) == "table" and type(record.file) == "string" then
-                local file = normalize_path(record.file)
-                if file then
-                    record.file = file
-                    record.git_root = normalize_path(record.git_root)
-                    record.git_common_dir = normalize_path(record.git_common_dir)
-                    state.records[file] = record
-                end
-            end
-        end
+    for _, record in ipairs(load_record_list(read_store())) do
+        state.records[record.file] = record
     end
 
     state.loaded = true
@@ -198,16 +249,20 @@ local function save_records()
         return
     end
 
-    ensure_store_dir()
+    local disk_records = load_record_list(read_store())
+    local merged = logic.merge_record_maps(logic.index_records(disk_records), state.records)
+    merged = logic.apply_stale_records(merged, state.stale)
+    local records = trim_records(logic.sort_records(logic.record_map_values(merged)))
 
-    local records = trim_records(sorted_records())
-    Path:new(store_path):write(vim.json.encode(records), "w")
+    state.records = logic.index_records(records)
+    write_store(records)
     state.dirty = false
+    state.stale = {}
 end
 
 local function mark_stale(file)
     if file and state.records[file] then
-        state.stale[file] = true
+        state.stale[file] = os.time()
         state.dirty = true
     end
 end
@@ -222,7 +277,7 @@ local function candidate_path(root, relative_path)
         return nil
     end
 
-    local path = normalize_path(root .. "/" .. relative_path)
+    local path = normalize_path(vim.fs.joinpath(root, relative_path))
     if path_exists(path) then
         return path
     end
