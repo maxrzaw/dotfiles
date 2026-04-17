@@ -1,3 +1,4 @@
+local assert = require("luassert")
 local logic = require("mzawisa.recent_files.logic")
 
 describe("recent_files.logic", function()
@@ -92,6 +93,62 @@ describe("recent_files.logic", function()
             })
 
             assert.are.equal("file:/tmp/notes.md", key)
+        end)
+    end)
+
+    describe("display_dedupe_key", function()
+        local record = {
+            file = "/tmp/worktree-a/lua/file.lua",
+            git_common_dir = "/tmp/repo/.git",
+            relative_path = "lua/file.lua",
+        }
+
+        it("dedupes sibling worktrees inside the same repo family", function()
+            local key = logic.display_dedupe_key(record, {
+                git_common_dir = "/tmp/repo/.git",
+            })
+
+            assert.are.equal("git:/tmp/repo/.git:lua/file.lua", key)
+        end)
+
+        it("keeps sibling worktrees distinct outside the repo family", function()
+            local key = logic.display_dedupe_key(record, {
+                git_common_dir = "/tmp/other/.git",
+            })
+
+            assert.are.equal("file:/tmp/worktree-a/lua/file.lua", key)
+        end)
+
+        it("keeps sibling worktrees distinct with no git context", function()
+            local key = logic.display_dedupe_key(record, nil)
+
+            assert.are.equal("file:/tmp/worktree-a/lua/file.lua", key)
+        end)
+    end)
+
+    describe("should_translate_to_context", function()
+        local record = {
+            file = "/tmp/worktree-a/lua/file.lua",
+            git_common_dir = "/tmp/repo/.git",
+            relative_path = "lua/file.lua",
+        }
+
+        it("translates equivalent files inside the same repo family", function()
+            assert.is_true(logic.should_translate_to_context(record, {
+                git_common_dir = "/tmp/repo/.git",
+                git_root = "/tmp/worktree-b",
+            }))
+        end)
+
+        it("does not translate equivalent files outside the repo family", function()
+            assert.is_false(logic.should_translate_to_context(record, {
+                git_common_dir = "/tmp/other/.git",
+                git_root = "/tmp/other",
+            }))
+        end)
+
+        it("does not translate without git context", function()
+            assert.is_false(logic.should_translate_to_context(record, nil))
         end)
     end)
 

@@ -149,6 +149,25 @@ function M.dedupe_key(record)
     return "file:" .. record.file
 end
 
+function M.record_identity_key(record)
+    return "file:" .. record.file
+end
+
+function M.should_translate_to_context(record, context)
+    return record.git_common_dir ~= nil
+        and record.relative_path ~= nil
+        and context ~= nil
+        and context.git_common_dir == record.git_common_dir
+end
+
+function M.display_dedupe_key(record, context)
+    if M.should_translate_to_context(record, context) then
+        return M.dedupe_key(record)
+    end
+
+    return M.record_identity_key(record)
+end
+
 function M.sort_records(records)
     table.sort(records, function(a, b)
         return (a.last_accessed or 0) > (b.last_accessed or 0)

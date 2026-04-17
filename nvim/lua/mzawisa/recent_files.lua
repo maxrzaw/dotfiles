@@ -289,7 +289,7 @@ end
 
 local function resolve_record_target(record, context)
     if record.git_common_dir and record.relative_path then
-        if context and context.git_common_dir == record.git_common_dir then
+        if logic.should_translate_to_context(record, context) then
             local translated = candidate_path(context.git_root, record.relative_path)
             if translated then
                 return translated
@@ -411,7 +411,7 @@ local function picker_items()
             local target = resolve_record_target(record, context)
             if target and target ~= current_file then
                 local key
-                key = logic.dedupe_key(record)
+                key = logic.display_dedupe_key(record, context)
 
                 if not seen[key] then
                     seen[key] = true
