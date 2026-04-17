@@ -164,6 +164,27 @@ return {
             recent_files.setup({
                 default_branch = "main",
                 repo_overrides = {},
+                ignore_patterns = {
+                    "COMMIT_EDITMSG",
+                    "MERGE_MSG",
+                    "TAG_EDITMSG",
+                    "git-rebase-todo",
+                    "**/.git/*",
+                    "node_modules/**",
+                    "bin/**",
+                    "obj/**",
+                    "dist/**",
+                    "coverage/**",
+                    "test_results/**",
+                    ".cache/**",
+                    "AppData/**",
+                    ".nuget/**",
+                    "*.tmp",
+                    "*.swp",
+                    "*.swo",
+                    "*~",
+                    ".DS_Store",
+                },
             })
 
             vim.keymap.set("n", "<leader>ff", function()

@@ -1,5 +1,106 @@
 local M = {}
 
+local function glob_to_lua_pattern(glob)
+    local pattern = { "^" }
+    local i = 1
+
+    while i <= #glob do
+        local char = glob:sub(i, i)
+        local next_two = glob:sub(i, i + 1)
+
+        if next_two == "**" then
+            table.insert(pattern, ".*")
+            i = i + 2
+        elseif char == "*" then
+            table.insert(pattern, "[^/]*")
+            i = i + 1
+        elseif char == "?" then
+            table.insert(pattern, "[^/]")
+            i = i + 1
+        elseif char:match("[%]%(%)%%%.%+%-%^%$]") then
+            table.insert(pattern, "%" .. char)
+            i = i + 1
+        else
+            table.insert(pattern, char)
+            i = i + 1
+        end
+    end
+
+    table.insert(pattern, "$")
+    return table.concat(pattern)
+end
+
+local function normalize_ignore_pattern(pattern)
+    if type(pattern) ~= "string" then
+        return nil
+    end
+
+    local trimmed = vim.trim(pattern)
+    if trimmed == "" or trimmed:sub(1, 1) == "#" then
+        return nil
+    end
+
+    local negated = trimmed:sub(1, 1) == "!"
+    if negated then
+        trimmed = vim.trim(trimmed:sub(2))
+        if trimmed == "" then
+            return nil
+        end
+    end
+
+    local anchored = trimmed:sub(1, 1) == "/"
+    if anchored then
+        trimmed = trimmed:sub(2)
+    end
+
+    local basename_only = not anchored and not trimmed:find("/", 1, true)
+
+    return {
+        negated = negated,
+        basename_only = basename_only,
+        regex = glob_to_lua_pattern(trimmed),
+    }
+end
+
+function M.compile_ignore_patterns(patterns)
+    local compiled = {}
+
+    for _, pattern in ipairs(patterns or {}) do
+        local normalized = normalize_ignore_pattern(pattern)
+        if normalized then
+            table.insert(compiled, normalized)
+        end
+    end
+
+    return compiled
+end
+
+function M.matches_ignore_patterns(path, compiled_patterns, opts)
+    if type(path) ~= "string" or path == "" then
+        return false
+    end
+
+    opts = opts or {}
+    local basename = opts.basename
+    local relative_path = opts.relative_path
+    local ignored = false
+
+    for _, pattern in ipairs(compiled_patterns or {}) do
+        local candidate = pattern.basename_only and basename or relative_path or path
+        local matches = candidate and candidate:match(pattern.regex)
+
+        if not matches and candidate and not pattern.basename_only then
+            matches = ("/" .. candidate):match(pattern.regex)
+        end
+
+        if matches then
+            ignored = not pattern.negated
+        end
+    end
+
+    return ignored
+end
+
 function M.relative_to_root(path, root, normalize)
     if not path or not root then
         return nil

@@ -12,7 +12,9 @@ local state = {
         default_branch = "main",
         repo_overrides = {},
         max_entries = 1000,
+        ignore_patterns = {},
     },
+    compiled_ignore_patterns = {},
 }
 
 local store_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "mzawisa")
@@ -343,6 +345,20 @@ local function track_file(file)
     state.dirty = true
 end
 
+local function should_ignore_record(file, record)
+    local normalized = normalize_path(file)
+    if not normalized then
+        return false
+    end
+
+    local basename = vim.fs.basename(normalized)
+    local relative_path = record and record.relative_path or normalized
+    return logic.matches_ignore_patterns(normalized, state.compiled_ignore_patterns, {
+        basename = basename,
+        relative_path = relative_path,
+    })
+end
+
 local function record_current_buffer(event)
     local buf = event and event.buf or 0
     if vim.bo[buf].buftype ~= "" then
@@ -353,7 +369,12 @@ local function record_current_buffer(event)
         return
     end
 
-    track_file(vim.api.nvim_buf_get_name(buf))
+    local file = vim.api.nvim_buf_get_name(buf)
+    if should_ignore_record(file) then
+        return
+    end
+
+    track_file(file)
 end
 
 local function worktree_label(record)
@@ -386,7 +407,7 @@ local function picker_items()
     local items = {}
 
     for _, record in ipairs(sorted_records()) do
-        if not state.stale[record.file] then
+        if not state.stale[record.file] and not should_ignore_record(record.file, record) then
             local target = resolve_record_target(record, context)
             if target and target ~= current_file then
                 local key
@@ -469,6 +490,7 @@ end
 
 function M.setup(opts)
     state.config = vim.tbl_deep_extend("force", state.config, opts or {})
+    state.compiled_ignore_patterns = logic.compile_ignore_patterns(state.config.ignore_patterns)
 
     if state.setup_done then
         return

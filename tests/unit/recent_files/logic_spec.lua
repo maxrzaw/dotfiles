@@ -270,4 +270,46 @@ describe("recent_files.logic", function()
             assert.is_true(files["/tmp/b.lua"])
         end)
     end)
+
+    describe("ignore patterns", function()
+        it("matches basename-only patterns", function()
+            local patterns = logic.compile_ignore_patterns({ "COMMIT_EDITMSG" })
+
+            assert.is_true(logic.matches_ignore_patterns("/tmp/repo/.git/COMMIT_EDITMSG", patterns, {
+                basename = "COMMIT_EDITMSG",
+                relative_path = ".git/COMMIT_EDITMSG",
+            }))
+        end)
+
+        it("matches path globs", function()
+            local patterns = logic.compile_ignore_patterns({ "**/.git/*" })
+
+            assert.is_true(logic.matches_ignore_patterns("/tmp/repo/.git/MERGE_MSG", patterns, {
+                basename = "MERGE_MSG",
+                relative_path = ".git/MERGE_MSG",
+            }))
+        end)
+
+        it("ignores blank lines and comments", function()
+            local patterns = logic.compile_ignore_patterns({ "", "   ", "# comment", "*.tmp" })
+
+            assert.is_true(logic.matches_ignore_patterns("/tmp/file.tmp", patterns, {
+                basename = "file.tmp",
+                relative_path = "file.tmp",
+            }))
+        end)
+
+        it("supports negation", function()
+            local patterns = logic.compile_ignore_patterns({ "*.tmp", "!keep.tmp" })
+
+            assert.is_false(logic.matches_ignore_patterns("/tmp/keep.tmp", patterns, {
+                basename = "keep.tmp",
+                relative_path = "keep.tmp",
+            }))
+            assert.is_true(logic.matches_ignore_patterns("/tmp/drop.tmp", patterns, {
+                basename = "drop.tmp",
+                relative_path = "drop.tmp",
+            }))
+        end)
+    end)
 end)
