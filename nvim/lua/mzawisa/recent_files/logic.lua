@@ -1,5 +1,26 @@
 local M = {}
 
+---@class RecentFileRecord
+---@field file string
+---@field git_root? string
+---@field git_common_dir? string
+---@field relative_path? string
+---@field last_accessed? integer
+
+---@class RecentFilesContext
+---@field git_root string
+---@field git_common_dir string
+
+---@class RecentFilesWorktree
+---@field path string
+---@field branch? string
+---@field git_common_dir? string
+
+---@class RecentFilesIgnorePattern
+---@field negated boolean
+---@field basename_only boolean
+---@field regex string
+
 local function glob_to_lua_pattern(glob)
     local pattern = { "^" }
     local i = 1

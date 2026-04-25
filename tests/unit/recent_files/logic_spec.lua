@@ -4,37 +4,25 @@ local logic = require("mzawisa.recent_files.logic")
 describe("recent_files.logic", function()
     describe("relative_to_root", function()
         it("returns a relative path inside the root", function()
-            local relative = logic.relative_to_root(
-                "/tmp/project/lua/file.lua",
-                "/tmp/project",
-                function(path)
-                    return path
-                end
-            )
+            local relative = logic.relative_to_root("/tmp/project/lua/file.lua", "/tmp/project", function(path)
+                return path
+            end)
 
             assert.are.equal("lua/file.lua", relative)
         end)
 
         it("returns dot for the root itself", function()
-            local relative = logic.relative_to_root(
-                "/tmp/project",
-                "/tmp/project",
-                function(path)
-                    return path
-                end
-            )
+            local relative = logic.relative_to_root("/tmp/project", "/tmp/project", function(path)
+                return path
+            end)
 
             assert.are.equal(".", relative)
         end)
 
         it("returns nil for paths outside the root", function()
-            local relative = logic.relative_to_root(
-                "/tmp/other/file.lua",
-                "/tmp/project",
-                function(path)
-                    return path
-                end
-            )
+            local relative = logic.relative_to_root("/tmp/other/file.lua", "/tmp/project", function(path)
+                return path
+            end)
 
             assert.is_nil(relative)
         end)
@@ -160,9 +148,12 @@ describe("recent_files.logic", function()
                 { file = "a", last_accessed = 30 },
             })
 
-            assert.are.same({ "a", "b", "c" }, vim.tbl_map(function(record)
-                return record.file
-            end, records))
+            assert.are.same(
+                { "a", "b", "c" },
+                vim.tbl_map(function(record)
+                    return record.file
+                end, records)
+            )
         end)
     end)
 
@@ -174,9 +165,12 @@ describe("recent_files.logic", function()
                 { file = "c" },
             }, 2)
 
-            assert.are.same({ "a", "b" }, vim.tbl_map(function(record)
-                return record.file
-            end, records))
+            assert.are.same(
+                { "a", "b" },
+                vim.tbl_map(function(record)
+                    return record.file
+                end, records)
+            )
         end)
     end)
 
@@ -204,12 +198,15 @@ describe("recent_files.logic", function()
             }
 
             local representatives = logic.pick_representatives(records)
-            assert.are.same({
-                "/tmp/worktree-b/lua/file.lua",
-                "/tmp/worktree-a/lua/other.lua",
-            }, vim.tbl_map(function(record)
-                return record.file
-            end, representatives))
+            assert.are.same(
+                {
+                    "/tmp/worktree-b/lua/file.lua",
+                    "/tmp/worktree-a/lua/other.lua",
+                },
+                vim.tbl_map(function(record)
+                    return record.file
+                end, representatives)
+            )
         end)
 
         it("supports filtering before deduping", function()
@@ -226,9 +223,12 @@ describe("recent_files.logic", function()
                 return record.git_common_dir ~= nil
             end)
 
-            assert.are.same({ "/tmp/worktree-b/lua/file.lua" }, vim.tbl_map(function(record)
-                return record.file
-            end, representatives))
+            assert.are.same(
+                { "/tmp/worktree-b/lua/file.lua" },
+                vim.tbl_map(function(record)
+                    return record.file
+                end, representatives)
+            )
         end)
 
         it("does not dedupe same relative path across different repos", function()
@@ -247,12 +247,15 @@ describe("recent_files.logic", function()
                 },
             })
 
-            assert.are.same({
-                "/tmp/repo-a/lua/file.lua",
-                "/tmp/repo-b/lua/file.lua",
-            }, vim.tbl_map(function(record)
-                return record.file
-            end, representatives))
+            assert.are.same(
+                {
+                    "/tmp/repo-a/lua/file.lua",
+                    "/tmp/repo-b/lua/file.lua",
+                },
+                vim.tbl_map(function(record)
+                    return record.file
+                end, representatives)
+            )
         end)
     end)
 
