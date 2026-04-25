@@ -7,6 +7,7 @@ return {
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
             { "nvim-telescope/telescope-ui-select.nvim" },
+            { "maxrzaw/recent-files.nvim" },
             { "folke/trouble.nvim" },
         },
         cond = not vim.g.vscode,
