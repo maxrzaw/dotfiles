@@ -30,16 +30,28 @@ function M.new(deps)
         return basename ~= "" and basename or record.git_root
     end
 
-    local function make_display(record, resolved, context)
+    local function display_parts(record, resolved, context)
         if record.git_common_dir and record.relative_path then
             if context and context.git_common_dir == record.git_common_dir then
-                return record.relative_path
+                return "", record.relative_path
             end
 
-            return string.format("[%s] %s", worktree_label(record), record.relative_path)
+            return string.format("[%s] ", worktree_label(record)), record.relative_path
         end
 
-        return vim.fn.fnamemodify(resolved, ":~")
+        return "", vim.fn.fnamemodify(resolved, ":~")
+    end
+
+    local function make_display(item)
+        local strings = require("plenary.strings")
+        local state = require("telescope.state")
+        local prefix = item.prefix or ""
+        local path = item.path_display or ""
+        local status = state.get_status(vim.api.nvim_get_current_buf())
+        local width = vim.api.nvim_win_get_width(status.layout.results.winid) - #status.picker.selection_caret - 2
+        local truncated = strings.truncate(path, width - vim.fn.strdisplaywidth(prefix), nil, -1)
+
+        return prefix .. truncated
     end
 
     local function picker_items()
@@ -58,11 +70,17 @@ function M.new(deps)
 
                     if not seen[key] then
                         seen[key] = true
+                        local prefix, path_display = display_parts(record, target, context)
                         table.insert(items, {
                             record = record,
                             filename = target,
-                            display = make_display(record, target, context),
-                            ordinal = (record.relative_path or record.file) .. " " .. worktree_label(record),
+                            prefix = prefix,
+                            path_display = path_display,
+                            ordinal = table.concat({
+                                record.relative_path or record.file,
+                                target,
+                                worktree_label(record),
+                            }, " "),
                         })
                     end
                 end
@@ -108,7 +126,9 @@ function M.new(deps)
                         return {
                             value = item.record,
                             ordinal = item.ordinal,
-                            display = item.display,
+                            display = function()
+                                return make_display(item)
+                            end,
                             filename = item.filename,
                         }
                     end,

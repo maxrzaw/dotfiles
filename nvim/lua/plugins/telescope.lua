@@ -12,7 +12,6 @@ return {
         cond = not vim.g.vscode,
         config = function()
             local builtin = require("telescope.builtin")
-            local recent_files = require("mzawisa.recent_files")
             local actions = require("telescope.actions")
             local trouble = require("trouble")
             local open_with_trouble = function(...)
@@ -158,14 +157,17 @@ return {
                     jumplist = just_filename,
                     oldfiles = just_entry1,
                 },
+                extensions = {
+                    recent_files = {
+                        default_branch = "main",
+                        repo_overrides = {},
+                        picker = create_picker_config(grapple_tag__filename),
+                    },
+                },
             })
 
             telescope.load_extension("ui-select")
-            recent_files.setup({
-                default_branch = "main",
-                repo_overrides = {},
-                picker = create_picker_config(grapple_tag__filename),
-            })
+            telescope.load_extension("recent_files")
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files({ hidden = true, no_ignore = true, no_ignore_parent = true })
@@ -177,7 +179,7 @@ return {
             vim.keymap.set("n", "<leader>fh", builtin.help_tags, get_opts("Telescope: [F]ind [H]elp Tags"))
             vim.keymap.set("n", "<leader>fq", builtin.quickfix, get_opts("Telescope: [F]ind [Q]uickfix List"))
             vim.keymap.set("n", "<leader>fj", builtin.jumplist, get_opts("Telescope: [F]ind [J]umplist"))
-            vim.keymap.set("n", "<leader>fr", recent_files.open_picker, get_opts("Telescope: [F]ind [R]ecent Files"))
+            vim.keymap.set("n", "<leader>fr", telescope.extensions.recent_files.recent_files, get_opts("Telescope: [F]ind [R]ecent Files"))
             vim.keymap.set("n", "<leader>fR", builtin.oldfiles, get_opts("Telescope: [F]ind All [R]ecent Files"))
             vim.keymap.set("n", "<leader>fk", builtin.keymaps, get_opts("Telescope: [F]ind [K]eymaps"))
             vim.keymap.set("n", "<leader>fgs", builtin.git_status, get_opts("Telescope: [F]ind [G]it [S]tatus"))
