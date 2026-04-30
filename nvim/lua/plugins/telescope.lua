@@ -7,7 +7,7 @@ return {
             -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
             { "nvim-telescope/telescope-ui-select.nvim" },
-            { "maxrzaw/recent-files.nvim" },
+            { "maxrzaw/worktree-oldfiles.nvim" },
             { "folke/trouble.nvim" },
         },
         cond = not vim.g.vscode,
@@ -159,16 +159,18 @@ return {
                     oldfiles = just_entry1,
                 },
                 extensions = {
-                    recent_files = {
+                    worktree_oldfiles = {
                         default_branch = "main",
                         repo_overrides = {},
-                        picker = create_picker_config(grapple_tag__filename),
+                        picker = vim.tbl_deep_extend("force", create_picker_config(grapple_tag__filename), {
+                            prompt_title = "Recent Files",
+                        }),
                     },
                 },
             })
 
             telescope.load_extension("ui-select")
-            telescope.load_extension("recent_files")
+            telescope.load_extension("worktree_oldfiles")
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files({ hidden = true, no_ignore = true, no_ignore_parent = true })
@@ -180,7 +182,12 @@ return {
             vim.keymap.set("n", "<leader>fh", builtin.help_tags, get_opts("Telescope: [F]ind [H]elp Tags"))
             vim.keymap.set("n", "<leader>fq", builtin.quickfix, get_opts("Telescope: [F]ind [Q]uickfix List"))
             vim.keymap.set("n", "<leader>fj", builtin.jumplist, get_opts("Telescope: [F]ind [J]umplist"))
-            vim.keymap.set("n", "<leader>fr", telescope.extensions.recent_files.recent_files, get_opts("Telescope: [F]ind [R]ecent Files"))
+            vim.keymap.set(
+                "n",
+                "<leader>fr",
+                telescope.extensions.worktree_oldfiles.worktree_oldfiles,
+                get_opts("Telescope: [F]ind [R]ecent Files")
+            )
             vim.keymap.set("n", "<leader>fR", builtin.oldfiles, get_opts("Telescope: [F]ind All [R]ecent Files"))
             vim.keymap.set("n", "<leader>fk", builtin.keymaps, get_opts("Telescope: [F]ind [K]eymaps"))
             vim.keymap.set("n", "<leader>fgs", builtin.git_status, get_opts("Telescope: [F]ind [G]it [S]tatus"))
