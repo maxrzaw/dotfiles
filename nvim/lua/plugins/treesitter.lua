@@ -25,6 +25,7 @@ return {
                 "c_sharp",
                 "angular",
                 "html",
+                "scss",
                 "markdown",
                 "sql",
             }
