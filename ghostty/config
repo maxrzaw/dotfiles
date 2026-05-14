@@ -6,7 +6,7 @@ font-family = "FiraCode Nerd Font Mono"
 font-size = 12
 
 # Theme settings
-background-opacity = "0.9"
+background-opacity = "0.95"
 theme = "Catppuccin Mocha"
 
 # Mouse settings
