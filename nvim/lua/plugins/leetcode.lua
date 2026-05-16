@@ -27,6 +27,7 @@ return {
             hooks = {
                 enter = {
                     function()
+                        vim.cmd("lsp enable basedpyright")
                         local ok, command = pcall(require, "copilot.command")
                         if ok then
                             command.disable()
