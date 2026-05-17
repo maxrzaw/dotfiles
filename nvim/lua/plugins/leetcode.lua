@@ -17,7 +17,7 @@ return {
             },
         },
         opts = {
-            lang = "typescript",
+            lang = "python3",
             picker = {
                 provider = "telescope",
             },
