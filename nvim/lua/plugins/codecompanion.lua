@@ -49,7 +49,11 @@ return {
             "nvim-treesitter/nvim-treesitter",
             "MunifTanjim/nui.nvim",
         },
-        opts = {
+        opts = function()
+            local is_work = vim.g.is_work
+            local default_adapter = is_work and "claude_code" or "opencode"
+
+            return {
             adapters = {
                 acp = {
                     opencode = function()
@@ -59,16 +63,37 @@ return {
                             },
                         })
                     end,
+                    claude_code = function()
+                        return require("codecompanion.adapters").extend("claude_code", {
+                            defaults = {
+                                mcpServers = "inherit_from_config",
+                            },
+                        })
+                    end,
                 },
             },
             interactions = {
+                shared = {
+                    keymaps = {
+                        always_accept = { modes = { n = "gA" } },
+                        accept_change = { modes = { n = "ga" } },
+                        reject_change = { modes = { n = "gr" } },
+                        cancel = { modes = { n = "gx" } },
+                    },
+                },
                 cli = {
-                    agent = "opencode",
+                    agent = is_work and "claude" or "opencode",
                     agents = {
                         opencode = {
                             cmd = "opencode",
                             args = {},
                             description = "OpenCode CLI",
+                            provider = "terminal",
+                        },
+                        claude = {
+                            cmd = "claude",
+                            args = {},
+                            description = "Claude Code CLI",
                             provider = "terminal",
                         },
                     },
@@ -92,10 +117,10 @@ return {
                     },
                 },
                 chat = {
-                    adapter = "opencode",
+                    adapter = default_adapter,
                 },
                 inline = {
-                    adapter = "opencode",
+                    adapter = default_adapter,
                 },
             },
             display = {
@@ -121,9 +146,19 @@ return {
             opts = {
                 log_level = "ERROR",
             },
-        },
+            }
+        end,
         config = function(_, opts)
             require("codecompanion").setup(opts)
+
+            vim.api.nvim_create_autocmd("FileType", {
+                group = vim.api.nvim_create_augroup("CodeCompanionUI", { clear = true }),
+                pattern = "codecompanion",
+                callback = function(args)
+                    vim.api.nvim_set_option_value("colorcolumn", "", { win = vim.api.nvim_get_current_win() })
+                    vim.bo[args.buf].textwidth = 0
+                end,
+            })
 
             vim.keymap.set({ "n", "x" }, "<leader>aa", function()
                 local mode = vim.fn.mode()

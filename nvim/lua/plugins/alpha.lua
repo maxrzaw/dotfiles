@@ -76,6 +76,7 @@ return {
                 dashboard.button("l", "󰒲 " .. " Lazy", ":Lazy<CR>"),
                 dashboard.button("m", "󰢷 " .. " Mason", ":Mason<CR>"),
                 dashboard.button("c", "󰇦 " .. " LeetCode", ":Leet<CR>"),
+                dashboard.button("a", " " .. " Agent", ":CodeCompanionChat<CR>"),
                 dashboard.button("q", " " .. " Quit", ":qa<CR>"),
             }
 
