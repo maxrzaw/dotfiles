@@ -76,7 +76,7 @@ return {
                 dashboard.button("l", "󰒲 " .. " Lazy", ":Lazy<CR>"),
                 dashboard.button("m", "󰢷 " .. " Mason", ":Mason<CR>"),
                 dashboard.button("c", "󰇦 " .. " LeetCode", ":Leet<CR>"),
-                dashboard.button("a", " " .. " Agent", ":CodeCompanionChat<CR>"),
+                dashboard.button("a", " " .. " Agent", "<cmd>Lazy load codecompanion.nvim<CR><cmd>lua require('codecompanion').chat({ window_opts = { layout = 'buffer' } })<CR>"),
                 dashboard.button("q", " " .. " Quit", ":qa<CR>"),
             }
 
