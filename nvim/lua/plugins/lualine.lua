@@ -41,7 +41,7 @@ return {
                         end,
                         color = function()
                             local bg = palette.mauve
-                            if require("mzawisa.custom.codecompanion.status").is_plan_mode() then
+                            if require("mzawisa.custom.codecompanion.status").is_read_only_mode() then
                                 bg = palette.green
                             end
 

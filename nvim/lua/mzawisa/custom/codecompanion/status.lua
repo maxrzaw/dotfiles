@@ -19,6 +19,11 @@ M._spinner_index = 1
 M._spinner_timer = nil
 
 local spinner_interval = 120
+local read_only_modes = {
+    ["Claude Code"] = { "Plan" },
+    ["Codex"] = { "Read Only" },
+    ["OpenCode"] = { "plan" },
+}
 
 local function refresh_statusline()
     local ok, lualine = pcall(require, "lualine")
@@ -94,6 +99,38 @@ local function current_mode_value(metadata)
     return mode.current
 end
 
+local function current_mode_name(metadata)
+    local mode = metadata and metadata.config_options and metadata.config_options.mode
+    if type(mode) ~= "table" then
+        return nil
+    end
+
+    return mode.name
+end
+
+local function adapter_name(metadata)
+    local adapter = metadata and metadata.adapter
+    if type(adapter) ~= "table" then
+        return nil
+    end
+
+    return adapter.name
+end
+
+local function contains(values, value)
+    if not value then
+        return false
+    end
+
+    for _, candidate in ipairs(values) do
+        if candidate == value then
+            return true
+        end
+    end
+
+    return false
+end
+
 function M.setup()
     if M._setup_done then
         return
@@ -165,9 +202,20 @@ function M.lualine()
     return table.concat(parts, " ")
 end
 
-function M.is_plan_mode()
+function M.is_read_only_mode()
     local metadata = current_metadata()
-    return current_mode_value(metadata) == "plan"
+    local mapping = read_only_modes[adapter_name(metadata)]
+    if not mapping then
+        return false
+    end
+
+    if contains(mapping, current_mode_value(metadata)) then
+        return true
+    end
+
+    return contains(mapping, current_mode_name(metadata))
 end
+
+M.is_plan_mode = M.is_read_only_mode
 
 return M

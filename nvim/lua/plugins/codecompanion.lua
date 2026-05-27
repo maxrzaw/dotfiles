@@ -63,6 +63,14 @@ return {
             return {
                 adapters = {
                     acp = {
+                        codex = function()
+                            return require("codecompanion.adapters").extend("codex", {
+                                defaults = {
+                                    auth_method = "chatgpt",
+                                    mcpServers = "inherit_from_config",
+                                },
+                            })
+                        end,
                         opencode = function()
                             return require("codecompanion.adapters").extend("opencode", {
                                 defaults = {
