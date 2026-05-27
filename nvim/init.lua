@@ -98,6 +98,11 @@ require("lazy").setup({
                             NeoTreeDotfile = { fg = mocha.subtext0 },
                             NeoTreeFileStats = { fg = mocha.overlay2 },
                             NeoTreeMessage = { fg = mocha.overlay2 },
+
+                            CodeCompanionDiffAdd = { bg = mocha.teal, fg = mocha.base, blend = 70 },
+                            CodeCompanionDiffDelete = { bg = mocha.maroon, fg = mocha.base, blend = 50 },
+                            CodeCompanionDiffText = { bg = mocha.teal, fg = mocha.base, bold = true },
+                            CodeCompanionDiffTextDelete = { bg = mocha.maroon, fg = mocha.base, bold = true },
                         }
                     end,
                 })
