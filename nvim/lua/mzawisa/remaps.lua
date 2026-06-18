@@ -80,6 +80,12 @@ else
     -- Map jk to <ESC> when in insert mode
     inoremap("jk", "<ESC>", {})
 
+    -- Inside psmux (Windows), paste-detection intercepts <C-v> at the console
+    -- layer so visual-block never reaches nvim. Map <C-b> to visual-block there.
+    if vim.env.PSMUX_SESSION then
+        nnoremap("<C-b>", "<C-v>", { desc = "Visual block (psmux <C-v> passthrough)" })
+    end
+
     -- Keep me centered
     nnoremap("<C-u>", "<C-u>zz", {})
     nnoremap("<C-d>", "<C-d>zz", {})
