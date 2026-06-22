@@ -1,45 +1,35 @@
-local path = require("plenary.path")
-
 local M = {}
 M.enabled = false
 
 local function load_file_into_buffer(file)
-    local uri = vim.uri_from_fname(file)
-    local bufnrs = vim.api.nvim_list_bufs()
-    local bufnr = -1
-    for _, v in pairs(bufnrs) do
-        local buf_name = vim.api.nvim_buf_get_name(v)
-        if buf_name == file then
-            bufnr = v
-            break
-        end
-    end
-    if bufnr == -1 then
-        local new_buff = vim.uri_to_bufnr(uri)
-        vim.api.nvim_win_set_buf(0, new_buff)
-        vim.fn.execute("edit")
-    else
-        vim.api.nvim_win_set_buf(0, bufnr)
-    end
+    -- Just use :edit. It reuses an already-loaded buffer for the file if one exists, and unlike the
+    -- previous nvim_win_set_buf + execute("edit") dance it sequences the buffer swap and LSP detach
+    -- correctly, avoiding "E1159: Cannot open a float when closing the buffer" during the redraw.
+    vim.cmd.edit(vim.fn.fnameescape(file))
 end
 
 local function get_destination_without_extension()
     local current_buffer = vim.api.nvim_buf_get_name(0)
-    local buf_path = path:new(current_buffer)
-    local relative_path = buf_path:make_relative()
-    local filename = string.match(relative_path, "([^/]+)$")
+    -- Use fnamemodify for both the directory (":p:h" = absolute head) and the filename (":t" = tail).
+    -- These are separator-aware and handle absolute, relative, and forward-slash paths on every OS,
+    -- which plenary's :parent() / join did not do reliably on Windows.
+    local dir = vim.fn.fnamemodify(current_buffer, ":p:h")
+    local filename = vim.fn.fnamemodify(current_buffer, ":t")
 
     local filename_without_ext = nil
-    if string.match(filename, ".html") then
-        filename_without_ext = string.match(filename, "(.-)%.html")
-    elseif string.match(filename, ".spec.ts") then
-        filename_without_ext = string.match(filename, "(.-)%.spec.ts")
-    elseif string.match(filename, ".ts") then
-        filename_without_ext = string.match(filename, "(.-)%.ts")
-    elseif string.match(filename, ".scss") then
-        filename_without_ext = string.match(filename, "(.-)%.scss")
+    if string.match(filename, "%.html$") then
+        filename_without_ext = string.match(filename, "(.-)%.html$")
+    elseif string.match(filename, "%.spec%.ts$") then
+        filename_without_ext = string.match(filename, "(.-)%.spec%.ts$")
+    elseif string.match(filename, "%.ts$") then
+        filename_without_ext = string.match(filename, "(.-)%.ts$")
+    elseif string.match(filename, "%.scss$") then
+        filename_without_ext = string.match(filename, "(.-)%.scss$")
     end
-    return buf_path:parent() .. "/" .. filename_without_ext
+
+    -- Join with "/": Neovim (filereadable, vim.uri_from_fname, :edit) accepts forward slashes on
+    -- Windows too, so this stays correct cross-platform without manual separator handling.
+    return dir .. "/" .. filename_without_ext
 end
 
 local function go_to_file_with_ext(ext)

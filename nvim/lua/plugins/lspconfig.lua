@@ -309,31 +309,57 @@ return {
 
         -- Set up Sonarlint Language Server
         if is_work then
-            -- Detect Java installation for SonarLint (requires Java 17+)
-            local java_home = vim.env.JAVA_HOME
+            -- Detect a usable java.exe for SonarLint (requires Java 17+).
+            -- Avoid hardcoding patch versions (they drift on every JDK update); prefer
+            -- whatever resolves on PATH, then fall back to globbing common install dirs.
+            local java_exe = nil
             if vim.g.windows == 1 then
-                -- On Windows, search for compatible Java version if default is too old
-                local possible_java_paths = {
-                    vim.env.JAVA_HOME, -- Try system JAVA_HOME first
-                    "C:\\Program Files\\Microsoft\\jdk-25.0.2.10-hotspot",
-                    "C:\\Program Files\\Java\\jdk-25",
-                    "C:\\Program Files\\Java\\jdk-21",
-                    "C:\\Program Files\\Java\\jdk-17",
-                }
-                for _, path in ipairs(possible_java_paths) do
-                    if path and vim.fn.isdirectory(path) == 1 then
-                        java_home = path
-                        break
+                -- 1. JAVA_HOME, only if it actually exists on disk.
+                if vim.env.JAVA_HOME and vim.fn.isdirectory(vim.env.JAVA_HOME) == 1 then
+                    java_exe = vim.env.JAVA_HOME .. "\\bin\\java.exe"
+                end
+                -- 2. java on PATH (resolves to the current install even after upgrades).
+                if not java_exe then
+                    local on_path = vim.fn.exepath("java")
+                    if on_path ~= "" then
+                        java_exe = on_path
                     end
+                end
+                -- 3. Glob versioned JDK dirs, newest match wins.
+                if not java_exe then
+                    local glob_roots = {
+                        "C:\\Program Files\\Microsoft\\jdk-*",
+                        "C:\\Program Files\\Java\\jdk-*",
+                        "C:\\Program Files\\Eclipse Adoptium\\jdk-*",
+                    }
+                    for _, pattern in ipairs(glob_roots) do
+                        local matches = vim.fn.glob(pattern, true, true)
+                        table.sort(matches) -- ascending; take the last/newest
+                        local dir = matches[#matches]
+                        if dir and vim.fn.isdirectory(dir) == 1 then
+                            java_exe = dir .. "\\bin\\java.exe"
+                            break
+                        end
+                    end
+                end
+                if java_exe and vim.fn.filereadable(java_exe) == 0 then
+                    java_exe = nil
                 end
             end
 
             local sonarlint_cmd = { "sonarlint-language-server" }
 
-            -- On Windows with incompatible Java, call java directly
-            if vim.g.windows == 1 and java_home then
+            -- On Windows, call java directly with the discovered executable.
+            if vim.g.windows == 1 then
+                if not java_exe then
+                    vim.notify(
+                        "SonarLint: no java.exe found (checked JAVA_HOME, PATH, common JDK dirs). "
+                            .. "Set JAVA_HOME or install a JDK 17+.",
+                        vim.log.levels.WARN
+                    )
+                end
                 sonarlint_cmd = {
-                    java_home .. "\\bin\\java.exe",
+                    java_exe or "java.exe",
                     "-jar",
                     vim.fn.expand("$MASON/packages/sonarlint-language-server/extension/server/sonarlint-ls.jar"),
                 }
