@@ -240,6 +240,30 @@ local function ensure_test_file(question)
     return path
 end
 
+local function focus_window_for_path(path)
+    local normalized = vim.fn.fnamemodify(path, ":p")
+
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local buf_name = vim.api.nvim_buf_get_name(buf)
+        if vim.fn.fnamemodify(buf_name, ":p") == normalized then
+            vim.api.nvim_set_current_win(win)
+            return true
+        end
+    end
+
+    return false
+end
+
+local function close_existing_test_runner()
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local ok, is_test_runner = pcall(vim.api.nvim_win_get_var, win, "leetcode_test_runner")
+        if ok and is_test_runner then
+            vim.api.nvim_win_close(win, true)
+        end
+    end
+end
+
 local function open_test_file()
     local question = current_python_question()
     if not question then
@@ -247,6 +271,10 @@ local function open_test_file()
     end
 
     local path = ensure_test_file(question)
+    if focus_window_for_path(path) then
+        return
+    end
+
     vim.cmd("botright vsplit " .. vim.fn.fnameescape(path))
 end
 
@@ -258,9 +286,11 @@ local function run_test_file()
 
     local path = ensure_test_file(question)
     vim.cmd("silent update")
+    close_existing_test_runner()
     vim.cmd("botright split")
     vim.cmd("resize 12")
     vim.cmd("terminal python3 " .. vim.fn.shellescape(path))
+    vim.w.leetcode_test_runner = true
 end
 
 return {
