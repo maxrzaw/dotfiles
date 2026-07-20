@@ -8,6 +8,16 @@ fi
 alias vim=$VIM
 alias mux=tmuxinator
 
+# Load completion definitions before using compdef below.
+autoload -Uz compinit && compinit
+
+# Powerlevel10k prompt
+if [[ -r ~/.powerlevel10k/powerlevel10k.zsh-theme ]]; then
+    source ~/.powerlevel10k/powerlevel10k.zsh-theme
+    source ~/dotfiles/zsh/p10k.custom.zsh
+    source ~/dotfiles/zsh/.p10k.zsh
+fi
+
 # Custom tmuxinator/mux completion that adds directory completion for extra args
 _mux() {
   local commands projects
@@ -67,7 +77,6 @@ fi
 # Better completion
 # This allows for case insensitive completion as a fallback
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-# autoload -Uz compinit && compinit
 
 # Kubernetes
 if [[ ! -v NEOVIM_WORK ]] then
