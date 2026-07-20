@@ -5,6 +5,9 @@ if [ ! -L ~/.config/nvim ]; then
     echo "Created symbolic link from ~/.config/nvim to ~/dotfiles/nvim"
 fi
 
+# Install fnm for node
+curl -fsSL https://fnm.vercel.app/install | bash
+
 # if [ ! -d ~/.config/powerline ]; then
 #     ln -s ~/dotfiles/powerline ~/.config/powerline
 #     echo "Created symbolic link from ~/.config/powerline to ~/dotfiles/powerline"
@@ -31,10 +34,19 @@ if [ ! -d ~/.config/tmuxinator ]; then
     echo "Created symbolic link from ~/.config/tmuxinator to ~/dotfiles/tmuxinator"
 fi
 
+# Set up Ghostty
+mkdir -p ~/.config/ghostty
+touch ~/.config/ghostty/config
+if test $(grep -c "config-file = ~/dotfiles/ghostty/config" ~/.config/ghostty/config) = 0; then
+    echo "Adding dotfiles config to ~/.config/ghostty/config"
+    echo "config-file = ~/dotfiles/ghostty/config" >> ~/.config/ghostty/config
+fi
+
 # Set up zsh
-if [ ! -L ~/.zshrc ]; then
-    ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc
-    echo "Created symbolic link from ~/.zshrc to ~/dotfiles/zsh/.zshrc"
+touch ~/.zshrc
+if test $(grep -c "~/dotfiles/zsh/.zshrc" ~/.zshrc) = 0; then
+    echo "Adding zshrc to ~/.zshrc"
+    echo "source ~/dotfiles/zsh/.zshrc" >> ~/.zshrc
 fi
 if [ ! -L ~/.p10k.zsh ]; then
     ln -s ~/dotfiles/zsh/.p10k.zsh ~/.p10k.zsh
