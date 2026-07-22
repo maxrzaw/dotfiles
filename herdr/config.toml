@@ -59,17 +59,15 @@ resize_mode      = "prefix+r"
 
 # --- Session / workspace / UI
 detach           = "prefix+q"
-workspace_picker = "prefix+w"
+workspace_picker = "prefix+w"   # interactive space (workspace) picker UI
 new_workspace    = "prefix+shift+n"
 reload_config    = "prefix+shift+r"
-toggle_sidebar   = "prefix+b"
+toggle_sidebar   = "prefix+b"   # show/hide the space list in the sidebar
 
-# --- Bonus: lazygit in a popup from any tab (a herdr differentiator over the
-# dedicated lazygit window in the old layout). On Windows, command strings run
-# through cmd.exe /d /c.
-[[keys.command]]
-key = "prefix+g"
-type = "popup"
-command = "lazygit"
-width = "90%"
-height = "90%"
+# --- Navigate mode: vim-style j/k to move between workspaces (spaces) in the
+# picker/navigate UI (opened by workspace_picker / goto). Defaults are the
+# arrow keys; remapped to j/k here. Note: navigate-mode keys must NOT include
+# prefix+, esc, enter, tab, or 1..9 -- plain j/k are allowed. Arrow keys still
+# work alongside these.
+navigate_workspace_up   = "k"   # vim up in the workspace picker
+navigate_workspace_down = "j"   # vim down in the workspace picker
