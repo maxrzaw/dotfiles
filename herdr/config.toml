@@ -1,0 +1,75 @@
+# herdr configuration
+# ---------------------------------------------------------------------------
+# This is the real config, version-controlled in the dotfiles repo. The
+# default location (%APPDATA%\herdr\config.toml on Windows) is a symlink that
+# points here, so editing this file edits the live config.
+#
+# After changing this file, reload the running server with:
+#   herdr server reload-config      (or the prefix+shift+r binding below)
+# Validate structure/keybindings with:
+#   herdr config check
+# Print the full annotated default schema with:
+#   herdr --default-config
+#
+# This lives ALONGSIDE the existing psmux setup (psmux.conf,
+# powershell/psmux-task.ps1) as a parallel/fallback workflow, not a
+# replacement. See tmuxinator/tmux-agents.md for the workflow it mirrors.
+# ---------------------------------------------------------------------------
+
+[theme]
+# Catppuccin Mocha, always. (Bare "catppuccin" also resolves to Mocha; the
+# name is spelled out here to be explicit. auto_switch is intentionally left
+# off so it never follows the host terminal into a light theme.)
+name = "catppuccin"
+
+auto_switch = false
+[keys]
+# Prefix key. psmux uses ctrl+a (remapped from tmux's ctrl+b); herdr defaults
+# to ctrl+b. Match the psmux muscle memory.
+prefix = "ctrl+a"
+
+# --- Tabs (these are the old psmux "windows": claude / editor / lazygit / shell)
+#
+# herdr's switch_tab ONLY accepts the indexed 1..9 form -- letter keys and
+# symbols are rejected ("indexed keybinding must use 1..9"). On this keyboard
+# the number row is swapped (unshifted 1-4 send ! @ # $), so jumping to tab N
+# is: prefix, then shift+<key> to produce the real digit. That is the
+# supported path; there is no symbol/letter alternative for switch_tab.
+switch_tab   = "prefix+1..9"
+new_tab      = "prefix+c"
+next_tab     = "prefix+n"
+previous_tab = "prefix+p"
+close_tab    = "prefix+shift+x"
+rename_tab   = "prefix+shift+t"
+
+# --- Pane focus, vi-style (mirrors the vim-tmux-navigator h/j/k/l habit).
+# These are prefixed; a seamless prefixless nvim<->herdr nav is a possible
+# follow-up but needs an nvim plugin that speaks herdr's socket API.
+focus_pane_left  = "prefix+h"
+focus_pane_down  = "prefix+j"
+focus_pane_up    = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# --- Splits / pane management
+split_vertical   = "prefix+v"
+split_horizontal = "prefix+minus"
+close_pane       = "prefix+x"
+zoom             = "prefix+z"
+resize_mode      = "prefix+r"
+
+# --- Session / workspace / UI
+detach           = "prefix+q"
+workspace_picker = "prefix+w"
+new_workspace    = "prefix+shift+n"
+reload_config    = "prefix+shift+r"
+toggle_sidebar   = "prefix+b"
+
+# --- Bonus: lazygit in a popup from any tab (a herdr differentiator over the
+# dedicated lazygit window in the old layout). On Windows, command strings run
+# through cmd.exe /d /c.
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+command = "lazygit"
+width = "90%"
+height = "90%"
