@@ -88,6 +88,10 @@ $snap = $null
 $didScan = $false
 if ($haveLock) {
     try {
+        # Once-per-era orphan sweep (F3 follow-up): strip leftover icon tags from a
+        # PREVIOUS psmux era that F3's manifest-diff can't see. No-op after the
+        # first scan (marker-guarded). Only the elected scanner runs it.
+        Invoke-OrphanSweep
         $existing = Read-StatusSnapshot
         if ((Get-SnapshotAgeSeconds $existing) -ge $rescanIfOlder) {
             $snap = Invoke-AgentScan          # expensive pass; refreshes the snapshot

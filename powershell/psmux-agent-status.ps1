@@ -145,12 +145,21 @@ function Get-AgentState {
 }
 
 # Enumerate panes whose foreground process is claude. herdr step 1: process id.
+# Includes #{window_name} so the scan doesn't need a separate per-pane
+# `display-message` spawn to read the current name (F4 perf). window_name is LAST
+# so a name containing '|' can't shift the earlier positional fields; we split
+# into at most 5 parts and take the remainder as the name.
 function Get-ClaudePanes {
-    psmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index}|#{session_name}|#{window_index}|#{pane_current_command}" 2>$null |
-        Where-Object { $_ -match '\|claude$' } |
+    psmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index}|#{session_name}|#{window_index}|#{pane_current_command}|#{window_name}" 2>$null |
+        ForEach-Object { ,($_ -split '\|', 5) } |
+        Where-Object { $_.Count -eq 5 -and $_[3] -eq 'claude' } |   # match the COMMAND field, not a window NAMED claude
         ForEach-Object {
-            $p = $_ -split '\|'
-            [pscustomobject]@{ Target = $p[0]; Session = $p[1]; Window = $p[2] }
+            [pscustomobject]@{
+                Target     = $_[0]
+                Session    = $_[1]
+                Window     = $_[2]
+                WindowName = $_[4]
+            }
         }
 }
 
@@ -186,6 +195,11 @@ $script:StatusDir     = Join-Path $HOME '.psmux\status'
 $script:TagManifest   = Join-Path $script:StatusDir 'window-tags.json'
 # JSON snapshot for other consumers (Task 2).
 $script:StatusJson    = Join-Path $script:StatusDir 'agent-status.json'
+# F3-orphan sweep marker: its presence means the once-per-era residual-icon sweep
+# has already run. Cleared when no psmux server exists (so the next server start
+# triggers a fresh sweep). Lives in TEMP, not the status dir, so a stale status
+# dir doesn't suppress the sweep.
+$script:SweepMarker   = Join-Path $env:TEMP 'psmux-agent-status.swept'
 
 function Ensure-StatusDir {
     if (-not (Test-Path $script:StatusDir)) {
@@ -276,6 +290,11 @@ function Invoke-AgentScan {
     $paneStates = [ordered]@{}
     # window-tag manifest we (re)build this pass: target -> original name.
     $manifest = @{}
+    # F3: the PREVIOUS tick's manifest (persisted on disk — $script: state does
+    # NOT survive, since each hook tick is a fresh pwsh process). Any target in
+    # here that is NOT a claude pane this tick has had its claude process exit, so
+    # its icon tag must be reverted NOW rather than lingering until a restore.
+    $prevManifest = Read-TagManifest
 
     # Pass 1: classify every claude pane, tag its WINDOW (not the session — see
     # below), and fold its state into the per-session most-urgent state. A session
@@ -300,11 +319,21 @@ function Invoke-AgentScan {
         # (1) per-window rename, preserving the ORIGINAL name: tag as
         # "<icon> <original>" (not hardcoded "claude"). Record the original in the
         # manifest so restore returns the exact prior name even after a crash.
+        # window_name comes from Get-ClaudePanes now (no per-pane display-message
+        # spawn — F4).
         $winTarget = "$($pane.Session):$($pane.Window)"
-        $curName   = psmux display-message -t $winTarget -p "#{window_name}" 2>$null
+        $curName   = $pane.WindowName
         $orig      = Get-BaseName $curName   # strip any icon we previously applied
-        if ($orig) { $manifest[$winTarget] = $orig }
-        psmux rename-window -t $winTarget "$($script:AgentIcons[$state]) $orig" 2>$null | Out-Null
+        # F2: if we couldn't recover a base name (empty/whitespace), do NOT rename
+        # — a bare "<icon> " tag can't be stripped by the restore sweep. Skip.
+        if ($orig) {
+            $manifest[$winTarget] = $orig
+            $desired = "$($script:AgentIcons[$state]) $orig"
+            # F4: skip the rename spawn when the name is already what we'd set.
+            if ($curName -ne $desired) {
+                psmux rename-window -t $winTarget $desired 2>$null | Out-Null
+            }
+        }
 
         # per-session most-urgent accumulation.
         if (-not $sessionBase.ContainsKey($pane.Session)) {
@@ -312,6 +341,18 @@ function Invoke-AgentScan {
             $sessionState[$pane.Session] = $state
         } elseif ($rank[$state] -gt $rank[$sessionState[$pane.Session]]) {
             $sessionState[$pane.Session] = $state
+        }
+    }
+
+    # F3: revert windows whose claude process departed since last tick. A target
+    # in the previous manifest but absent from the one we just built is no longer
+    # a claude pane, so rename it back to its recorded original immediately (it
+    # would otherwise keep its icon until the next start/exit restore). Its absence
+    # from $manifest means the new write already drops it.
+    foreach ($target in $prevManifest.Keys) {
+        if (-not $manifest.ContainsKey($target)) {
+            $origName = $prevManifest[$target]
+            if ($origName) { psmux rename-window -t $target $origName 2>$null | Out-Null }
         }
     }
 
@@ -442,6 +483,33 @@ function Get-RunningPollerPid {
 # Also clears the @agent_status option on every server; the status-right
 # #{?@agent_status,...} guard then self-hides the segment, returning the bar to
 # the themed default. We NO LONGER rename sessions, so no session names to restore.
+# Residual-icon sweep: scan ALL windows and strip any leftover icon prefix. This
+# is the "belt-and-suspenders" pass that catches ORPHANED tags — windows tagged
+# by a poller whose manifest was lost (so F3's manifest-diff can't catch them).
+# Shared by Restore-AgentStatus and Invoke-OrphanSweep.
+function Invoke-IconSweep {
+    foreach ($line in @(psmux list-panes -a -F "#{session_name}:#{window_index}|#{window_name}" 2>$null)) {
+        $parts = $line -split '\|', 2
+        if ($parts.Count -eq 2) {
+            $wbase = Get-BaseName $parts[1]
+            if ($wbase -ne $parts[1]) { psmux rename-window -t $parts[0] $wbase 2>$null | Out-Null }
+        }
+    }
+}
+
+# Once-per-era orphan sweep (F3 follow-up). The residual sweep used to run only at
+# the daemon's start/exit; under the hook model there is no daemon, so orphaned
+# tags (icon, no manifest entry, no claude) would persist. This runs the sweep
+# exactly ONCE per psmux "era": the first tick after servers come up. The marker's
+# presence means "already swept"; Start-AgentStatus/the tick clear it when no
+# server exists, so the next server start re-arms it. Cheap: one list-panes pass,
+# skipped on every subsequent tick.
+function Invoke-OrphanSweep {
+    if (Test-Path $script:SweepMarker) { return }   # already swept this era
+    Invoke-IconSweep
+    Set-Content -Path $script:SweepMarker -Value '1' -Encoding ascii -ErrorAction SilentlyContinue
+}
+
 function Restore-AgentStatus {
     # 1. manifest-driven exact-name restore.
     $manifest = Read-TagManifest
@@ -450,13 +518,7 @@ function Restore-AgentStatus {
         if ($orig) { psmux rename-window -t $target $orig 2>$null | Out-Null }
     }
     # 2. sweep any residual icon-tagged window names.
-    foreach ($line in @(psmux list-panes -a -F "#{session_name}:#{window_index}|#{window_name}" 2>$null)) {
-        $parts = $line -split '\|', 2
-        if ($parts.Count -eq 2) {
-            $wbase = Get-BaseName $parts[1]
-            if ($wbase -ne $parts[1]) { psmux rename-window -t $parts[0] $wbase 2>$null | Out-Null }
-        }
-    }
+    Invoke-IconSweep
     # clear @agent_status on every (space-free) session. `set -g -u '@agent_status'`
     # removes the user option (SetOptionUnset); the status-right #{?@agent_status,}
     # guard then self-hides the segment, returning the bar to the themed default.
@@ -467,6 +529,9 @@ function Restore-AgentStatus {
     }
     # manifest consumed — clear it so we don't re-restore stale entries.
     Remove-Item $script:TagManifest -ErrorAction SilentlyContinue
+    # re-arm the once-per-era orphan sweep: after a full restore the next scan
+    # should sweep again for a fresh era.
+    Remove-Item $script:SweepMarker  -ErrorAction SilentlyContinue
 }
 
 function Start-AgentStatus {
