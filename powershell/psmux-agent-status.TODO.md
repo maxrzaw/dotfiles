@@ -1,164 +1,112 @@
 # psmux-agent-status — TODO / instructions
 
-Updated 2026-07-23 after a source review of psmux (clone at `~/dev/psmux`,
-commit f83637b) and the psmux-plugins repo (clone at `~/dev/psmux-plugins`).
-Installed binary: 3.3.7 (05cc5d4, 2026-07-20). Facts below were verified
-against the source, not guessed — treat them as ground truth.
+Installed psmux: 3.3.7 (05cc5d4, 2026-07-20). Facts below verified against the
+source clone (`~/dev/psmux` @ f83637b) + the psmux-plugins repo, not guessed.
 
-## Decisions
+## Open items
 
-- **DROP session renaming entirely.** The choose-tree switcher displays the
-  session name straight from the `.port` file *stem* (`src/session.rs:1501-1543`,
-  no `-F`/format support), so icons there require real renames — and renames
-  mutate the `~/.psmux` registry filenames, which is the root of the unicode
-  targeting fragility. Not worth it. Session-level state moves to the status
-  bar instead (task 1). Remove all `rename-session` logic, including from
-  `Restore-AgentStatus`.
-- **Keep the env-var-style push architecture** (publish to every server each
-  tick), but migrate the channel from `set-environment` to `@` user options
-  (task 1). Do NOT migrate to `#()` shell evaluation in status-right (see
-  Rejected approaches).
-- **Keep window renaming** for per-window state, but make it name-preserving
-  and crash-safe (task 2). There are no window-scoped `@` options in psmux
-  (`set -w` parses but `@` values land in one global-per-server map), so
-  rename-window remains the only per-window channel.
+- **F2 — empty `$orig` renames a window to a bare icon.** If
+  `display-message -p "#{window_name}"` returns nothing, `$orig` is `''`: the
+  manifest gets no entry but `rename-window` still runs, naming the window
+  `"● "`, which the restore sweep can't strip (its regex needs
+  `<icon><space><name>`). Fix: skip the rename when `$orig` is empty/whitespace.
+- **F3 — tags outlive claude mid-run.** The manifest is rebuilt each tick from
+  CURRENT claude panes, and restore runs only at start/exit. A window whose
+  claude process exits keeps its icon until a restore. Fix: diff the previous
+  tick's manifest against the current one and rename departed targets back
+  immediately (then drop them).
+- **F4 — minor perf (optional).** Add `#{window_name}` to the `Get-ClaudePanes`
+  format string to drop the per-pane `display-message` spawn, and skip
+  `rename-window` when the name is already `"<icon> <orig>"`.
+- **Verify live (user, real use):** (1) purple flash gone on session switch;
+  (2) all-sessions-in-TUI-for->15s → bars self-hide, not freeze; (3) sustained
+  multi-session use over minutes.
 
-## Verified psmux facts
+### Deferred: control-mode socket
+Replace per-poll `psmux.exe` CLI spawns (~200ms each, the dominant cost) with
+persistent TCP connections. Protocol (source-verified): loopback TCP, port in
+`~/.psmux/<base>.port`, key in `<base>.key`; send `AUTH <key>\n` then command
+lines, UTF-8. Client to mimic: `src/session.rs:1191-1302` (`send_control`).
+Unverified: whether one connection takes multiple sequential commands, and
+whether `capture-pane -p` output returns on the stream. Worth it only for many
+sessions or sub-second latency; a handful at 5s does not need it.
+
+## Verified psmux facts (durable reference)
 
 1. `set-option` re-joins its value from all remaining args with spaces
-   (`src/server/connection.rs:2121`), while `set-environment` keeps only the
-   first token and silently drops the rest (`connection.rs:3842`). So
-   **`@` user options may contain spaces; env var values may not.** After the
-   migration in task 1 the no-space middot workaround is unnecessary.
-2. Format lookup for an unknown `#{name}` checks `user_options` (the `@` map)
-   BEFORE the session environment table (`src/format.rs:967-980`). `#{@foo}`
-   and `#{?@foo,...,...}` both resolve from options set via `set -g @foo ...`.
+   (`connection.rs:2121`); `set-environment` keeps only the first token
+   (`connection.rs:3842`). **`@` options may contain spaces; env vars may not.**
+2. Format lookup for `#{name}` checks `user_options` (the `@` map) BEFORE the
+   session env table (`format.rs:967-980`). `#{@foo}` / `#{?@foo,...,...}`
+   resolve from `set -g @foo ...`.
 3. **Never put `#(command)` in status-right** on this build: the server-push
-   render path expands `#()` synchronously on the server loop, per pushed
-   frame, with no TTL cache (missing AsyncFormatGuard at
-   `src/server/mod.rs:~5562`). It would stall all panes during output.
-4. The stale-routing bug we hit (writes landing on a warm server) is psmux
-   issue #485; the fix (commit 061ac56, `$TMUX` overrides stale
-   `PSMUX_TARGET_SESSION`) is upstream but NOT in the installed 05cc5d4 build.
-   **Keep clearing `PSMUX_SESSION` / `PSMUX_TARGET_SESSION` at poller start**
-   until the installed build includes it. Re-check on every psmux upgrade.
-5. psmux **strips backslashes** from command strings stored for later
-   execution (`bind-key`, `set-hook`). Always convert script paths to
-   forward slashes first. Never inline PowerShell in those strings — point
-   at a script file.
-6. `set-hook -ga` APPENDS; repeated setup accumulates duplicate hooks. Unset
-   with `set-hook -gu <event>` before re-registering, and verify with
-   `show-hooks`.
-7. `run-shell` children are spawned async (the server drains results
-   non-blocking) and receive `PSMUX_TARGET_SESSION` preset to the server that
-   ran the hook — a hook script targets its own server with no `-t`.
-8. `psmux ls` returns exit code 0 with EMPTY output when no server exists —
-   confirmed independently by psmux-continuum (`auto_save.ps1`). The
-   `$emptyStreak` liveness logic is correct; keep it.
+   render path expands `#()` synchronously per frame, no TTL cache
+   (`src/server/mod.rs:~5562`). Would stall panes.
+4. Stale warm-server routing = psmux issue #485; fix (061ac56) is upstream but
+   NOT in 05cc5d4. Clear `PSMUX_SESSION`/`PSMUX_TARGET_SESSION` in USER-SHELL
+   entry paths (`Start-AgentStatus`, manual). Do NOT clear them in the hook
+   child — the server presets `PSMUX_TARGET_SESSION` to itself and the no-`-t`
+   self-publish relies on it (use the `__warm__$` guard there instead).
+5. psmux **strips backslashes** from stored command strings (`bind-key`,
+   `set-hook`). Use forward slashes; point at a script file, never inline PS.
+6. `set-hook -ga` APPENDS → `-gu <event>` before `-ga` to avoid duplicates.
+7. `run-shell` children are async and receive `PSMUX_TARGET_SESSION` preset to
+   the server that ran the hook (so a hook script targets its own server, no `-t`).
+8. `psmux ls` returns exit 0 with EMPTY output when no server exists. The
+   `$emptyStreak` liveness logic is correct.
+9. **`@` options MUST be single-quoted from PowerShell** (`'@agent_status'`). A
+   bare `@name` token is PowerShell SPLATTING → expands undefined `$name` to
+   nothing → psmux gets one positional and silently ignores it (exit 0). This
+   produced a false "@ options don't work" conclusion during dev. Verified
+   working once quoted. (Memory: [[psmux-atsign-option-splatting]].)
+10. `status-interval` does NOT fire uniformly across servers (reproducible: 2 of
+    4 sessions ticked, correlated with attach/full-screen-TUI state). This is
+    why the tick fans out via `-t` rather than relying on each server's own hook
+    (see "hybrid" below).
 
-## Tasks (priority order)
+## Done — changelog (context only, not TODO)
 
-### 1. Migrate the publish channel: `set-environment` → `@` user options
-- In `Update-AgentStatus`, replace the `set-environment` fan-out with:
-  `psmux set -g -t <session> @agent_status "<rollup>"` — same loop over
-  `list-sessions`, same explicit `-t` per session.
-- Spaces are now legal in the value: replace the middot-only separator with
-  normal readable spacing (e.g. `● dotfiles · ✓ test`). Still guard against
-  session names that themselves contain `|` or quotes.
-- Also publish each session's OWN most-urgent icon to that session's server:
-  `psmux set -g -t <session> @agent_state "<icon>"` (this replaces what
-  session renaming used to convey).
-- Update `~/dotfiles/psmux.conf`:
-  - status-right: change `#{?AGENT_STATUS,...#{AGENT_STATUS}...,}` to
-    `#{?@agent_status,...#{@agent_status}...,}` (keep the self-hiding guard).
-  - status-left: show the local session's state inside the themed segment,
-    e.g. prepend `#{?@agent_state,#{@agent_state} ,}` before `#S`.
-- Cleanup path: unset with `psmux set -g -t <session> -u @agent_status` (and
-  `@agent_state`). `SetOptionUnset` removes `@` options
-  (`src/server/mod.rs`, drain/CtrlReq handlers).
-- Delete all `rename-session` calls and the session-name icon-stripping in
-  `Restore-AgentStatus` (sessions are never touched anymore).
+- **Publish channel:** `set-environment`/`AGENT_STATUS` → `@agent_status` user
+  option (single-quoted, fact 9); readable `" · "` separator; conf guard
+  `#{?@agent_status,...}`. UTF-8 bootstrap + user-shell env-clearing retained.
+- **No session renaming** anywhere (registry-mutation fragility; choose-tree is
+  hardcoded to the `.port` stem anyway). Roll-up in status-right supersedes the
+  picker-visibility motive.
+- **Window tagging** is name-preserving (`<icon> <original>`) and crash-safe via
+  manifest `~/.psmux/status/window-tags.json` (restore at start/exit + sweep).
+- **JSON snapshot** `~/.psmux/status/agent-status.json` written atomically each
+  scan (consumer feed + the tick's shared channel).
+- **Roll-up shows ALL sessions** (not just those with a claude pane);
+  agent-less ones use state `none` (empty icon → bare name).
+- **Hook-scheduled, no daemon (hybrid):** `psmux.conf` registers a single
+  `status-interval` hook → `psmux-agent-status-tick.ps1`. A named mutex elects
+  one scanner per interval (age-gated so staggered per-server ticks don't
+  re-scan); the scanner fans `@agent_status` out to EVERY server via `-t` (fact
+  10 forces this over pure self-publish); each tick also self-publishes to its
+  own server; snapshot older than ~3 intervals → self-hide. Daemon functions
+  stay in `psmux-agent-status.ps1` for manual/fallback use; profile no longer
+  references the feature. `client-attached` hook dropped (purple-flash on every
+  switch; redundant under `-t` fan-out). Singleton: the tick uses the
+  continuum-style `WaitOne(0)` + `AbandonedMutexException` reclaim; the old
+  PID-file guard now only governs the legacy daemon.
 
-### 2. Make window tagging name-preserving and crash-safe
-- Tag as `<icon> <original-window-name>` instead of hardcoding
-  `<icon> claude`.
-- Persist a manifest (e.g. `~/.psmux/status/agent-status-manifest.json`) of
-  every window renamed and its original name. On poller start (including
-  takeover after a stale PID) restore from any leftover manifest FIRST, then
-  begin tagging. On clean exit, restore and delete the manifest. This closes
-  the "hard kill leaves names tagged" hole.
+## Rejected (do not retry)
 
-### 3. Publish a JSON snapshot each tick
-`~/.psmux/status/agent-status.json`: per-session states, per-pane states,
-roll-up string, ISO-8601 `updated` timestamp. Write atomically: temp file in
-the same directory, then `Move-Item -Force`. This is for other consumers;
-the status bar keeps using `@agent_status`.
-
-### 4. OPTIONAL redesign: hook-scheduled instead of a daemon
-Pattern from psmux-cpu (`~/dev/psmux-plugins/psmux-cpu/plugin.conf`): the
-server itself fires `status-interval` hooks every `status-interval` seconds:
-```
-set-hook -ga status-interval 'run-shell "pwsh -NoProfile -File C:/Users/MZawisa/dotfiles/powershell/psmux-agent-status-tick.ps1"'
-set-hook -ga client-attached 'run-shell "..."'   # immediate refresh on attach
-```
-Each server fires its own hook; the tick script would: try a named mutex —
-the winner does the expensive capture/classify pass and writes the JSON
-snapshot; every instance (winner or not) reads the snapshot and publishes
-`@agent_status`/`@agent_state` to its OWN server (no `-t` needed — see fact
-7). This eliminates the persistent daemon, the PID file, and the
-resurrection problem: if a tick dies, the next interval fires anyway.
-Trade-off to measure first: one pwsh spawn per server per interval vs one
-persistent process. Mind facts 5 and 6 (forward slashes, -gu before -ga).
-
-### 5. OPTIONAL: singleton primitive
-If the PID-file guard ever misbehaves, psmux-continuum's named-mutex pattern
-(`~/dev/psmux-plugins/psmux-continuum/psmux-continuum.ps1`, auto_save
-section) handles the abandonment case the old TODO worried about in ~8 lines:
-`WaitOne(0)` in try/catch, `AbandonedMutexException` → reclaim. Either
-primitive is fine; don't use `Start-Job` for the background launch (job dies
-with its parent) — keep `Start-Process -WindowStyle Hidden`.
-
-## Deferred: control-mode socket (updated with protocol findings)
-
-**Idea:** replace per-poll `psmux.exe` CLI spawns (~200ms each — profiled as
-the poller's dominant cost) with persistent connections.
-
-**Protocol (verified in source):** plain TCP on loopback. Port is in
-`~/.psmux/<base>.port`, auth key in `<base>.key`. Handshake: send
-`AUTH <key>` + newline, then command lines. Client implementation to mimic:
-`~/dev/psmux/src/session.rs:1191-1302` (`send_control`,
-`send_control_with_response`). One connection per server (one server per
-session). Use UTF-8 on the stream.
-
-**Still to verify empirically:** whether one connection accepts multiple
-sequential commands or must be reopened per command, and whether
-`capture-pane -p` output returns over the same stream. If persistent
-connections work, keep one `System.Net.Sockets.TcpClient` per server and
-measure a full poll pass before/after. Worth it only for many sessions or
-sub-second blocked-latency; a handful of agents at 5s does not need it.
-
-## Rejected approaches (do not retry)
-
-- **`#()` in status-right** — sync per-frame expansion on this build (fact 3).
-- **Session renaming** — registry mutation + choose-tree is hardcoded anyway
-  (see Decisions).
-- **`window_activity_flag` gating** for cheaper polling — tested and
-  rejected earlier: it flags "background window changed since last viewed"
-  (a notification primitive), NOT "pane is emitting output". It stayed 0
-  while claude worked, even with monitor-activity on. The real fix for
-  per-pane capture cost is the control socket.
-- **psmux plugin packaging** — considered and declined for now: every
-  pattern above works from plain config + scripts; a plugin adds only
-  packaging/distribution. (If ever revisited: plugin entry scripts must exit
-  fast — the server waits up to 5s for them at startup — and a `.ps1` whose
-  set/bind lines can be statically extracted is applied WITHOUT being
-  executed, `src/config.rs:1225-1233`. Use plugin.conf + a `run` launcher
-  line, like ppm.)
+- **`#()` in status-right** — sync per-frame expansion (fact 3).
+- **Session renaming** — registry mutation; choose-tree hardcoded.
+- **status-left `@agent_state`** — only shows the session you're already on.
+- **`window_activity_flag` gating** — flags "changed since last viewed", not
+  "emitting output"; stayed 0 while claude worked.
+- **Pure self-publish (no `-t`)** — fact 10: bars on non-ticking servers stay
+  blank.
+- **psmux plugin packaging** — plain config + scripts suffice. (If revisited:
+  entry scripts must exit fast, server waits ≤5s at startup; a `.ps1` whose
+  set/bind lines are statically extractable is applied WITHOUT executing,
+  `config.rs:1225-1233` — use plugin.conf + a `run` launcher line, like ppm.)
 
 ## On every psmux upgrade past 05cc5d4, re-check
 
-1. Whether issue #485 (061ac56) is included → the env-clearing at poller
-   start becomes unnecessary (keep it anyway; it's harmless).
-2. Whether the server-push `#()` path gained an AsyncFormatGuard
-   (`src/server/mod.rs` around the `has_frame_receivers` push block) → `#()`
-   in status formats becomes viable again.
+1. Issue #485 (061ac56) included → user-shell env-clearing becomes unnecessary
+   (harmless to keep).
+2. Server-push `#()` path gained an AsyncFormatGuard (`src/server/mod.rs` near
+   the `has_frame_receivers` push block) → `#()` in status formats viable again.

@@ -4,7 +4,8 @@
 # `psmux capture-pane`) and classifies its state by matching against a
 # text-only port of herdr's Claude detection manifest. It then:
 #   1. renames the claude window with a state icon (per-session visibility), and
-#   2. writes a roll-up of every claude session's state into status-right.
+#   2. writes a roll-up of every claude session's state into the @agent_status
+#      user option, which status-right reads via #{?@agent_status,...,}.
 #
 # WHY THIS EXISTS: herdr detects Claude state WITHOUT hooks — it screen-scrapes
 # the pane's bottom buffer and applies TOML "agent-detection manifests". This
@@ -31,6 +32,7 @@ $script:AgentIcons = [ordered]@{
     working = '●'   # actively generating / running a tool
     blocked = '◍'   # waiting for YOU (permission prompt, selection form)
     idle    = '✓'   # prompt box ready, nothing pending
+    none    = ''    # session has NO claude pane — shown as bare name, no glyph
     unknown = '·'   # transient UI (transcript viewer, model picker) — hold last
 }
 
@@ -167,13 +169,13 @@ function Get-BaseName {
     ($Name -replace "^\s*$($script:IconClass)\s+", '').Trim()
 }
 
-# Separator between agents in the roll-up. MUST contain NO spaces of any kind:
-# psmux set-environment truncates a value at its first space (confirmed in the
-# psmux source: connection.rs keeps only the 2nd positional token), AND the
-# PowerShell->psmux boundary converts NBSP (U+00A0) into a real space — so even
-# non-breaking spaces get truncated. A bare middot with no surrounding spaces
-# round-trips intact.
-$script:RollupSep = [char]0x00B7   # "·", no spaces
+# Separator between agents in the roll-up. Now that the publish channel is `@`
+# user options (`set -g @agent_status`) instead of `set-environment`, SPACES ARE
+# LEGAL in the value: set-option re-joins its value from all remaining args with
+# spaces (psmux source connection.rs:2121), whereas set-environment kept only the
+# first token (connection.rs:3842). So we use a readable " · " (middot with
+# surrounding spaces) instead of the old bare-middot workaround.
+$script:RollupSep = ' ' + [char]0x00B7 + ' '   # " · ", spaces now allowed
 
 # --- State/manifest files (Task 1 + 2) --------------------------------------
 # Directory for our sidecar files. Lives next to psmux's own registry.
@@ -210,12 +212,61 @@ function Read-TagManifest {
     } catch { return @{} }
 }
 
-function Update-AgentStatus {
+# Read the JSON snapshot (the shared channel for the hook tick, task 4). Returns
+# the parsed object, or $null if missing/unreadable. Callers use `.updated`,
+# `.rollup`, `.sessions`.
+function Read-StatusSnapshot {
+    if (-not (Test-Path $script:StatusJson)) { return $null }
+    try { return (Get-Content $script:StatusJson -Raw -ErrorAction Stop | ConvertFrom-Json) }
+    catch { return $null }
+}
+
+# Age of a snapshot's `updated` timestamp in seconds, or [double]::MaxValue if it
+# can't be parsed (treated as "infinitely stale" so callers self-hide).
+function Get-SnapshotAgeSeconds {
+    param($Snapshot)
+    if (-not $Snapshot -or -not $Snapshot.updated) { return [double]::MaxValue }
+    try {
+        $t = [datetimeoffset]::Parse($Snapshot.updated)
+        return ([datetimeoffset]::Now - $t).TotalSeconds
+    } catch { return [double]::MaxValue }
+}
+
+# Self-publish the roll-up to THIS server only (no -t; relies on the server-preset
+# PSMUX_TARGET_SESSION for a hook child). This is the hook tick's publish path —
+# every server self-publishes the same shared roll-up from the snapshot, so the
+# mutex only needs to gate the expensive scan, not the publish (plan task 4,
+# model 2). Single-quote the option name (splatting gotcha, see Publish-AgentStatusAll).
+function Publish-AgentStatusSelf {
+    param([string]$Rollup)
+    psmux set -g '@agent_status' $Rollup 2>$null | Out-Null
+}
+
+# Self-hide: unset @agent_status on THIS server so its status-right #{?@agent_status,}
+# guard drops the segment. Used when the snapshot is too stale to trust (the
+# scanner has stopped) — the bar reverts to the themed default instead of
+# freezing on old data. Also gives per-server correctness when a single server's
+# updates stall (plan F1).
+function Hide-AgentStatusSelf {
+    psmux set -g -u '@agent_status' 2>$null | Out-Null
+}
+
+# EXPENSIVE PASS: capture + classify every claude pane, tag windows, build the
+# roll-up, and write the JSON snapshot. Does NOT publish @agent_status — that is
+# the caller's job (the daemon fans out via -t; the hook tick self-publishes from
+# the snapshot). Returns the snapshot object it wrote so a caller can publish
+# without re-reading the file.
+#
+# This is the split-out of the old monolithic Update-AgentStatus, so the
+# hook-scheduled tick (psmux-agent-status-tick.ps1, task 4) can run JUST the scan
+# under a mutex and let every server self-publish from the shared JSON.
+function Invoke-AgentScan {
     $panes = @(Get-ClaudePanes)
 
     # Urgency ranking so a session with any blocked pane sorts as blocked
-    # (attention-first, like herdr's priority sidebar sort).
-    $rank = @{ blocked = 3; working = 2; idle = 1; unknown = 0 }
+    # (attention-first, like herdr's priority sidebar sort). `none` (no agent) is
+    # lowest so any real claude pane in a session outranks the no-agent baseline.
+    $rank = @{ blocked = 3; working = 2; idle = 1; unknown = 0; none = -1 }
 
     # session base-name + most-urgent state, accumulated across its claude panes.
     $sessionState = [ordered]@{}
@@ -233,7 +284,7 @@ function Update-AgentStatus {
     #
     # NOTE: we deliberately DO NOT rename sessions. Session renames mutate psmux's
     # ~\.psmux\<name>.{key,port,sid} registry filenames, which was the root of the
-    # UTF-8/space targeting fragility. The roll-up (AGENT_STATUS) already carries
+    # UTF-8/space targeting fragility. The roll-up (@agent_status) already carries
     # per-session state to the bar and switcher, so session tags are redundant.
     foreach ($pane in $panes) {
         $cap   = psmux capture-pane -t $pane.Target -p 2>$null
@@ -265,40 +316,92 @@ function Update-AgentStatus {
     }
 
     # Persist the tag manifest so a crashed poller's window tags can be restored
-    # on the next start (crash-safe restore, Task 1).
+    # on the next start (crash-safe restore).
     Write-JsonAtomic -Path $script:TagManifest -Object $manifest
 
-    # (2) build the roll-up from PER-SESSION state (one entry per session). A
-    # session whose base name contains a space is skipped from set-environment
-    # targeting anyway (see below), but its roll-up piece still shows.
+    # Fold in EVERY session, including those with no claude pane, so the roll-up
+    # shows the whole session list (user request). Agent-less sessions get state
+    # `none` (bare name, no glyph). Preserve list-sessions ORDER for a stable bar;
+    # sessions with claude panes keep the state accumulated above.
+    $orderedState = [ordered]@{}
+    foreach ($s in @(psmux list-sessions -F "#{session_name}" 2>$null)) {
+        if (-not $s) { continue }
+        $b = Get-BaseName $s
+        if ($sessionState.Contains($s)) {
+            $orderedState[$s] = $sessionState[$s]     # has an agent — keep its state
+        } else {
+            $orderedState[$s] = 'none'                # no claude pane
+            $sessionBase[$s]  = $b
+        }
+    }
+    $sessionState = $orderedState
+
+    # Build the roll-up from PER-SESSION state (one entry per session). Spaces are
+    # legal (@ user option value). `none` has an empty icon, so those entries are
+    # the bare name with no leading glyph/space ("psmux", not " psmux").
     $rollupParts = foreach ($sess in $sessionState.Keys) {
         $icon = $script:AgentIcons[$sessionState[$sess]]
         $base = $sessionBase[$sess]
-        "$icon$([char]0x00B7)$base"   # NO space (set-environment truncates at 1st space)
+        if ($icon) { "$icon $base" } else { "$base" }
     }
     $rollup = $rollupParts -join $script:RollupSep
 
-    # (3) publish the roll-up into AGENT_STATUS on EVERY session's server (env
-    # vars are server-scoped; each psmux session is its own server). psmux.conf's
-    # status-right embeds #{AGENT_STATUS}. SKIP sessions whose name contains a
-    # space: set-environment can't be reliably targeted at them (the space breaks
-    # the positional -t arg the same way it truncates values).
-    $allSessions = psmux list-sessions -F "#{session_name}" 2>$null
-    foreach ($s in @($allSessions)) {
-        if (-not $s) { continue }
-        if ($s -match '\s') { continue }   # unsupported target; skip (reviewer Task 1)
-        psmux set-environment -t $s AGENT_STATUS $rollup 2>$null | Out-Null
+    # Atomic JSON snapshot. This is BOTH the consumer feed (Task 3) AND the shared
+    # channel the hook tick self-publishes from (task 4): `updated` lets a tick
+    # decide whether to rescan (age gate) or self-hide (staleness). `sessions`
+    # maps sessionName -> state so a tick can publish its OWN session's icon.
+    $snap = [ordered]@{
+        updated  = (Get-Date).ToString('o')
+        rollup   = $rollup
+        sessions = $sessionState
+        panes    = $paneStates
     }
+    Write-JsonAtomic -Path $script:StatusJson -Object $snap
+    return $snap
+}
 
-    # (Task 2) atomic JSON snapshot for other consumers. Timestamp is passed in
-    # (scripts can't call Get-Date freely under some harnesses) — use real time
-    # here since this runs as a normal background process.
-    Write-JsonAtomic -Path $script:StatusJson -Object ([ordered]@{
-        updated      = (Get-Date).ToString('o')
-        rollup       = $rollup
-        sessions     = $sessionState
-        panes        = $paneStates
-    })
+# Publish the @agent_status USER OPTION into every session's server (options are
+# server-scoped; each psmux session is its own server). psmux.conf's status-right
+# embeds #{?@agent_status,...#{@agent_status}...,}. Used by the DAEMON path; the
+# hook tick self-publishes to its own server instead (no -t).
+#
+# `set -g '@agent_status' "<value>"` re-joins the value with spaces
+# (connection.rs:2121), so the readable roll-up survives intact — no middot-only
+# workaround. We SKIP space-named sessions: a space breaks the -t positional arg;
+# those are pathological session names we don't create.
+#
+# CRITICAL PowerShell gotcha: the option name MUST be SINGLE-QUOTED. A bare
+# `@agent_status` token is PowerShell's SPLATTING operator — it expands the
+# undefined variable `$agent_status` to nothing, so psmux receives
+# `set -g "<value>"` (one positional) and silently ignores it with exit 0.
+# '@agent_status' passes the literal name. (This exact bug produced a false
+# "@ options don't work on this build" conclusion during development.)
+function Publish-AgentStatusAll {
+    param([string]$Rollup)
+    foreach ($s in @(psmux list-sessions -F "#{session_name}" 2>$null)) {
+        if (-not $s) { continue }
+        if ($s -match '\s') { continue }   # unsupported -t target; skip
+        psmux set -g -t $s '@agent_status' $Rollup 2>$null | Out-Null
+    }
+}
+
+# Unset @agent_status on ALL servers via -t (the fan-out counterpart of
+# Publish-AgentStatusAll). Used when a fresh scan finds NO claude panes anywhere:
+# every bar should drop its segment, not freeze on the last roll-up. Same
+# single-quote gotcha as Publish-AgentStatusAll.
+function Clear-AgentStatusAll {
+    foreach ($s in @(psmux list-sessions -F "#{session_name}" 2>$null)) {
+        if (-not $s) { continue }
+        if ($s -match '\s') { continue }   # unsupported -t target; skip
+        psmux set -g -t $s -u '@agent_status' 2>$null | Out-Null
+    }
+}
+
+# DAEMON path: scan + fan-out publish to all servers. Kept for the persistent
+# poller (Start-AgentStatus) and manual use. The hook tick does NOT call this.
+function Update-AgentStatus {
+    $snap = Invoke-AgentScan
+    Publish-AgentStatusAll -Rollup $snap.rollup
 }
 
 # Single-instance guard. Your sessions all live in one namespace and you switch
@@ -336,9 +439,9 @@ function Get-RunningPollerPid {
 #   1. From the manifest, rename each tagged window back to its recorded original.
 #   2. Belt-and-suspenders: scan all windows and strip any leftover icon prefix
 #      (covers windows tagged by a poller whose manifest was lost).
-# Also clears AGENT_STATUS on every server; the status-right #{?...} guard then
-# self-hides the segment, returning the bar to the themed default.
-# We NO LONGER rename sessions, so there are no session names to restore.
+# Also clears the @agent_status option on every server; the status-right
+# #{?@agent_status,...} guard then self-hides the segment, returning the bar to
+# the themed default. We NO LONGER rename sessions, so no session names to restore.
 function Restore-AgentStatus {
     # 1. manifest-driven exact-name restore.
     $manifest = Read-TagManifest
@@ -354,10 +457,13 @@ function Restore-AgentStatus {
             if ($wbase -ne $parts[1]) { psmux rename-window -t $parts[0] $wbase 2>$null | Out-Null }
         }
     }
-    # clear AGENT_STATUS on every (space-free) session.
+    # clear @agent_status on every (space-free) session. `set -g -u '@agent_status'`
+    # removes the user option (SetOptionUnset); the status-right #{?@agent_status,}
+    # guard then self-hides the segment, returning the bar to the themed default.
+    # Single-quote the option name (PowerShell splatting gotcha — see Update-AgentStatus).
     foreach ($sess in @(psmux list-sessions -F "#{session_name}" 2>$null)) {
         if (-not $sess -or ($sess -match '\s')) { continue }
-        psmux set-environment -t $sess -u AGENT_STATUS 2>$null | Out-Null
+        psmux set -g -t $sess -u '@agent_status' 2>$null | Out-Null
     }
     # manifest consumed — clear it so we don't re-restore stale entries.
     Remove-Item $script:TagManifest -ErrorAction SilentlyContinue
@@ -371,9 +477,9 @@ function Start-AgentStatus {
     )
     # Clear any inherited psmux session env vars. A shell can carry a STALE
     # PSMUX_SESSION (e.g. "__warm__" left over from the pre-warm pool, or empty),
-    # which redirects the psmux CLI to the wrong socket — making set-environment
+    # which redirects the psmux CLI to the wrong socket — making `set -g`
     # writes land on a warm server instead of the real sessions (observed: names
-    # got tagged but AGENT_STATUS stayed empty). Clearing these makes the CLI use
+    # got tagged but @agent_status stayed empty). Clearing these makes the CLI use
     # the default/real socket so `-t <session>` targets the real servers.
     Remove-Item Env:\PSMUX_SESSION        -ErrorAction SilentlyContinue
     Remove-Item Env:\PSMUX_TARGET_SESSION -ErrorAction SilentlyContinue
@@ -443,9 +549,12 @@ function Start-AgentStatusBackground {
     # CRITICAL: force UTF-8 in the detached shell. Without a profile, pwsh
     # defaults to a non-UTF-8 console encoding, which garbles the ●/◍/✓/· glyphs
     # AND the icon-tagged session names when reading `list-sessions`. That makes
-    # `set-environment -t "<garbled name>"` silently miss the real session, so
-    # AGENT_STATUS never lands (the whole feature appears dead). Setting the
-    # console + $OutputEncoding to UTF-8 first fixes reading and writing.
+    # `set -g -t "<garbled name>" @agent_status ...` silently miss the real
+    # session, so @agent_status never lands (the whole feature appears dead).
+    # NOTE: task 1 (@ user options) made the VALUE space-safe, but this bootstrap
+    # is STILL REQUIRED — the poller reads session NAMES back to build each -t
+    # target, so the mojibake risk moved but did not vanish. Do not remove.
+    # Setting the console + $OutputEncoding to UTF-8 first fixes reading and writing.
     $script = $PSCommandPath
     $bootstrap = "[Console]::OutputEncoding=[Text.Encoding]::UTF8; " +
                  "[Console]::InputEncoding=[Text.Encoding]::UTF8; " +
