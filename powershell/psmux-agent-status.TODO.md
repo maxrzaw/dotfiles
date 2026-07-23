@@ -5,22 +5,15 @@ source clone (`~/dev/psmux` @ f83637b) + the psmux-plugins repo, not guessed.
 
 ## Open items
 
-- **F2 — empty `$orig` renames a window to a bare icon.** If
-  `display-message -p "#{window_name}"` returns nothing, `$orig` is `''`: the
-  manifest gets no entry but `rename-window` still runs, naming the window
-  `"● "`, which the restore sweep can't strip (its regex needs
-  `<icon><space><name>`). Fix: skip the rename when `$orig` is empty/whitespace.
-- **F3 — tags outlive claude mid-run.** The manifest is rebuilt each tick from
-  CURRENT claude panes, and restore runs only at start/exit. A window whose
-  claude process exits keeps its icon until a restore. Fix: diff the previous
-  tick's manifest against the current one and rename departed targets back
-  immediately (then drop them).
-- **F4 — minor perf (optional).** Add `#{window_name}` to the `Get-ClaudePanes`
-  format string to drop the per-pane `display-message` spawn, and skip
-  `rename-window` when the name is already `"<icon> <orig>"`.
-- **Verify live (user, real use):** (1) purple flash gone on session switch;
-  (2) all-sessions-in-TUI-for->15s → bars self-hide, not freeze; (3) sustained
-  multi-session use over minutes.
+- **Verify live (user, real use):** (1) all-sessions-in-TUI-for->15s → bars
+  self-hide, not freeze; (2) sustained multi-session use over minutes.
+  (Purple-flash-on-switch already confirmed gone.)
+- **Orphan-sweep boundary (accepted, watch for pain):** the residual-icon sweep
+  runs ONCE per psmux era (first scan; marker `$env:TEMP\psmux-agent-status.swept`).
+  F3 handles the normal mid-run claude-exit case, so this only matters for
+  orphans created mid-session by an unexpected path — those wait for a restart
+  or a manual `Restore-AgentStatus`. If mid-session orphans turn out common,
+  switch to sweeping every scan (one extra `list-panes` spawn per scan).
 
 ### Deferred: control-mode socket
 Replace per-poll `psmux.exe` CLI spawns (~200ms each, the dominant cost) with
@@ -61,39 +54,17 @@ sessions or sub-second latency; a handful at 5s does not need it.
    working once quoted. (Memory: [[psmux-atsign-option-splatting]].)
 10. `status-interval` does NOT fire uniformly across servers (reproducible: 2 of
     4 sessions ticked, correlated with attach/full-screen-TUI state). This is
-    why the tick fans out via `-t` rather than relying on each server's own hook
-    (see "hybrid" below).
-
-## Done — changelog (context only, not TODO)
-
-- **Publish channel:** `set-environment`/`AGENT_STATUS` → `@agent_status` user
-  option (single-quoted, fact 9); readable `" · "` separator; conf guard
-  `#{?@agent_status,...}`. UTF-8 bootstrap + user-shell env-clearing retained.
-- **No session renaming** anywhere (registry-mutation fragility; choose-tree is
-  hardcoded to the `.port` stem anyway). Roll-up in status-right supersedes the
-  picker-visibility motive.
-- **Window tagging** is name-preserving (`<icon> <original>`) and crash-safe via
-  manifest `~/.psmux/status/window-tags.json` (restore at start/exit + sweep).
-- **JSON snapshot** `~/.psmux/status/agent-status.json` written atomically each
-  scan (consumer feed + the tick's shared channel).
-- **Roll-up shows ALL sessions** (not just those with a claude pane);
-  agent-less ones use state `none` (empty icon → bare name).
-- **Hook-scheduled, no daemon (hybrid):** `psmux.conf` registers a single
-  `status-interval` hook → `psmux-agent-status-tick.ps1`. A named mutex elects
-  one scanner per interval (age-gated so staggered per-server ticks don't
-  re-scan); the scanner fans `@agent_status` out to EVERY server via `-t` (fact
-  10 forces this over pure self-publish); each tick also self-publishes to its
-  own server; snapshot older than ~3 intervals → self-hide. Daemon functions
-  stay in `psmux-agent-status.ps1` for manual/fallback use; profile no longer
-  references the feature. `client-attached` hook dropped (purple-flash on every
-  switch; redundant under `-t` fan-out). Singleton: the tick uses the
-  continuum-style `WaitOne(0)` + `AbandonedMutexException` reclaim; the old
-  PID-file guard now only governs the legacy daemon.
+    why the tick fans out via `-t` rather than relying on each server's own hook.
+11. `$script:`-scoped state does NOT survive across ticks — each hook tick is a
+    fresh pwsh process. Anything that must persist tick-to-tick (the tag manifest
+    for F3, the orphan-sweep marker) MUST be on disk. (The classifier's
+    "hold last state on unknown" via `$script:LastState` is therefore per-tick
+    only under hooks; acceptable, but noted.)
 
 ## Rejected (do not retry)
 
 - **`#()` in status-right** — sync per-frame expansion (fact 3).
-- **Session renaming** — registry mutation; choose-tree hardcoded.
+- **Session renaming** — registry mutation; choose-tree hardcoded to `.port` stem.
 - **status-left `@agent_state`** — only shows the session you're already on.
 - **`window_activity_flag` gating** — flags "changed since last viewed", not
   "emitting output"; stayed 0 while claude worked.
