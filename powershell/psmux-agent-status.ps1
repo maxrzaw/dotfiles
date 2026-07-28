@@ -108,7 +108,10 @@ function Get-AgentState {
 function Get-ClaudePanes {
     psmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index}|#{session_name}|#{window_index}|#{pane_current_command}|#{window_name}" 2>$null |
         ForEach-Object { ,($_ -split '\|', 5) } |
-        Where-Object { $_.Count -eq 5 -and $_[3] -eq 'claude' } |
+        # Match "claude", "claude.exe", and "claude.exe.old" (a self-update renames
+        # the running binary to .old until the pane restarts). Anchor the START so a
+        # window merely NAMED claude isn't matched via some other field.
+        Where-Object { $_.Count -eq 5 -and $_[3] -match '^claude(\.exe)?(\.old)?$' } |
         ForEach-Object {
             [pscustomobject]@{
                 Target     = $_[0]
