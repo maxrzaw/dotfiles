@@ -30,15 +30,27 @@ function Get-AgentState {
 
     if (-not $Lines -or $Lines.Count -eq 0) { return 'unknown' }
 
+    # Tail feeds only WORKING (the spinner renders above the box); kept generous so
+    # a burst of output can't push it off-screen.
     $ne   = $Lines | Where-Object { $_.Trim() }
-    $tail = ($ne | Select-Object -Last 12)
-    $blob = ($tail -join "`n")
-    $low  = $blob.ToLowerInvariant()
+    $tail = ($ne | Select-Object -Last 25)
+    $low  = ($tail -join "`n").ToLowerInvariant()
 
-    # WORKING: a spinner glyph is not enough — a finished turn leaves a past-tense
-    # summary ("✻ Crunched for 4s") that starts with the same glyph but is idle.
-    # Require the glyph AND a live-activity marker (elapsed timer, token count, or
-    # "esc to interrupt") on the same line, and exclude the "<Verb> for Ns" summary.
+    # Live UI region = between the last two horizontal rules (the input box) down to
+    # the footer. BLOCKED/IDLE match only here, so transcript prose ABOUT prompts
+    # can't false-trigger. Fall back to the tail if there aren't two rules.
+    $ruleRx = [regex]'^\s*[─—-]{20,}\s*$'
+    $ruleIdx = @(for ($i = 0; $i -lt $Lines.Count; $i++) { if ($ruleRx.IsMatch($Lines[$i])) { $i } })
+    if ($ruleIdx.Count -ge 2) {
+        $live = @($Lines[$ruleIdx[-2]..($Lines.Count - 1)] | Where-Object { $_.Trim() })
+    } else {
+        $live = $tail
+    }
+    $liveLow = ($live -join "`n").ToLowerInvariant()
+
+    # WORKING: glyph alone isn't enough — a finished turn leaves "✻ Crunched for 4s"
+    # (same glyph, idle). Require the glyph plus a live-activity marker (timer, token
+    # count, "esc to interrupt") on the line, excluding the "<Verb> for Ns" summary.
     foreach ($l in $tail) {
         $glyph = $l -match '^\s*[⠀-⣿✳✴✻✼✽✹✤]\s?\S'
         if ($glyph) {
@@ -50,67 +62,51 @@ function Get-AgentState {
             if ($liveActivity -and -not $finishedSummary) { return 'working' }
         }
     }
-    # Live-activity line with the spinner scrolled off (not the bare "esc to
-    # interrupt" footer, which also shows when idle).
     if ($low -match '\d+s\s*·[^\n]*token') { return 'working' }
 
     # UNKNOWN: transient full-screen UI — hold the previous state, don't overwrite.
-    if ($low -match 'showing detailed transcript') { return 'unknown' }
-    if ($low -match 'select model' -and $low -match 'esc to cancel' -and $low -notmatch 'do you want to proceed') { return 'unknown' }
+    if ($liveLow -match 'showing detailed transcript') { return 'unknown' }
+    if ($liveLow -match 'select model' -and $liveLow -match 'esc to cancel' -and $liveLow -notmatch 'do you want to proceed') { return 'unknown' }
 
-    # BLOCKED: selection menu.
-    if (($low -match 'enter to select' -or $low -match 'esc to cancel') -and
-        ($low -match 'to navigate' -or $low -match 'arrow keys')) { return 'blocked' }
-    if ($low -match 'run a dynamic workflow\?' -and $low -match 'esc to cancel') { return 'blocked' }
-
-    # capture-pane collapses spaces in some rendered lines ("Do you wanttoproceed?",
-    # "❯1. Yes"). $sp makes a phrase space-tolerant: "do you want to" -> "do\s*you\s*want\s*to".
+    # capture-pane collapses spaces in some lines ("Do you wanttoproceed?"). $sp
+    # makes a phrase space-tolerant: "do you want to" -> "do\s*you\s*want\s*to".
     $sp = { param($phrase) ($phrase -split ' ' | ForEach-Object { [regex]::Escape($_) }) -join '\s*' }
 
-    # Numbered permission menu (❯1. Yes / 2. No) — strongest signal, survives the
-    # space-collapsing above.
-    foreach ($l in $tail) {
+    # BLOCKED — matched against the live region only. Numbered menu is strongest.
+    foreach ($l in $live) {
         if ($l -match '(?i)^\s*❯?\s*\d+\.\s*yes\b' -or $l -match '(?i)^\s*\d+\.\s*no\b') { return 'blocked' }
     }
-    if ($low -match (& $sp 'do you want to proceed')) { return 'blocked' }
-    if (($low -match (& $sp 'enter to select') -or $low -match (& $sp 'esc to cancel')) -and
-        ($low -match (& $sp 'to navigate') -or $low -match (& $sp 'arrow keys'))) { return 'blocked' }
-    if ($low -match (& $sp 'run a dynamic workflow') -and $low -match (& $sp 'esc to cancel')) { return 'blocked' }
+    if ($liveLow -match (& $sp 'do you want to proceed')) { return 'blocked' }
+    if (($liveLow -match (& $sp 'enter to select') -or $liveLow -match (& $sp 'esc to cancel')) -and
+        ($liveLow -match (& $sp 'to navigate') -or $liveLow -match (& $sp 'arrow keys'))) { return 'blocked' }
+    if ($liveLow -match (& $sp 'run a dynamic workflow') -and $liveLow -match (& $sp 'esc to cancel')) { return 'blocked' }
 
-    # An empty "❯" box means the turn is done and Claude awaits free input (idle),
-    # not a yes/no question. It vetoes the loose blocker below so ordinary prose
-    # ("What would you like to work on?") isn't misread as blocked. A real menu
-    # already returned 'blocked' above.
-    $emptyPromptBox = [bool]($tail | Where-Object { $_ -match '^\s*❯\s*$' })
-    if (-not $emptyPromptBox) {
-        if (($low -match (& $sp 'do you want to') -or $low -match (& $sp 'would you like to')) -and
-            ($low -match 'yes' -or $blob -match '❯')) { return 'blocked' }
+    # A "❯" box = free-form input awaited (idle/typing). It vetoes the loose prose
+    # and bare-"esc to cancel" rules, so typing "how do you want to handle it" isn't
+    # read as blocked. Real menus already returned above.
+    $promptBox = [bool]($live | Where-Object { $_ -match '^\s*❯' })
+    if (-not $promptBox) {
+        if (($liveLow -match (& $sp 'do you want to') -or $liveLow -match (& $sp 'would you like to')) -and
+            ($liveLow -match 'yes' -or ($live -join "`n") -match '❯')) { return 'blocked' }
     }
-    if ($low -match (& $sp 'waiting for permission'))  { return 'blocked' }
-    # Amend/explain affordances only appear under a permission prompt.
-    if ($low -match (& $sp 'tab to amend') -or $low -match (& $sp 'ctrl+e to explain')) { return 'blocked' }
-    if (-not $emptyPromptBox -and $low -match (& $sp 'esc to cancel')) { return 'blocked' }
+    if ($liveLow -match (& $sp 'waiting for permission'))  { return 'blocked' }
+    if ($liveLow -match (& $sp 'tab to amend') -or $liveLow -match (& $sp 'ctrl+e to explain')) { return 'blocked' }
+    if (-not $promptBox -and $liveLow -match (& $sp 'esc to cancel')) { return 'blocked' }
 
-    # IDLE: a "❯" line with no menu/prompt text around it.
-    foreach ($l in $tail) {
-        if ($l -match '^\s*❯') {
-            if ($low -notmatch 'enter to select' -and $low -notmatch 'esc to cancel' -and
-                $low -notmatch 'to navigate' -and $low -notmatch 'arrow keys') { return 'idle' }
-        }
-    }
+    # IDLE: an input box that got past every blocked rule is the user's own prompt —
+    # even if they typed "1. Yes" or "esc to cancel" into it.
+    if ($promptBox) { return 'idle' }
 
     return 'unknown'
 }
 
-# Panes whose foreground process is claude. window_name is included (and placed
-# LAST, so a name containing '|' can't shift earlier fields) to avoid a separate
-# per-pane display-message call. Match the COMMAND field, not a window NAMED claude.
+# Panes whose foreground process is claude. window_name is last so a '|' in it
+# can't shift earlier fields, and comes from here to avoid a per-pane display-message.
 function Get-ClaudePanes {
     psmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index}|#{session_name}|#{window_index}|#{pane_current_command}|#{window_name}" 2>$null |
         ForEach-Object { ,($_ -split '\|', 5) } |
-        # Match "claude", "claude.exe", and "claude.exe.old" (a self-update renames
-        # the running binary to .old until the pane restarts). Anchor the START so a
-        # window merely NAMED claude isn't matched via some other field.
+        # Match the COMMAND field: claude / claude.exe / claude.exe.old (a self-update
+        # renames the running binary to .old until the pane restarts).
         Where-Object { $_.Count -eq 5 -and $_[3] -match '^claude(\.exe)?(\.old)?$' } |
         ForEach-Object {
             [pscustomobject]@{
