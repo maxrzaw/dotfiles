@@ -45,6 +45,11 @@ _mux() {
 compdef _mux tmuxinator mux
 alias wtitle="wezterm cli set-tab-title"
 
+# herdr-task / herdt — the herdr equivalent of `mux task`
+if [ -x "$(command -v herdr)" ]; then
+    source ~/dotfiles/zsh/herdr.zsh
+fi
+
 export EDITOR=$VIM
 export GIT_EDITOR=$VIM
 

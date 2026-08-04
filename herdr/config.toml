@@ -72,3 +72,17 @@ toggle_sidebar   = "prefix+b"   # show/hide the space list in the sidebar
 # work alongside these.
 navigate_workspace_up   = "k"   # vim up in the workspace picker
 navigate_workspace_down = "j"   # vim down in the workspace picker
+
+# --- Sound -------------------------------------------------------------------
+# Headless Linux boxes have no audio device, so every agent state change spammed
+# herdr-client.log with "no mp3-capable audio player available". Off globally
+# because herdr config has no layering -- scoping to Linux would mean
+# duplicating [keys] into a second file. Silences macOS/Windows too.
+[ui.sound]
+enabled = false
+
+[ui.toast]
+delivery = "herdr"
+
+[ui]
+show_agent_labels_on_pane_borders = true

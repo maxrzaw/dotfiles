@@ -85,6 +85,21 @@ end
 -- Enable workspace config files
 vim.opt.exrc = true
 
+-- Clipboard over OSC52. On a headless Linux box (no X/Wayland display) there is
+-- no xclip/wl-copy for "+y to talk to, so hand the yank to the terminal itself
+-- as an escape sequence and let it set the real clipboard. nvim already does
+-- this automatically over ssh; herdr is a local terminal, so ask explicitly.
+-- Paste is left unset: the terminal's own paste (which arrives as keystrokes)
+-- is the only thing that works, since OSC52 reads are widely disabled.
+if vim.g.windows ~= 1 and vim.env.DISPLAY == nil and vim.env.WAYLAND_DISPLAY == nil then
+    local osc52 = require("vim.ui.clipboard.osc52")
+    vim.g.clipboard = {
+        name = "OSC 52",
+        copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+        paste = { ["+"] = function() return {} end, ["*"] = function() return {} end },
+    }
+end
+
 -- Windows shell configuration
 if vim.g.windows == 1 then
     vim.opt.shell = "pwsh.exe"
