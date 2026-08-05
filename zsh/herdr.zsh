@@ -1,7 +1,7 @@
 # herdr shell integration — the zsh side of powershell/herdr-task.ps1.
 #
 # herdr-task creates a herdr WORKSPACE with the 4 preferred tabs:
-#   1 claude   -> runs `claude`
+#   1 agent    -> runs `claude`
 #   2 editor   -> runs `nvim`
 #   3 lazygit  -> runs `lazygit`
 #   4 shell    -> plain shell (no command)
@@ -66,23 +66,23 @@ herdr-task() {
     fi
 
     # --- build the workspace ------------------------------------------------
-    # Tab 1 (claude) is the workspace's root tab, created with the workspace.
+    # Tab 1 (agent) is the workspace's root tab, created with the workspace.
     local created
     created=$(herdr workspace create --label "$name" --cwd "$dir" --no-focus 2>&1)
 
-    local wsid claude_pane claude_tab
+    local wsid agent_pane agent_tab
     wsid=$(print -r -- "$created" | jq -r '.result.workspace.workspace_id // empty' 2>/dev/null)
-    claude_pane=$(print -r -- "$created" | jq -r '.result.root_pane.pane_id // empty' 2>/dev/null)
-    claude_tab=$(print -r -- "$created" | jq -r '.result.tab.tab_id // empty' 2>/dev/null)
+    agent_pane=$(print -r -- "$created" | jq -r '.result.root_pane.pane_id // empty' 2>/dev/null)
+    agent_tab=$(print -r -- "$created" | jq -r '.result.tab.tab_id // empty' 2>/dev/null)
 
-    if [[ -z $wsid || -z $claude_pane ]]; then
+    if [[ -z $wsid || -z $agent_pane ]]; then
         print -u2 "herdr-task: failed to create workspace. Is the herdr server running?"
         print -u2 "herdr-task: output: $created"
         return 1
     fi
 
-    # Rename the auto-created first tab (label defaults to "1") to "claude".
-    [[ -n $claude_tab ]] && herdr tab rename "$claude_tab" claude >/dev/null 2>&1
+    # Rename the auto-created first tab (label defaults to "1") to "agent".
+    [[ -n $agent_tab ]] && herdr tab rename "$agent_tab" agent >/dev/null 2>&1
 
     # Tabs 2-4. Each returns its own root_pane we run the tool in.
     local editor_pane lazygit_pane
@@ -95,7 +95,7 @@ herdr-task() {
 
     # Launch the tools directly in each pane. `pane run` prints nothing on
     # success; a missing tool surfaces in the pane itself, not here.
-    herdr pane run "$claude_pane" claude >/dev/null 2>&1
+    herdr pane run "$agent_pane" claude >/dev/null 2>&1
     [[ -n $editor_pane ]] && herdr pane run "$editor_pane" nvim >/dev/null 2>&1
     [[ -n $lazygit_pane ]] && herdr pane run "$lazygit_pane" lazygit >/dev/null 2>&1
 

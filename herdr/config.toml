@@ -29,7 +29,7 @@ auto_switch = false
 # to ctrl+b. Match the psmux muscle memory.
 prefix = "ctrl+a"
 
-# --- Tabs (these are the old psmux "windows": claude / editor / lazygit / shell)
+# --- Tabs (these are the old psmux "windows": agent / editor / lazygit / shell)
 #
 # herdr's switch_tab ONLY accepts the indexed 1..9 form -- letter keys and
 # symbols are rejected ("indexed keybinding must use 1..9"). On this keyboard

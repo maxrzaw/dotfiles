@@ -2,7 +2,7 @@
 # (`mux-task` / `muxt`) onto herdr's CLI.
 #
 # Creates a herdr WORKSPACE with the 4 preferred tabs:
-#   1 claude   -> runs `claude`
+#   1 agent    -> runs `claude`
 #   2 editor   -> runs `nvim`
 #   3 lazygit  -> runs `lazygit`
 #   4 shell    -> plain shell (no command)
@@ -64,17 +64,17 @@ function herdr-task {
     }
 
     # --- build the workspace ------------------------------------------------
-    # Tab 1 (claude) is the workspace's root tab, created with the workspace.
+    # Tab 1 (agent) is the workspace's root tab, created with the workspace.
     $created = herdr workspace create --label $Name --cwd $dir --no-focus 2>&1 | ConvertFrom-Json
     if (-not ($created -and $created.result -and $created.result.workspace)) {
         Write-Error "herdr-task: failed to create workspace. Is the herdr server running? Output: $created"
         return
     }
-    $wsid       = $created.result.workspace.workspace_id
-    $claudePane = $created.result.root_pane.pane_id   # tab 1 root pane
+    $wsid      = $created.result.workspace.workspace_id
+    $agentPane = $created.result.root_pane.pane_id   # tab 1 root pane
 
-    # Rename the auto-created first tab (label defaults to "1") to "claude".
-    herdr tab rename $created.result.tab.tab_id claude | Out-Null
+    # Rename the auto-created first tab (label defaults to "1") to "agent".
+    herdr tab rename $created.result.tab.tab_id agent | Out-Null
 
     # Tabs 2-4. Each returns its own root_pane we run the tool in.
     $editorPane  = (herdr tab create --workspace $wsid --label editor  --cwd $dir --no-focus 2>&1 | ConvertFrom-Json).result.root_pane.pane_id
@@ -83,7 +83,7 @@ function herdr-task {
     $null        = (herdr tab create --workspace $wsid --label shell   --cwd $dir --no-focus 2>&1 | ConvertFrom-Json)
 
     # Launch the tools directly in each pane (replaces send-keys + WaitReady).
-    herdr pane run $claudePane  claude  | Out-Null
+    herdr pane run $agentPane   claude  | Out-Null
     herdr pane run $editorPane  nvim    | Out-Null
     herdr pane run $lazygitPane lazygit | Out-Null
 
