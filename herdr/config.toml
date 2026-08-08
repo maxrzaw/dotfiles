@@ -31,11 +31,8 @@ prefix = "ctrl+a"
 
 # --- Tabs (these are the old psmux "windows": agent / editor / lazygit / shell)
 #
-# herdr's switch_tab ONLY accepts the indexed 1..9 form -- letter keys and
-# symbols are rejected ("indexed keybinding must use 1..9"). On this keyboard
-# the number row is swapped (unshifted 1-4 send ! @ # $), so jumping to tab N
-# is: prefix, then shift+<key> to produce the real digit. That is the
-# supported path; there is no symbol/letter alternative for switch_tab.
+# The built-in switch_tab action only accepts the indexed 1..9 form. The
+# plugin_action bindings below provide tmux-style arbitrary prefix keys.
 switch_tab   = "prefix+1..9"
 new_tab      = "prefix+c"
 next_tab     = "prefix+n"
@@ -43,13 +40,15 @@ previous_tab = "prefix+p"
 close_tab    = "prefix+shift+x"
 rename_tab   = "prefix+shift+t"
 
-# --- Pane focus, vi-style (mirrors the vim-tmux-navigator h/j/k/l habit).
-# These are prefixed; a seamless prefixless nvim<->herdr nav is a possible
-# follow-up but needs an nvim plugin that speaks herdr's socket API.
+# --- Pane focus
+# prefix+j/k/l are intentionally reserved for selector plugin bindings below.
 focus_pane_left  = "prefix+h"
-focus_pane_down  = "prefix+j"
-focus_pane_up    = "prefix+k"
-focus_pane_right = "prefix+l"
+focus_pane_down  = ""
+focus_pane_up    = ""
+focus_pane_right = ""
+swap_pane_down   = ""
+swap_pane_up     = ""
+swap_pane_right  = ""
 
 # --- Splits / pane management
 split_vertical   = "prefix+v"
@@ -72,6 +71,78 @@ toggle_sidebar   = "prefix+b"   # show/hide the space list in the sidebar
 # work alongside these.
 navigate_workspace_up   = "k"   # vim up in the workspace picker
 navigate_workspace_down = "j"   # vim down in the workspace picker
+
+[[keys.command]]
+key = "prefix+j"
+type = "plugin_action"
+command = "dotfiles.select.tab-1"
+description = "focus tab 1"
+
+[[keys.command]]
+key = "prefix+k"
+type = "plugin_action"
+command = "dotfiles.select.tab-2"
+description = "focus tab 2"
+
+[[keys.command]]
+key = "prefix+l"
+type = "plugin_action"
+command = "dotfiles.select.tab-3"
+description = "focus tab 3"
+
+[[keys.command]]
+key = "prefix+semicolon"
+type = "plugin_action"
+command = "dotfiles.select.tab-4"
+description = "focus tab 4"
+
+[[keys.command]]
+key = "prefix+shift+j"
+type = "plugin_action"
+command = "dotfiles.select.workspace-1"
+description = "focus workspace 1"
+
+[[keys.command]]
+key = "prefix+shift+k"
+type = "plugin_action"
+command = "dotfiles.select.workspace-2"
+description = "focus workspace 2"
+
+[[keys.command]]
+key = "prefix+shift+l"
+type = "plugin_action"
+command = "dotfiles.select.workspace-3"
+description = "focus workspace 3"
+
+[[keys.command]]
+key = "prefix+shift+semicolon"
+type = "plugin_action"
+command = "dotfiles.select.workspace-4"
+description = "focus workspace 4"
+
+[[keys.command]]
+key = "prefix+alt+j"
+type = "plugin_action"
+command = "dotfiles.select.agent-1"
+description = "focus agent 1"
+
+[[keys.command]]
+key = "prefix+alt+k"
+type = "plugin_action"
+command = "dotfiles.select.agent-2"
+description = "focus agent 2"
+
+[[keys.command]]
+key = "prefix+alt+l"
+type = "plugin_action"
+command = "dotfiles.select.agent-3"
+description = "focus agent 3"
+
+[[keys.command]]
+key = "prefix+alt+semicolon"
+type = "plugin_action"
+command = "dotfiles.select.agent-4"
+description = "focus agent 4"
 
 # --- Sound -------------------------------------------------------------------
 # Headless Linux boxes have no audio device, so every agent state change spammed

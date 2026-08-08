@@ -5,3 +5,4 @@ nvim/undo
 nvim/lazy-lock.json
 .claude/settings.local.json
 /.codex
+/herdr/plugins/select/target

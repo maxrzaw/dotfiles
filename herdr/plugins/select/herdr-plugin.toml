@@ -1,0 +1,168 @@
+id = "dotfiles.select"
+name = "Select"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Focus Herdr tabs, workspaces, and agents by number from arbitrary keybindings."
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "tab-1"
+title = "Focus tab 1"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "1"]
+
+[[actions]]
+id = "tab-2"
+title = "Focus tab 2"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "2"]
+
+[[actions]]
+id = "tab-3"
+title = "Focus tab 3"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "3"]
+
+[[actions]]
+id = "tab-4"
+title = "Focus tab 4"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "4"]
+
+[[actions]]
+id = "tab-5"
+title = "Focus tab 5"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "5"]
+
+[[actions]]
+id = "tab-6"
+title = "Focus tab 6"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "6"]
+
+[[actions]]
+id = "tab-7"
+title = "Focus tab 7"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "7"]
+
+[[actions]]
+id = "tab-8"
+title = "Focus tab 8"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "8"]
+
+[[actions]]
+id = "tab-9"
+title = "Focus tab 9"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "tab", "9"]
+
+[[actions]]
+id = "workspace-1"
+title = "Focus workspace 1"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "1"]
+
+[[actions]]
+id = "workspace-2"
+title = "Focus workspace 2"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "2"]
+
+[[actions]]
+id = "workspace-3"
+title = "Focus workspace 3"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "3"]
+
+[[actions]]
+id = "workspace-4"
+title = "Focus workspace 4"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "4"]
+
+[[actions]]
+id = "workspace-5"
+title = "Focus workspace 5"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "5"]
+
+[[actions]]
+id = "workspace-6"
+title = "Focus workspace 6"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "6"]
+
+[[actions]]
+id = "workspace-7"
+title = "Focus workspace 7"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "7"]
+
+[[actions]]
+id = "workspace-8"
+title = "Focus workspace 8"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "8"]
+
+[[actions]]
+id = "workspace-9"
+title = "Focus workspace 9"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "workspace", "9"]
+
+[[actions]]
+id = "agent-1"
+title = "Focus agent 1"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "1"]
+
+[[actions]]
+id = "agent-2"
+title = "Focus agent 2"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "2"]
+
+[[actions]]
+id = "agent-3"
+title = "Focus agent 3"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "3"]
+
+[[actions]]
+id = "agent-4"
+title = "Focus agent 4"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "4"]
+
+[[actions]]
+id = "agent-5"
+title = "Focus agent 5"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "5"]
+
+[[actions]]
+id = "agent-6"
+title = "Focus agent 6"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "6"]
+
+[[actions]]
+id = "agent-7"
+title = "Focus agent 7"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "7"]
+
+[[actions]]
+id = "agent-8"
+title = "Focus agent 8"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "8"]
+
+[[actions]]
+id = "agent-9"
+title = "Focus agent 9"
+contexts = ["workspace"]
+command = ["./target/release/herdr-select", "agent", "9"]
