@@ -1,7 +1,7 @@
 # herdr shell integration — the zsh side of powershell/herdr-task.ps1.
 #
 # herdr-task creates a herdr WORKSPACE with the 4 preferred tabs:
-#   1 agent    -> runs `claude`
+#   1 agent    -> runs `$MUX_DEFAULT_AGENT` (or `claude`)
 #   2 editor   -> runs `nvim`
 #   3 lazygit  -> runs `lazygit`
 #   4 shell    -> plain shell (no command)
@@ -25,6 +25,7 @@ herdr-task() {
     setopt local_options no_unset
 
     local name="${1:-task}"
+    local agent="${MUX_DEFAULT_AGENT:-claude}"
     # NOT `path` — that is zsh's array alias for PATH; assigning a string to it
     # replaces PATH with a single directory and every command lookup then fails.
     local target="${2:-$PWD}"
@@ -95,14 +96,14 @@ herdr-task() {
 
     # Launch the tools directly in each pane. `pane run` prints nothing on
     # success; a missing tool surfaces in the pane itself, not here.
-    herdr pane run "$agent_pane" claude >/dev/null 2>&1
+    herdr pane run "$agent_pane" "$agent" >/dev/null 2>&1
     [[ -n $editor_pane ]] && herdr pane run "$editor_pane" nvim >/dev/null 2>&1
     [[ -n $lazygit_pane ]] && herdr pane run "$lazygit_pane" lazygit >/dev/null 2>&1
 
     # Focus the workspace so it's front-and-center on attach.
     herdr workspace focus "$wsid" >/dev/null 2>&1
 
-    print "herdr-task: created workspace '$name' ($wsid) at $dir"
+    print "herdr-task: created workspace '$name' ($wsid) at $dir with $agent"
     print "Attach with:  herdr"
 }
 

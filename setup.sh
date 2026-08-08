@@ -34,6 +34,15 @@ if [ ! -d ~/.config/tmuxinator ]; then
     echo "Created symbolic link from ~/.config/tmuxinator to ~/dotfiles/tmuxinator"
 fi
 
+# Set up herdr
+mkdir -p ~/.config/herdr
+if [ ! -e ~/.config/herdr/config.toml ]; then
+    ln -s ~/dotfiles/herdr/config.toml ~/.config/herdr/config.toml
+    echo "Created symbolic link from ~/.config/herdr/config.toml to ~/dotfiles/herdr/config.toml"
+elif [ ! -L ~/.config/herdr/config.toml ]; then
+    echo "Leaving existing ~/.config/herdr/config.toml unchanged"
+fi
+
 # Set up Ghostty
 mkdir -p ~/.config/ghostty
 touch ~/.config/ghostty/config

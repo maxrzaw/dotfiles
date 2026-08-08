@@ -2,7 +2,7 @@
 # (`mux-task` / `muxt`) onto herdr's CLI.
 #
 # Creates a herdr WORKSPACE with the 4 preferred tabs:
-#   1 agent    -> runs `claude`
+#   1 agent    -> runs `$env:MUX_DEFAULT_AGENT` (or `claude`)
 #   2 editor   -> runs `nvim`
 #   3 lazygit  -> runs `lazygit`
 #   4 shell    -> plain shell (no command)
@@ -34,6 +34,8 @@ function herdr-task {
         [string]$Name = 'task',
         [string]$Path = $PWD.Path
     )
+
+    $agent = if ($env:MUX_DEFAULT_AGENT) { $env:MUX_DEFAULT_AGENT } else { 'claude' }
 
     # Resolve to an absolute path; fail clearly if it doesn't exist.
     try {
@@ -83,14 +85,14 @@ function herdr-task {
     $null        = (herdr tab create --workspace $wsid --label shell   --cwd $dir --no-focus 2>&1 | ConvertFrom-Json)
 
     # Launch the tools directly in each pane (replaces send-keys + WaitReady).
-    herdr pane run $agentPane   claude  | Out-Null
+    herdr pane run $agentPane   $agent  | Out-Null
     herdr pane run $editorPane  nvim    | Out-Null
     herdr pane run $lazygitPane lazygit | Out-Null
 
     # Focus the workspace so it's front-and-center on attach.
     herdr workspace focus $wsid | Out-Null
 
-    Write-Host "herdr-task: created workspace '$Name' ($wsid) at $dir"
+    Write-Host "herdr-task: created workspace '$Name' ($wsid) at $dir with $agent"
     Write-Host "Attach with:  herdr"
 }
 
