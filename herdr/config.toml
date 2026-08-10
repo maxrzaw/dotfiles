@@ -157,3 +157,15 @@ delivery = "herdr"
 
 [ui]
 show_agent_labels_on_pane_borders = true
+
+# Right-click passthrough. By default herdr swallows right-click to open its own
+# pane menu, so nvim never sees it. On this headless Linux box the old
+# "shift+drag to select, right-click to copy" flow depends on the click reaching
+# past herdr, so forward it under ctrl: ctrl+right-click goes to the pane app,
+# plain right-click still opens herdr's menu.
+#
+# ctrl only gates the right-click GESTURE -- it does not reserve the ctrl key, so
+# the ctrl+a prefix, ctrl+letter bindings, and ctrl+c are unaffected.
+# shift is rejected by herdr on purpose (terminals reserve shift+mouse), which is
+# also why shift+drag still reaches Windows Terminal's native selection layer.
+right_click_passthrough_modifier = "ctrl"
