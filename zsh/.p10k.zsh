@@ -389,10 +389,13 @@
 
     if [[ -n $VCS_STATUS_LOCAL_BRANCH ]]; then
       local branch=${(V)VCS_STATUS_LOCAL_BRANCH}
-      # If local branch name is at most 32 characters long, show it in full.
+      # Show only the last "/"-separated segment of the branch name, so
+      # users/mzawisa/12345-fix-thing renders as just 12345-fix-thing.
+      # Tip: To show the full branch path, delete the next line.
+      branch=${branch##*/}
+      # If the remaining name is at most 32 characters long, show it in full.
       # Otherwise show the first 12 … the last 12.
-      # Tip: To always show local branch name in full without truncation, delete the next line.
-      (( $#branch > 32 )) && branch[13,-13]="…"  # <-- this line
+      (( $#branch > 32 )) && branch[13,-13]="…"
       res+="${clean}${(g::)POWERLEVEL9K_VCS_BRANCH_ICON}${branch//\%/%%}"
     fi
 
@@ -894,7 +897,14 @@
   # Context format when running with privileges: bold user@hostname.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE='%B%n@%m'
   # Context format when in SSH without privileges: user@hostname.
-  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_TEMPLATE='%n@%m'
+  # This VM's real hostname is a long machine-generated string
+  # (227210-hv-ubuntu24-...), so show a readable alias instead. %m is kept as
+  # the fallback for any other host sharing these dotfiles.
+  if [[ ${(%):-%m} == 227210-hv-ubuntu24-* ]]; then
+    typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_TEMPLATE='%n@rkt-ubuntu'
+  else
+    typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_TEMPLATE='%n@%m'
+  fi
   # Default context format (no privileges, no SSH): user@hostname.
   typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE='%n@%m'
 
