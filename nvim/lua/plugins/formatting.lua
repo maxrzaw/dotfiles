@@ -60,6 +60,7 @@ return {
                     json = prettier,
                     jsonc = prettier,
                     markdown = prettier,
+                    tex = { "latexindent" },
                     yaml = prettier,
                     yml = prettier,
                 },
