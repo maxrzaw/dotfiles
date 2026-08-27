@@ -90,3 +90,9 @@ if [[ ! -v NEOVIM_WORK ]] then
         alias k=kubectl
     fi
 fi
+
+# AWS CLI ships a bash-style completer, so it needs bashcompinit.
+if [ -x "$(command -v aws_completer)" ]; then
+    autoload -Uz bashcompinit && bashcompinit
+    complete -C aws_completer aws
+fi
