@@ -145,37 +145,38 @@ return {
             },
         })
 
-        -- Set up Angular Language Server
-        -- wierd things required for angular monorepo
-        local function get_node_modules(root_dir)
-            local root_node = root_dir .. "/node_modules"
-            local stats = vim.uv.fs_stat(root_node)
-            if stats == nil then
-                return ""
-            else
-                return root_node
-            end
-        end
-
-        local default_node_modules = get_node_modules(vim.fn.getcwd())
-        local ngls_cmd = {
-            "ngserver",
-            "--stdio",
-            "--tsProbeLocations",
-            default_node_modules,
-            "--ngProbeLocations",
-            default_node_modules,
-        }
-        vim.lsp.config("angularls", {
-            cmd = ngls_cmd,
-            root_markers = { ".git", "package.json" },
-            filetypes = {
-                "typescript",
-                "html",
-                "htmlangular",
-                "typescriptreact",
-            },
-        })
+        -- Previous Angular monorepo override. Do not re-enable unchanged: it derives the probe
+        -- location at Neovim startup rather than from the workspace root, which can leave ngserver
+        -- unable to resolve TypeScript. Retained here as reference for a future dynamic monorepo setup.
+        -- local function get_node_modules(root_dir)
+        --     local root_node = root_dir .. "/node_modules"
+        --     local stats = vim.uv.fs_stat(root_node)
+        --     if stats == nil then
+        --         return ""
+        --     else
+        --         return root_node
+        --     end
+        -- end
+        --
+        -- local default_node_modules = get_node_modules(vim.fn.getcwd())
+        -- local ngls_cmd = {
+        --     "ngserver",
+        --     "--stdio",
+        --     "--tsProbeLocations",
+        --     default_node_modules,
+        --     "--ngProbeLocations",
+        --     default_node_modules,
+        -- }
+        -- vim.lsp.config("angularls", {
+        --     cmd = ngls_cmd,
+        --     root_markers = { ".git", "package.json" },
+        --     filetypes = {
+        --         "typescript",
+        --         "html",
+        --         "htmlangular",
+        --         "typescriptreact",
+        --     },
+        -- })
 
         -- Note: autostart is false by default in vim.lsp.config
         -- You'll need to manually start Angular LS with :LspStart angularls
