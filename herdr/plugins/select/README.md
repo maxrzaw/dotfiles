@@ -44,3 +44,5 @@ server.
 - Build output lives under `target/` and is ignored by git.
 - The plugin is linked locally from this repo; after moving the repo, relink it.
 - The binary can also be run as `herdr-select tab 1`, `herdr-select workspace 1`, or `herdr-select agent 1` when `HERDR_SOCKET_PATH` is set by Herdr.
+- Agent selection resolves the indexed agent and focuses its pane directly so
+  Herdr 0.9 clients update their local view.

@@ -136,12 +136,16 @@ fn run() -> Result<(), String> {
                 .get(target - 1)
                 .ok_or_else(|| format!("agent {target} not found"))?;
 
+            // Resolve agents by the sidebar ordering above, but focus their
+            // pane directly. In Herdr 0.9, agent.focus updates server-side
+            // agent focus without moving an attached client's local view;
+            // pane.focus carries the required presentation effect.
             let _: Value = request(
                 &socket_path,
                 json!({
-                    "id":"herdr_select_agent_focus",
-                    "method":"agent.focus",
-                    "params":{"target": agent.pane_id},
+                    "id":"herdr_select_agent_pane_focus",
+                    "method":"pane.focus",
+                    "params":{"pane_id": agent.pane_id},
                 }),
             )?;
         }
