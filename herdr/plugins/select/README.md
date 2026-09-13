@@ -15,10 +15,22 @@ herdr server reload-config
 Verify:
 
 ```sh
+test -x herdr/plugins/select/target/release/herdr-select
 herdr plugin list
 herdr plugin action list --plugin dotfiles.select
 herdr config check
 ```
+
+If a configured binding does nothing, inspect its latest invocation result:
+
+```sh
+herdr plugin log list --plugin dotfiles.select --limit 10
+```
+
+`herdr config check` validates the binding and plugin metadata, but does not
+check that the plugin executable still exists. An `os error 2` in the plugin
+log means the ignored build output is missing; rerun the build and reload the
+server.
 
 ## Current Bindings
 

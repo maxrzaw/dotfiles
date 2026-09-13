@@ -43,6 +43,38 @@ elif [ ! -L ~/.config/herdr/config.toml ]; then
     echo "Leaving existing ~/.config/herdr/config.toml unchanged"
 fi
 
+# The selector plugin is linked from this repo, but its ignored Rust build
+# output can disappear after a fresh clone or cleanup. Rebuild and relink it so
+# valid-looking prefix+j/k/l bindings never point at a missing executable.
+herdr_select_dir="$HOME/dotfiles/herdr/plugins/select"
+herdr_select_bin="$herdr_select_dir/target/release/herdr-select"
+case "$(uname -s)" in
+    Darwin|Linux)
+        if ! command -v herdr >/dev/null 2>&1; then
+            echo "Warning: herdr is not installed; skipping herdr-select setup"
+        elif ! command -v cargo >/dev/null 2>&1; then
+            echo "Warning: cargo is not installed; herdr selector bindings will not work"
+        elif ! cargo build --release --locked --manifest-path "$herdr_select_dir/Cargo.toml"; then
+            echo "Warning: failed to build herdr-select; selector bindings will not work"
+        elif [ ! -x "$herdr_select_bin" ]; then
+            echo "Warning: herdr-select build completed without creating $herdr_select_bin"
+        elif ! herdr plugin link "$herdr_select_dir" --enabled >/dev/null; then
+            echo "Warning: failed to link the dotfiles.select Herdr plugin"
+        elif ! herdr config check; then
+            echo "Warning: Herdr configuration validation failed"
+        else
+            if herdr status server >/dev/null 2>&1; then
+                herdr server reload-config >/dev/null \
+                    || echo "Warning: failed to reload the running Herdr server"
+            fi
+            echo "Built and linked herdr-select"
+        fi
+        ;;
+    *)
+        echo "Skipping herdr-select setup on unsupported platform $(uname -s)"
+        ;;
+esac
+
 # Set up Ghostty
 mkdir -p ~/.config/ghostty
 touch ~/.config/ghostty/config
