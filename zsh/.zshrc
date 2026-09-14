@@ -8,8 +8,9 @@ fi
 alias vim=$VIM
 alias mux=tmuxinator
 
-# Load completion definitions before using compdef below.
-autoload -Uz compinit && compinit
+# oh-my-zsh already ran compinit; this only self-initializes in a bare shell.
+# Must stay above the p10k block and the compdef below.
+(( $+functions[compdef] )) || { autoload -Uz compinit && compinit -d "${ZSH_COMPDUMP:-${ZDOTDIR:-$HOME}/.zcompdump}" }
 
 # Powerlevel10k prompt
 if [[ -r ~/.powerlevel10k/powerlevel10k.zsh-theme ]]; then
