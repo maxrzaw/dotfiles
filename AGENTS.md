@@ -58,3 +58,32 @@ The environment is optimized for running multiple AI agents (like Claude Code) u
 
 - **AWS Token Monitoring:** A background daemon (`aws_token_daemon.py`) monitors AWS credentials and updates the Zsh prompt via a cache file in `/tmp/`.
 - **Windows Support:** Some configurations (like `wezterm.lua` and `tmuxinator/windev.yaml`) include specific logic for Windows filesystem paths and PowerShell.
+
+## Troubleshooting
+
+### Mason `roslyn` package fails to install/update (wget exit code 8)
+
+Mason's `roslyn` package (`nvim/lua/plugins/mason.lua`) comes from the
+`crashdummyy/mason-registry` (configured in `nvim/lua/plugins/mason.lua`), which
+sometimes pins `roslyn` to a GitHub release tag that has no uploaded assets. When
+that happens, `:MasonInstall roslyn` (or Mason's own `ensure_installed` auto-install
+on startup) fails with `wget failed with exit code 8` — an HTTP error (404) fetching
+the asset zip, not a network blip, so retrying the same command won't help. Whatever
+binary was already on disk before the failed update stays in place, stale — which is
+how this often first shows up as the Roslyn LSP refusing to start (e.g. `Unrecognized
+command or argument '--daemon-mode'`, because `roslyn.nvim` always passes that flag
+but an old binary predates daemon-mode support).
+
+To fix without editing the registry or `mason.lua`, pin a known-good version directly:
+
+1. Check the `roslyn-nightly` entry in the same registry file
+   (`~/.local/share/nvim/mason/registries/github/crashdummyy/mason-registry/registry.json`)
+   for its `source.id` version — it tracks upstream more closely and is usually intact.
+2. Confirm that version's Linux asset actually resolves (302, not 404):
+   `curl -sI "https://github.com/Crashdummyy/roslynLanguageServer/releases/download/<version>/microsoft.codeanalysis.languageserver.linux-x64.zip"`
+3. Run `:MasonInstall roslyn@<version>` in Neovim — this pins the working release
+   under the existing `roslyn` package name, so `ensure_installed = { "roslyn" }`
+   stays valid and no config file needs to change.
+
+Don't reinstall plain `roslyn` (no version) afterward — that reverts to whatever
+broken version the registry currently pins.
