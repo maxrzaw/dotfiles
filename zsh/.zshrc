@@ -15,7 +15,6 @@ alias mux=tmuxinator
 # Powerlevel10k prompt
 if [[ -r ~/.powerlevel10k/powerlevel10k.zsh-theme ]]; then
     source ~/.powerlevel10k/powerlevel10k.zsh-theme
-    source ~/dotfiles/zsh/p10k.custom.zsh
     source ~/dotfiles/zsh/.p10k.zsh
 fi
 
