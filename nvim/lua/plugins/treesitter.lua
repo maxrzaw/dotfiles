@@ -44,12 +44,17 @@ return {
                 local treesitter_group = vim.api.nvim_create_augroup("mzawisa-treesitter", { clear = true })
                 local installing = {}
 
-                local function start_treesitter(bufnr)
+                local function start_treesitter(bufnr, lang)
                     if not pcall(vim.treesitter.start, bufnr) then
                         return false
                     end
 
-                    vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    -- Some languages (e.g. c_sharp) have no indents.scm upstream, so
+                    -- vim.treesitter.indentexpr() would silently indent to 0. Leave the
+                    -- filetype's own indentexpr (e.g. indent/cs.vim) in place for those.
+                    if vim.treesitter.query.get(lang, "indents") then
+                        vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    end
                     return true
                 end
 
@@ -65,7 +70,7 @@ return {
                             return
                         end
 
-                        if start_treesitter(bufnr) then
+                        if start_treesitter(bufnr, lang) then
                             return
                         end
 
@@ -83,7 +88,7 @@ return {
 
                             vim.schedule(function()
                                 if vim.api.nvim_buf_is_valid(bufnr) then
-                                    start_treesitter(bufnr)
+                                    start_treesitter(bufnr, lang)
                                 end
                             end)
                         end)
