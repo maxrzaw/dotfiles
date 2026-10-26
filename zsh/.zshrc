@@ -96,3 +96,7 @@ if [ -x "$(command -v aws_completer)" ]; then
     autoload -Uz bashcompinit && bashcompinit
     complete -C aws_completer aws
 fi
+
+docker-pull-all() {
+  docker compose pull --ignore-buildable; grep -rhiE '^\s*FROM\s' --include='Dockerfile*' . | awk '{img=""; for (i=2; i<=NF; i++) { if (img=="" && $i !~ /^--/) img=$i; if (tolower($i)=="as") alias[$(i+1)]=1 } imgs[img]=1} END {for (k in imgs) if (!(k in alias)) print k}' | grep -vE '^\$|^scratch$' | xargs -r -n1 docker pull
+}
